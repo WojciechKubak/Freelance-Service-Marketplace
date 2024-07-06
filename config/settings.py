@@ -32,6 +32,10 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+LOCAL_APPS = [
+    "apps.api.apps",
+]
+
 THIRD_PARTY_APPS = [
     "rest_framework",
 ]
