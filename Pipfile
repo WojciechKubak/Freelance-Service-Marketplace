@@ -8,6 +8,8 @@ django = "*"
 djangorestframework = "*"
 
 [dev-packages]
+flake8 = "*"
+flake8-bugbear = "*"
 
 [requires]
 python_version = "3.12"
