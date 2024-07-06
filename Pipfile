@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+djangorestframework = "*"
+
+[dev-packages]
+flake8 = "*"
+flake8-bugbear = "*"
+black = "*"
+pre-commit = "*"
+pytest-django = "*"
+factory-boy = "*"
+
+[requires]
+python_version = "3.12"

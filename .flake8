@@ -1,0 +1,43 @@
+[flake8]
+max-line-length = 88
+extend-select = B950
+extend-ignore = E203,E501,E701,E402
+
+count = True
+statistics = True
+
+per-file-ignores =
+    app/settings/*: F403,F401,E501
+
+exclude =
+    __pycache__,
+    .mypy_cache,
+    */migrations/*
+    .bzr,
+    .direnv,
+    .eggs,
+    .git,
+    .git-rewrite,
+    .hg,
+    .ipynb_checkpoints,
+    .nox,
+    .pants.d,
+    .pyenv,
+    .pytest_cache,
+    .pytype,
+    .ruff_cache,
+    .svn,
+    .tox,
+    .venv,
+    .vscode,
+    __pypackages__,
+    _build,
+    buck-out,
+    build,
+    dist,
+    node_modules,
+    site-packages,
+    venv,
+
+filename =
+    *.py
