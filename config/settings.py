@@ -32,6 +32,10 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+LOCAL_APPS = [
+    "apps.api.apps",
+]
+
 THIRD_PARTY_APPS = [
     "rest_framework",
 ]
@@ -44,6 +48,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     *THIRD_PARTY_APPS,
+    *LOCAL_APPS,
 ]
 
 MIDDLEWARE = [
