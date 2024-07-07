@@ -21,8 +21,6 @@ services:
       - ./:/app
     ports:
       - "8000:8000"
-    networks:
-      - web_app
     depends_on:
       - postgres
     restart: always
@@ -72,3 +70,5 @@ volumes:
   certbot-web:
   proxy-dhparams:
   certbot-certs:
+  postgres:
+
