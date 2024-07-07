@@ -9,6 +9,7 @@ djangorestframework = "*"
 python-dotenv = "*"
 gunicorn = "*"
 whitenoise = "*"
+psycopg2 = "*"
 
 [dev-packages]
 flake8 = "*"

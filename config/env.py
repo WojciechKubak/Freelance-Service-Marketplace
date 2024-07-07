@@ -1,4 +1,9 @@
+from pathlib import Path
 from typing import Any
+
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def env_to_list(env: str | None, default: list[str]) -> list[str]:

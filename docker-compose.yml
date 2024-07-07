@@ -1,6 +1,20 @@
 version: "3.8"
 
 services:
+
+  postgres:
+    image: postgres:latest
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    networks:
+      - web_app
+
   django:
     build: .
     volumes:
@@ -9,6 +23,8 @@ services:
       - "8000:8000"
     networks:
       - web_app
+    depends_on:
+      - postgres
 
   nginx:
     image: nginx:latest
@@ -24,3 +40,6 @@ services:
 networks:
   web_app:
   nginx:
+
+volumes:
+  postgres:
