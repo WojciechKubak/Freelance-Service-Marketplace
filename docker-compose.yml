@@ -7,9 +7,9 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password1234
+      POSTGRES_DB: db
     ports:
       - "5432:5432"
     networks:
@@ -25,21 +25,11 @@ services:
       - web_app
     depends_on:
       - postgres
-
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.default.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - web_app
-    depends_on:
-      - django
+    environment:
+      - DJANGO_DEBUG=1
       
 networks:
   web_app:
-  nginx:
 
 volumes:
   postgres:
