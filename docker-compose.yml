@@ -10,6 +10,8 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password1234
       POSTGRES_DB: db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER $$POSTGRES_DB"]
     ports:
       - "5432:5432"
     networks:
