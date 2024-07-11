@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["*"]
 
 LOCAL_APPS = [
     "apps.api.apps",
+    "apps.authentication.apps",
 ]
 
 THIRD_PARTY_APPS = [
