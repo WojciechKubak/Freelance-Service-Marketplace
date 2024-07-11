@@ -10,6 +10,7 @@ python-dotenv = "*"
 gunicorn = "*"
 whitenoise = "*"
 psycopg2 = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 flake8 = "*"
