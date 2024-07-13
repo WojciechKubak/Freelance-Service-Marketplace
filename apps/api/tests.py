@@ -9,4 +9,4 @@ def test_health_check_api_returns_expected_response_status_code_and_data() -> No
     response = HealthCheckAPI.as_view()(request)
 
     assert 200 == response.status_code
-    assert {"message": "Healthy"} == response.data
+    assert {"status": "Healthy"} == response.data
