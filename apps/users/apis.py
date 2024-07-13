@@ -1,6 +1,7 @@
 from apps.users.models import User
 from apps.users.selectors import UserSelectors
-from rest_framework.permissions import IsAdminUser
+from apps.users.services import UserService
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -46,3 +47,26 @@ class UserListApi(APIView):
             return paginator.get_paginated_response(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserRegisterApi(APIView):
+    permission_classes = (AllowAny,)
+
+    class InputSerializer(serializers.Serializer):
+        email = serializers.EmailField()
+        password = serializers.CharField()
+
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = ["email", "is_admin", "is_active"]
+
+    def post(self, request: Request) -> Response:
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = UserService.user_create(**serializer.validated_data)
+
+        output_serializer = self.OutputSerializer(user)
+
+        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
