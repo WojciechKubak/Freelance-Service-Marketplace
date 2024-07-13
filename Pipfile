@@ -11,6 +11,7 @@ gunicorn = "*"
 whitenoise = "*"
 psycopg2 = "*"
 djangorestframework-simplejwt = "*"
+django-filter = "*"
 
 [dev-packages]
 flake8 = "*"
