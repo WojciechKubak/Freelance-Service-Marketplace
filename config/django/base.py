@@ -17,7 +17,6 @@ import os
 
 load_dotenv()
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -97,6 +96,16 @@ DATABASES = {
         "HOST": "postgres",
         "PORT": "5432",
     }
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAdminUser",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "EXCEPTION_HANDLER": "apps.api.exception_handler.custom_exception_handler",
 }
 
 # Password validation
