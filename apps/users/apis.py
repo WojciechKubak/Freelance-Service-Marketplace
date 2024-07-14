@@ -1,3 +1,4 @@
+from apps.api.pagination import get_paginated_response
 from apps.users.models import User
 from apps.users.selectors import UserSelectors
 from apps.users.services import UserService
@@ -39,14 +40,14 @@ class UserListApi(APIView):
 
         users = UserSelectors.user_list(filters=filters.validated_data)
 
-        paginator = self.Pagination()
-        paginated_users = paginator.paginate_queryset(users, request)
+        response = get_paginated_response(
+            queryset=users,
+            pagination_class=self.Pagination,
+            serializer_class=self.OutputSerializer,
+            request=request,
+        )
 
-        if paginated_users is not None:
-            serializer = self.OutputSerializer(paginated_users, many=True)
-            return paginator.get_paginated_response(serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return response
 
 
 class UserRegisterApi(APIView):
