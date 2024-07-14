@@ -35,6 +35,7 @@ LOCAL_APPS = [
     "apps.authentication.apps.AuthenticationConfig",
     "apps.users.apps.UsersConfig",
     "apps.common.apps.CommonConfig",
+    "apps.emails.apps.EmailsConfig",
 ]
 
 THIRD_PARTY_APPS = [
