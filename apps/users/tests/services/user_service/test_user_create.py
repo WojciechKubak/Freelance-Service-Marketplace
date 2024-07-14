@@ -1,3 +1,4 @@
+from apps.users.tests.factories import UserFactory
 from apps.users.services import UserService
 from django.core.exceptions import ValidationError
 from apps.users.models import User
@@ -37,7 +38,7 @@ class TestUserCreate:
     @pytest.mark.django_db
     def test_user_create_triggers_email_duplicate_error(self) -> None:
         email = "example@domain.com"
-        UserService.user_create(email=email, password="password")
+        UserFactory(email=email)
 
         with pytest.raises(ValidationError):
             UserService.user_create(email=email, password="password")

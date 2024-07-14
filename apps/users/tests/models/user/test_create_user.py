@@ -1,3 +1,4 @@
+from apps.users.tests.factories import UserFactory
 from apps.users.models import User
 from django.core.exceptions import ValidationError
 import pytest
@@ -14,7 +15,7 @@ class TestCreateUser:
     def test_creating_user_with_existing_email_raises_error(self) -> None:
         email = "example@domain.com"
 
-        User.objects.create_user(email=email, password="password")
+        UserFactory(email=email)
 
         with pytest.raises(ValidationError):
             User.objects.create_user(email=email)

@@ -1,5 +1,5 @@
+from apps.users.tests.factories import UserFactory
 from apps.users.apis import UserRegisterApi
-from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 import pytest
@@ -25,7 +25,7 @@ class TestUserRegisterApi:
     @pytest.mark.django_db
     def test_api_response_on_failed_due_to_unique_email_constraint(self) -> None:
         email = "user@example.com"
-        User.objects.create_user(email=email, password="password")
+        UserFactory(email=email)
 
         request = APIRequestFactory().post(
             "/api/users/register/",

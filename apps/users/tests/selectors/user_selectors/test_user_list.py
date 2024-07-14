@@ -1,5 +1,5 @@
+from apps.users.tests.factories import UserFactory
 from apps.users.selectors import UserSelectors
-from apps.users.models import User
 import pytest
 
 
@@ -8,7 +8,7 @@ class TestUserList:
     @pytest.mark.django_db
     def test_user_list_returns_no_results_with_filter_provided(self) -> None:
         email = "email@example.com"
-        User.objects.create_user(email=email)
+        UserFactory(email=email)
 
         filters = {"email": f"other_{email}"}
 
@@ -17,7 +17,7 @@ class TestUserList:
     @pytest.mark.django_db
     def test_user_list_returns_single_result_with_filter_provided(self) -> None:
         email = "email@example.com"
-        User.objects.create_user(email=email)
+        UserFactory(email=email)
 
         filters = {"email": email}
 
@@ -27,8 +27,7 @@ class TestUserList:
 
     @pytest.mark.django_db
     def test_user_list_returns_multiple_results_with_filter_provided(self) -> None:
-        User.objects.create_user(email="first@example.com", is_admin=True)
-        User.objects.create_user(email="second@example.com", is_admin=True)
+        UserFactory.create_batch(2, is_admin=True)
 
         filters = {"is_admin": True}
 
@@ -38,8 +37,7 @@ class TestUserList:
 
     @pytest.mark.django_db
     def test_user_list_returns_all_users_without_filters_provided(self) -> None:
-        User.objects.create_user(email="first@example.com")
-        User.objects.create_user(email="second@example.com")
+        UserFactory.create_batch(2)
 
         result = UserSelectors.user_list(filters={})
 

@@ -1,3 +1,4 @@
+from apps.users.tests.factories import UserFactory
 from apps.users.apis import UserListApi
 from apps.users.models import User
 from rest_framework.test import APIRequestFactory
@@ -12,7 +13,7 @@ class TestUserListApi:
     def test_api_returns_no_results_with_filter_provided(
         self, auth_request: Callable[[User, str, str], APIRequestFactory]
     ) -> None:
-        user = User.objects.create_superuser(email="example@domain.com")
+        user = UserFactory(is_admin=True, is_active=True)
 
         url = f"api/users/?email=other_{user.email}"
 
@@ -34,7 +35,7 @@ class TestUserListApi:
     def test_api_returns_single_results_with_filter_provided(
         self, auth_request: Callable[[User, str, str], APIRequestFactory]
     ) -> None:
-        user = User.objects.create_superuser(email="example@domain.com")
+        user = UserFactory(is_admin=True, is_active=True)
 
         url = f"api/users/?email={user.email}"
 
@@ -63,10 +64,10 @@ class TestUserListApi:
     def test_api_returns_all_results_without_filters_provided(
         self, auth_request: Callable[[User, str, str], APIRequestFactory]
     ) -> None:
-        auth_user = User.objects.create_superuser(email="user@example.com")
+        auth_user = UserFactory(is_admin=True, is_active=True)
 
-        user1 = User.objects.create_user(email="1@domain.com", is_active=False)
-        user2 = User.objects.create_user(email="2@domain.com", is_active=False)
+        user1 = UserFactory(is_active=False)
+        user2 = UserFactory(is_active=False)
 
         url = "api/users/?is_active=False"
 
