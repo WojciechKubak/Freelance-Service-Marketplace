@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-from config.env import env_to_bool, BASE_DIR
+from config.env import BASE_DIR, APP_DIR, env_to_bool
 from dotenv import load_dotenv
 import os
 
@@ -27,6 +27,8 @@ SECRET_KEY = "secret_key"
 DEBUG = env_to_bool(os.environ.get("DJANGO_DEBUG"), True)
 
 ALLOWED_HOSTS = ["*"]
+
+DOMAIN = os.environ.get("DOMAIN", "http://localhost:8000")
 
 # Application definition
 
@@ -72,7 +74,7 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            os.path.join(BASE_DIR, "apps/emails/templates"),
+            os.path.join(APP_DIR, "emails/templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
