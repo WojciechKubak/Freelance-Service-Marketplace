@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class EmailSendingStrategy(Enum):
-    CONSOLE = "console"
-    SMTP = "smtp"
+    CONSOLE: str = "console"
+    SMTP: str = "smtp"
