@@ -14,13 +14,8 @@ class BaseUserManager(BUM):
         email: str,
         password: str | None = None,
         is_admin: bool = False,
-        is_active: bool = True,
     ) -> Self:
-        user = self.model(
-            email=self.normalize_email(email.lower()),
-            is_admin=is_admin,
-            is_active=is_active,
-        )
+        user = self.model(email=self.normalize_email(email.lower()), is_admin=is_admin)
         user.set_password(password)
 
         user.full_clean()
@@ -33,7 +28,7 @@ class BaseUserManager(BUM):
         email: str,
         password: str | None = None,
     ) -> Self:
-        user = self.create_user(email, password, is_admin=True, is_active=True)
+        user = self.create_user(email, password, is_admin=True)
         user.is_superuser = True
 
         user.save(using=self._db)
@@ -50,7 +45,7 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
         unique=True,
     )
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
     objects = BaseUserManager()

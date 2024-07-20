@@ -66,7 +66,7 @@ class UserRegisterApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user = UserService.user_create(**serializer.validated_data, is_active=False)
+        user = UserService.user_create(**serializer.validated_data)
 
         output_serializer = self.OutputSerializer(user)
 

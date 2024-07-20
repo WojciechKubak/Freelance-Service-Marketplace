@@ -15,11 +15,14 @@ class UserService:
         email: str,
         password: str,
         is_admin: bool = False,
-        is_active: bool = True,
+        is_superuser: bool = False,
     ) -> User:
-        user = User.objects.create_user(
-            email=email, password=password, is_admin=is_admin, is_active=is_active
-        )
+        if is_superuser:
+            user = User.objects.create_superuser(email=email, password=password)
+        else:
+            user = User.objects.create_user(
+                email=email, password=password, is_admin=is_admin
+            )
 
         link = UserService._activation_link_create(user_id=user.id)
 

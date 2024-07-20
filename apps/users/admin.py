@@ -1,5 +1,8 @@
 from apps.users.models import User
-from django.contrib import admin
+from django.core.exceptions import ValidationError
+from django.contrib import admin, messages
+from django.http import HttpRequest
+from apps.users.services import UserService
 
 
 @admin.register(User)
@@ -10,7 +13,7 @@ class UserAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        ("Permissions", {"fields": ("is_active", "is_admin", "is_superuser")}),
+        ("Permissions", {"fields": ("is_admin", "is_superuser")}),
         ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
 
@@ -21,3 +24,12 @@ class UserAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     )
+
+    def save_model(self, request: HttpRequest, obj: User, form, change: bool) -> None:
+        if change:
+            return super().save_model(request, obj, form, change)
+
+        try:
+            UserService.user_create(**form.cleaned_data)
+        except ValidationError as exc:
+            self.message_user(request, str(exc), messages.ERROR)

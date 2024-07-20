@@ -23,7 +23,7 @@ class TestUserCreate:
         user = User.objects.first()
 
         assert not user.is_admin
-        assert user.is_active
+        assert not user.is_active
 
     @pytest.mark.django_db
     @patch("apps.users.services.EmailService.email_send")
