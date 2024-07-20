@@ -28,7 +28,7 @@ DEBUG = env_to_bool(os.environ.get("DJANGO_DEBUG"), True)
 
 ALLOWED_HOSTS = ["*"]
 
-DOMAIN = os.environ.get("DOMAIN", "http://localhost:8000")
+BASE_BACKEND_URL = os.environ.get("DJANGO_BASE_BACKEND_URL", "http://localhost:8000")
 
 # Application definition
 

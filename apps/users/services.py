@@ -56,4 +56,4 @@ class UserService:
 
         activation_url = reverse("activate", kwargs={"user_id": signed_id})
 
-        return f"{settings.DOMAIN}{activation_url}"
+        return f"{settings.BASE_BACKEND_URL}{activation_url}"

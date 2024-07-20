@@ -11,9 +11,8 @@ def test_activation_link_create_generates_expected_url(mock_sign) -> None:
 
     result = UserService._activation_link_create(user_id=user_id)
 
-    expected_activation_url = (
-        f"{settings.DOMAIN}{reverse('activate', kwargs={'user_id': 'signed_user_id'})}"
-    )
+    endpoint = reverse("activate", kwargs={"user_id": "signed_user_id"})
+    expected_activation_url = f"{settings.BASE_BACKEND_URL}{endpoint}"
 
     mock_sign.assert_called_once_with(user_id)
     assert expected_activation_url == result
