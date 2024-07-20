@@ -43,7 +43,8 @@ class EmailService:
             to=[email.to],
         )
 
-        msg.attach_alternative(email.plain_text, "text/html")
+        if hasattr(email, "html") and email.html:
+            msg.attach_alternative(email.html, "text/html")
 
         try:
             msg.send()
