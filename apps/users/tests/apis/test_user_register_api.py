@@ -55,7 +55,7 @@ class TestUserRegisterApi:
             {
                 "email": email,
                 "is_admin": False,
-                "is_active": True,
+                "is_active": False,
             }
         )
 

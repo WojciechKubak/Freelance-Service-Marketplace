@@ -66,8 +66,16 @@ class UserRegisterApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user = UserService.user_create(**serializer.validated_data)
+        user = UserService.user_create(**serializer.validated_data, is_active=False)
 
         output_serializer = self.OutputSerializer(user)
 
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class UserActivateApi(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, _: Request, user_id: str) -> Response:
+        UserService.user_activate(signed_value=user_id)
+        return Response(status=status.HTTP_200_OK)

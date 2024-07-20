@@ -30,4 +30,4 @@ class Email(BaseModel):
         ]
 
     def __str__(self) -> str:
-        return f"{self.type} to {self.to}"
+        return f"{self.subject} to {self.to}"

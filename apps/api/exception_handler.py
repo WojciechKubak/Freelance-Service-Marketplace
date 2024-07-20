@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.signing import BadSignature, SignatureExpired
 from django.http import Http404
 from rest_framework import exceptions
 from rest_framework.serializers import as_serializer_error
@@ -7,7 +8,6 @@ from rest_framework.views import Response, exception_handler
 from typing import Any
 
 
-# https://github.com/HackSoftware/Django-Styleguide-Example/blob/master/styleguide_example/api/exception_handlers.py
 def custom_exception_handler(exc: Exception, ctx: dict[str, Any]) -> Response:
     if isinstance(exc, DjangoValidationError):
         exc = exceptions.ValidationError(as_serializer_error(exc))
@@ -17,6 +17,9 @@ def custom_exception_handler(exc: Exception, ctx: dict[str, Any]) -> Response:
 
     if isinstance(exc, PermissionDenied):
         exc = exceptions.PermissionDenied()
+
+    if isinstance(exc, (BadSignature, SignatureExpired)):
+        exc = exceptions.AuthenticationFailed(detail="Invalid or expired signature")
 
     response = exception_handler(exc, ctx)
 

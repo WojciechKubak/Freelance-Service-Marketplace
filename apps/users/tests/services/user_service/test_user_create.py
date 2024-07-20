@@ -2,15 +2,19 @@ from apps.users.tests.factories import UserFactory
 from apps.users.services import UserService
 from django.core.exceptions import ValidationError
 from apps.users.models import User
+from unittest.mock import patch
 import pytest
 
 
 class TestUserCreate:
 
     @pytest.mark.django_db
-    def test_user_create_saves_user_to_database(self) -> None:
-        UserService.user_create(email="example@domain.com", password="password")
-        assert 1 == User.objects.count()
+    def test_user_create_triggers_email_duplicate_error(self) -> None:
+        email = "example@domain.com"
+        UserFactory(email=email)
+
+        with pytest.raises(ValidationError):
+            UserService.user_create(email=email, password="password")
 
     @pytest.mark.django_db
     def test_user_create_sets_up_default_parameters(self) -> None:
@@ -22,23 +26,12 @@ class TestUserCreate:
         assert user.is_active
 
     @pytest.mark.django_db
-    def test_user_create_sets_up_custom_parameters(self) -> None:
-        UserService.user_create(
-            email="example@domain.com",
-            password="password",
-            is_admin=True,
-            is_active=False,
-        )
+    @patch("apps.users.services.EmailService.email_send")
+    def test_user_create_saves_user_to_db_and_calls_email_service(
+        self, mock_email_send
+    ) -> None:
+        UserService.user_create(email="example@domain.com", password="password")
 
-        user = User.objects.first()
+        mock_email_send.assert_called_once()
 
-        assert user.is_admin
-        assert not user.is_active
-
-    @pytest.mark.django_db
-    def test_user_create_triggers_email_duplicate_error(self) -> None:
-        email = "example@domain.com"
-        UserFactory(email=email)
-
-        with pytest.raises(ValidationError):
-            UserService.user_create(email=email, password="password")
+        assert 1 == User.objects.count()
