@@ -1,3 +1,4 @@
+from apps.emails.tests.factories import EmailFactory
 from apps.emails.services import EmailService
 from apps.emails.models import Email
 from apps.core.exceptions import EmailError
@@ -8,16 +9,10 @@ import pytest
 
 class TestEmailSend:
 
+    @pytest.mark.django_db
     def test_email_status_is_not_ready(self) -> None:
-        email = Email(
-            to="user@example.com",
-            subject="Subject",
-            html="html",
-            plain_text="text",
-            status=Email.Status.SENT,
-        )
-
         with pytest.raises(EmailError):
+            email = EmailFactory(status=Email.Status.SENT)
             EmailService.email_send(email)
 
     @pytest.mark.django_db
@@ -27,12 +22,7 @@ class TestEmailSend:
     ) -> None:
         mock_send.side_effect = SMTPException
 
-        email = Email(
-            to="user@example.com",
-            subject="Subject",
-            html="html",
-            plain_text="text",
-        )
+        email = EmailFactory()
 
         EmailService.email_send(email)
 
@@ -41,15 +31,9 @@ class TestEmailSend:
     @pytest.mark.django_db
     @patch("django.core.mail.message.EmailMultiAlternatives.send")
     def test_email_send_correctly_sends_email(self, mock_send) -> None:
-        email = Email(
-            to="user@example.com",
-            subject="Subject",
-            html="html",
-            plain_text="text",
-        )
+        email = EmailFactory()
 
         EmailService.email_send(email)
 
         mock_send.assert_called_once()
-
         assert Email.Status.SENT == Email.objects.first().status
