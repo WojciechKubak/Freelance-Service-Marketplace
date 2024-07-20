@@ -7,7 +7,14 @@ from apps.users.services import UserService
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("email", "is_active", "is_admin", "created_at", "updated_at")
+    list_display = (
+        "email",
+        "is_active",
+        "is_admin",
+        "is_superuser",
+        "created_at",
+        "updated_at",
+    )
 
     list_filter = ("is_admin", "is_active", "is_superuser")
 
