@@ -12,11 +12,11 @@ from smtplib import SMTPException
 class EmailService:
 
     @staticmethod
-    def send_activation_email(user_email: str, activation_link: str) -> Email:
+    def send_activation_email(user_email: str, url: str) -> Email:
         prepared = EmailService._email_prepare(
             user_email=user_email,
             email_type=EmailType.ACTIVATION,
-            context={"activation_link": activation_link},
+            context={"url": url},
         )
         email = EmailService.email_send(prepared)
 

@@ -33,6 +33,6 @@ class TestUserCreate:
         UserService.user_create(email="example@domain.com", password="password")
 
         mock_send_activation_email.assert_called_once_with(
-            user_email="example@domain.com", activation_link=ANY
+            user_email="example@domain.com", url=ANY
         )
         assert 1 == User.objects.count()

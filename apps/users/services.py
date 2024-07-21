@@ -8,6 +8,31 @@ from django.conf import settings
 
 
 @dataclass
+class UserEmailService:
+
+    @staticmethod
+    def user_activation_email_send(*, email: str) -> User:
+        user = User.objects.get(email=email)
+
+        if user.is_active:
+            raise ValidationError("User is already active")
+
+        link = UserEmailService._url_create(user_id=user.id, viewname="activate")
+        email = EmailService.send_activation_email(user_email=user.email, url=link)
+
+        return user
+
+    @staticmethod
+    def _url_create(*, user_id: str, viewname: str) -> str:
+        signer = TimestampSigner()
+        signed_id = signer.sign(user_id)
+
+        url = reverse(viewname, kwargs={"user_id": signed_id})
+
+        return f"{settings.BASE_BACKEND_URL}{url}"
+
+
+@dataclass
 class UserService:
 
     @staticmethod
@@ -25,8 +50,8 @@ class UserService:
                 email=email, password=password, is_admin=is_admin
             )
 
-        link = UserService._activation_link_create(user_id=user.id)
-        EmailService.send_activation_email(user_email=user.email, activation_link=link)
+        link = UserEmailService._url_create(user_id=user.id, viewname="activate")
+        email = EmailService.send_activation_email(user_email=user.email, url=link)
 
         return user
 
@@ -43,26 +68,3 @@ class UserService:
         user.save()
 
         return user
-
-    @staticmethod
-    def user_activation_email_resend(*, email: str) -> User:
-        user = User.objects.get(email=email)
-
-        if user.is_active:
-            raise ValidationError("User is already active")
-
-        link = UserService._activation_link_create(user_id=user.id)
-        email = EmailService.send_activation_email(
-            user_email=user.email, activation_link=link
-        )
-
-        return user
-
-    @staticmethod
-    def _activation_link_create(*, user_id: str) -> str:
-        signer = TimestampSigner()
-        signed_id = signer.sign(user_id)
-
-        activation_url = reverse("activate", kwargs={"user_id": signed_id})
-
-        return f"{settings.BASE_BACKEND_URL}{activation_url}"

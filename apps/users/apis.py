@@ -1,7 +1,7 @@
 from apps.api.pagination import get_paginated_response
 from apps.users.models import User
 from apps.users.selectors import UserSelectors
-from apps.users.services import UserService
+from apps.users.services import UserService, UserEmailService as EmailService
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -81,7 +81,7 @@ class UserActivateApi(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class UserActivationEmailResendApi(APIView):
+class UserActivationEmailSendApi(APIView):
     permission_classes = (AllowAny,)
 
     class InputSerializer(serializers.Serializer):
@@ -91,6 +91,6 @@ class UserActivationEmailResendApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        UserService.user_activation_email_resend(**serializer.validated_data)
+        EmailService.user_activation_email_send(**serializer.validated_data)
 
         return Response(status=status.HTTP_200_OK)

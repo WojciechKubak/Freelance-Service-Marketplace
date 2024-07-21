@@ -2,4 +2,4 @@ Activate Your Account
 
 Thank you for signing up. Please copy and paste the link below into your browser to activate your account.
 
-{{ activation_link }}
+{{ url }}

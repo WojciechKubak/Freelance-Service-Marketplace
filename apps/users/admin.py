@@ -1,5 +1,5 @@
 from apps.users.models import User
-from apps.users.services import UserService
+from apps.users.services import UserService, UserEmailService as EmailService
 from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
 from django.contrib import admin, messages
@@ -51,7 +51,7 @@ class UserAdmin(admin.ModelAdmin):
 
         for user in queryset:
             try:
-                UserService.user_activation_email_resend(email=user.email)
+                EmailService.user_activation_email_send(email=user.email)
             except ValidationError as e:
                 errors[e.message] += 1
 

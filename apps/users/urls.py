@@ -2,7 +2,7 @@ from apps.users.apis import (
     UserListApi,
     UserRegisterApi,
     UserActivateApi,
-    UserActivationEmailResendApi,
+    UserActivationEmailSendApi,
 )
 from django.urls import path
 
@@ -13,7 +13,7 @@ urlpatterns = [
     path("activate/<str:user_id>/", UserActivateApi.as_view(), name="activate"),
     path(
         "activation-email-resend/",
-        UserActivationEmailResendApi.as_view(),
+        UserActivationEmailSendApi.as_view(),
         name="activation-email-resend",
     ),
 ]

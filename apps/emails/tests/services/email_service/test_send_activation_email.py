@@ -22,18 +22,14 @@ class TestSendActivationEmail:
     @pytest.mark.django_db
     def test_send_activation_email(self, email_prepared_mock, email_send_mock) -> None:
         user_email = "user@example.com"
-        activation_link = "http://example.com/activate"
+        url = "http://example.com/activate"
         prepared_email = MagicMock(spec=Email)
         email_send_mock.return_value = prepared_email
 
-        result = EmailService.send_activation_email(
-            user_email=user_email, activation_link=activation_link
-        )
+        result = EmailService.send_activation_email(user_email=user_email, url=url)
 
         email_prepared_mock.assert_called_once_with(
-            user_email=user_email,
-            email_type=EmailType.ACTIVATION,
-            context={"activation_link": activation_link},
+            user_email=user_email, email_type=EmailType.ACTIVATION, context={"url": url}
         )
 
         assert prepared_email == result

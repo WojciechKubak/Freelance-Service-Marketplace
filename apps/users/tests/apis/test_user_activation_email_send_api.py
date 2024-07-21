@@ -1,4 +1,4 @@
-from apps.users.apis import UserActivationEmailResendApi
+from apps.users.apis import UserActivationEmailSendApi
 from apps.users.tests.factories import UserFactory
 from rest_framework.test import APIRequestFactory
 import pytest
@@ -15,7 +15,7 @@ class TestUserActivationEmailResendApi:
             "/api/users/activation-email-resend/", {"email": user.email}
         )
 
-        response = UserActivationEmailResendApi.as_view()(request)
+        response = UserActivationEmailSendApi.as_view()(request)
 
         assert 400 == response.status_code
 
@@ -28,6 +28,6 @@ class TestUserActivationEmailResendApi:
             "/api/users/activation-email-resend/", {"email": user.email}
         )
 
-        response = UserActivationEmailResendApi.as_view()(request)
+        response = UserActivationEmailSendApi.as_view()(request)
 
         assert 200 == response.status_code
