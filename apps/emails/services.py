@@ -12,23 +12,13 @@ from smtplib import SMTPException
 class EmailService:
 
     @staticmethod
-    def email_prepare(
-        *, user_email: str, email_type: EmailType, context: dict[str, str]
-    ) -> Email:
-        template = email_type.value()
-
-        html = render_to_string(template.html_path, context)
-        plain = render_to_string(template.plain_text_path, context)
-
-        email = Email(
-            to=user_email,
-            subject=template.subject,
-            html=html,
-            plain_text=plain,
+    def send_activation_email(user_email: str, activation_link: str) -> Email:
+        prepared = EmailService._email_prepare(
+            user_email=user_email,
+            email_type=EmailType.ACTIVATION,
+            context={"activation_link": activation_link},
         )
-
-        email.full_clean()
-        email.save()
+        email = EmailService.email_send(prepared)
 
         return email
 
@@ -57,4 +47,25 @@ class EmailService:
         email.full_clean()
         email.save()
 
-        return Email
+        return email
+
+    @staticmethod
+    def _email_prepare(
+        *, user_email: str, email_type: EmailType, context: dict[str, str]
+    ) -> Email:
+        template = email_type.value()
+
+        html = render_to_string(template.html_path, context)
+        plain = render_to_string(template.plain_text_path, context)
+
+        email = Email(
+            to=user_email,
+            subject=template.subject,
+            html=html,
+            plain_text=plain,
+        )
+
+        email.full_clean()
+        email.save()
+
+        return email

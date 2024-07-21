@@ -2,7 +2,7 @@ from apps.users.tests.factories import UserFactory
 from apps.users.services import UserService
 from django.core.exceptions import ValidationError
 from apps.users.models import User
-from unittest.mock import patch
+from unittest.mock import ANY, patch
 import pytest
 
 
@@ -26,12 +26,13 @@ class TestUserCreate:
         assert not user.is_active
 
     @pytest.mark.django_db
-    @patch("apps.users.services.EmailService.email_send")
+    @patch("apps.users.services.EmailService.send_activation_email")
     def test_user_create_saves_user_to_db_and_calls_email_service(
-        self, mock_email_send
+        self, mock_send_activation_email
     ) -> None:
         UserService.user_create(email="example@domain.com", password="password")
 
-        mock_email_send.assert_called_once()
-
+        mock_send_activation_email.assert_called_once_with(
+            user_email="example@domain.com", activation_link=ANY
+        )
         assert 1 == User.objects.count()

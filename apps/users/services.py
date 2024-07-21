@@ -1,6 +1,7 @@
 from apps.users.models import User
-from apps.emails.services import EmailService, EmailType
+from apps.emails.services import EmailService
 from django.core.signing import TimestampSigner
+from django.core.exceptions import ValidationError
 from dataclasses import dataclass
 from django.urls import reverse
 from django.conf import settings
@@ -25,13 +26,7 @@ class UserService:
             )
 
         link = UserService._activation_link_create(user_id=user.id)
-
-        email = EmailService.email_prepare(
-            user_email=user.email,
-            email_type=EmailType.ACTIVATION,
-            context={"activation_link": link},
-        )
-        EmailService.email_send(email)
+        EmailService.send_activation_email(user_email=user.email, activation_link=link)
 
         return user
 
@@ -46,6 +41,20 @@ class UserService:
 
         user.is_active = True
         user.save()
+
+        return user
+
+    @staticmethod
+    def user_activation_email_resend(*, email: str) -> User:
+        user = User.objects.get(email=email)
+
+        if user.is_active:
+            raise ValidationError("User is already active")
+
+        link = UserService._activation_link_create(user_id=user.id)
+        email = EmailService.send_activation_email(
+            user_email=user.email, activation_link=link
+        )
 
         return user
 

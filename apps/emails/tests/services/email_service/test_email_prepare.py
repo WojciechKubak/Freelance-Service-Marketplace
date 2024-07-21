@@ -15,7 +15,7 @@ class TestEmailPrepare:
 
         context = {"activation_url": reverse("activate", kwargs={"user_id": user.id})}
 
-        result = EmailService.email_prepare(
+        result = EmailService._email_prepare(
             user_email=user.email,
             email_type=EmailType.ACTIVATION,
             context=context,

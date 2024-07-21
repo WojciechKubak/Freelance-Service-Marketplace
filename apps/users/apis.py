@@ -79,3 +79,18 @@ class UserActivateApi(APIView):
     def get(self, _: Request, user_id: str) -> Response:
         UserService.user_activate(signed_value=user_id)
         return Response(status=status.HTTP_200_OK)
+
+
+class UserActivationEmailResendApi(APIView):
+    permission_classes = (AllowAny,)
+
+    class InputSerializer(serializers.Serializer):
+        email = serializers.EmailField()
+
+    def post(self, request: Request) -> Response:
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        UserService.user_activation_email_resend(**serializer.validated_data)
+
+        return Response(status=status.HTTP_200_OK)
