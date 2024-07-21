@@ -21,7 +21,7 @@ class TestUserActivateApi:
 
         response = UserActivateApi.as_view()(request, user_id=signed_id)
 
-        assert 401 == response.status_code
+        assert 400 == response.status_code
 
     @pytest.mark.django_db
     def test_api_response_on_successfull_user_activation(self) -> None:

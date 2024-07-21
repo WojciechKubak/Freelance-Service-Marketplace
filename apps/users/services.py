@@ -1,6 +1,6 @@
+from apps.users.utils import sign_data, unsign_data
 from apps.users.models import User
 from apps.emails.services import EmailService
-from django.core.signing import TimestampSigner
 from django.core.exceptions import ValidationError
 from dataclasses import dataclass
 from django.urls import reverse
@@ -24,8 +24,7 @@ class UserEmailService:
 
     @staticmethod
     def _url_create(*, user_id: str, viewname: str) -> str:
-        signer = TimestampSigner()
-        signed_id = signer.sign(user_id)
+        signed_id = sign_data(user_id)
 
         url = reverse(viewname, kwargs={"user_id": signed_id})
 
@@ -57,12 +56,11 @@ class UserService:
 
     @staticmethod
     def user_activate(*, signed_value: str) -> User:
-        signer = TimestampSigner()
-        unsigned_id = signer.unsign(
-            signed_value, max_age=settings.EMAIL_ACTIVATION_TIMEOUT
-        )
+        user_id = unsign_data(signed_value, max_age=settings.EMAIL_ACTIVATION_TIMEOUT)
+        if not user_id:
+            raise ValidationError("Activation link is invalid")
 
-        user = User.objects.get(id=unsigned_id)
+        user = User.objects.get(id=user_id)
 
         user.is_active = True
         user.save()

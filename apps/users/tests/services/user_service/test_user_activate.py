@@ -1,7 +1,7 @@
 from apps.users.tests.factories import UserFactory
 from apps.users.models import User
 from apps.users.services import UserService
-from django.core.signing import SignatureExpired, BadSignature
+from django.core.exceptions import ValidationError
 from django.core.signing import TimestampSigner
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
@@ -21,13 +21,13 @@ class TestUserActivate:
 
         value = sign_value("user_id")
 
-        with pytest.raises(SignatureExpired):
+        with pytest.raises(ValidationError):
             UserService.user_activate(signed_value=value)
 
     def test_user_activate_raises_bad_signature(self) -> None:
         value = sign_value("user_id")[:-1]
 
-        with pytest.raises(BadSignature):
+        with pytest.raises(ValidationError):
             UserService.user_activate(signed_value=value)
 
     @pytest.mark.django_db
