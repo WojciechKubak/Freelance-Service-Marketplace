@@ -1,4 +1,5 @@
 from apps.users.tests.factories import UserFactory
+from apps.users.utils import url_generate
 from apps.users.services import UserEmailService
 from django.core.exceptions import ValidationError
 from unittest.mock import patch
@@ -25,5 +26,5 @@ class TestUserActivationEmailSend:
 
         mock_send_activation_email.assert_called_once_with(
             user_email=user.email,
-            url=UserEmailService._url_create(user_id=user.id, viewname="activate"),
+            url=url_generate(user_id=user.id, viewname="activate"),
         )

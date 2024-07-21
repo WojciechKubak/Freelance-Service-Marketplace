@@ -1,9 +1,8 @@
-from apps.users.utils import sign_data, unsign_data
+from apps.users.utils import unsign_data, url_generate
 from apps.users.models import User
 from apps.emails.services import EmailService
 from django.core.exceptions import ValidationError
 from dataclasses import dataclass
-from django.urls import reverse
 from django.conf import settings
 
 
@@ -17,18 +16,10 @@ class UserEmailService:
         if user.is_active:
             raise ValidationError("User is already active")
 
-        link = UserEmailService._url_create(user_id=user.id, viewname="activate")
-        email = EmailService.send_activation_email(user_email=user.email, url=link)
+        url = url_generate(user_id=user.id, viewname="activate")
+        email = EmailService.send_activation_email(user_email=user.email, url=url)
 
         return user
-
-    @staticmethod
-    def _url_create(*, user_id: str, viewname: str) -> str:
-        signed_id = sign_data(user_id)
-
-        url = reverse(viewname, kwargs={"user_id": signed_id})
-
-        return f"{settings.BASE_BACKEND_URL}{url}"
 
 
 @dataclass
@@ -49,8 +40,8 @@ class UserService:
                 email=email, password=password, is_admin=is_admin
             )
 
-        link = UserEmailService._url_create(user_id=user.id, viewname="activate")
-        email = EmailService.send_activation_email(user_email=user.email, url=link)
+        url = url_generate(user_id=user.id, viewname="activate")
+        email = EmailService.send_activation_email(user_email=user.email, url=url)
 
         return user
 
@@ -58,7 +49,7 @@ class UserService:
     def user_activate(*, signed_value: str) -> User:
         user_id = unsign_data(signed_value, max_age=settings.EMAIL_ACTIVATION_TIMEOUT)
         if not user_id:
-            raise ValidationError("Activation link is invalid")
+            raise ValidationError("Activation url is invalid")
 
         user = User.objects.get(id=user_id)
 
