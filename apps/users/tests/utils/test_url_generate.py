@@ -11,7 +11,7 @@ def test_url_generate_creates_expected_url(mock_sign) -> None:
 
     result = url_generate(user_id=user_id, viewname="activate")
 
-    endpoint = reverse("activate", kwargs={"user_id": "signed_user_id"})
+    endpoint = reverse("activate", kwargs={"signed_id": "signed_user_id"})
     expected = f"{settings.BASE_BACKEND_URL}{endpoint}"
 
     mock_sign.assert_called_once_with(user_id)

@@ -13,7 +13,7 @@ class TestEmailPrepare:
     def test_email_prepare_correctly_creates_email_instance(self) -> None:
         user = UserFactory()
 
-        context = {"activation_url": reverse("activate", kwargs={"user_id": user.id})}
+        context = {"activation_url": reverse("activate", kwargs={"signed_id": user.id})}
 
         result = EmailService._email_prepare(
             user_email=user.email,

@@ -22,26 +22,26 @@ class TestUserActivate:
         value = sign_value("user_id")
 
         with pytest.raises(ValidationError):
-            UserService.user_activate(signed_value=value)
+            UserService.user_activate(signed_id=value)
 
     def test_user_activate_raises_bad_signature(self) -> None:
         value = sign_value("user_id")[:-1]
 
         with pytest.raises(ValidationError):
-            UserService.user_activate(signed_value=value)
+            UserService.user_activate(signed_id=value)
 
     @pytest.mark.django_db
     def test_user_activate_raises_object_does_not_exist(self) -> None:
         value = sign_value(uuid.uuid4())
 
         with pytest.raises(ObjectDoesNotExist):
-            UserService.user_activate(signed_value=value)
+            UserService.user_activate(signed_id=value)
 
     @pytest.mark.django_db
     def test_user_activate_correctly_activates_user(self) -> None:
         user = UserFactory(is_active=False)
         value = sign_value(str(user.id))
 
-        UserService.user_activate(signed_value=value)
+        UserService.user_activate(signed_id=value)
 
         assert User.objects.filter(is_active=True).exists()

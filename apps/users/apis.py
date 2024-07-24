@@ -76,8 +76,8 @@ class UserRegisterApi(APIView):
 class UserActivateApi(APIView):
     permission_classes = (AllowAny,)
 
-    def get(self, _: Request, user_id: str) -> Response:
-        UserService.user_activate(signed_value=user_id)
+    def post(self, _: Request, signed_id: str) -> Response:
+        UserService.user_activate(signed_id=signed_id)
         return Response(status=status.HTTP_200_OK)
 
 
@@ -94,3 +94,45 @@ class UserActivationEmailSendApi(APIView):
         EmailService.user_activation_email_send(**serializer.validated_data)
 
         return Response(status=status.HTTP_200_OK)
+
+
+class UserResetPasswordEmailSendApi(APIView):
+    permission_classes = (AllowAny,)
+
+    class InputSerializer(serializers.Serializer):
+        email = serializers.EmailField()
+
+    class OutputSerializer(serializers.Serializer):
+        email = serializers.EmailField()
+
+    def post(self, request: Request) -> Response:
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = EmailService.user_reset_password_email_send(**serializer.validated_data)
+
+        output_serializer = self.OutputSerializer({"email": email})
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+
+class UserResetPasswordApi(APIView):
+    permission_classes = (AllowAny,)
+
+    class InputSerializer(serializers.Serializer):
+        password = serializers.CharField()
+
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = ["id", "email"]
+
+    def post(self, request: Request, signed_id: str) -> Response:
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        result = UserService.user_reset_password(
+            signed_id=signed_id, **serializer.validated_data
+        )
+
+        output_serializer = self.OutputSerializer(result)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)

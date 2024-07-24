@@ -17,5 +17,13 @@ class ActivationEmail(EmailTemplate):
     plain_text_path: str = "account_activation.txt"
 
 
+@dataclass
+class PasswordResetEmail(EmailTemplate):
+    subject: str = "Reset your password"
+    html_path: str = "password_reset.html"
+    plain_text_path: str = "password_reset.txt"
+
+
 class EmailType(Enum):
     ACTIVATION: EmailTemplate = ActivationEmail
+    PASSWORD_RESET: EmailTemplate = PasswordResetEmail

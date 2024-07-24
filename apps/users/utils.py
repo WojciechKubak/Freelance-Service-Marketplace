@@ -22,6 +22,6 @@ def unsign_data(
 
 def url_generate(*, user_id: str, viewname: str) -> str:
     signed_id = sign_data(user_id)
-    url = reverse(viewname, kwargs={"user_id": signed_id})
+    url = reverse(viewname, kwargs={"signed_id": signed_id})
 
     return f"{settings.BASE_BACKEND_URL}{url}"

@@ -17,9 +17,9 @@ class TestUserActivateApi:
         signed_id = sign_value(uuid.uuid4())[:-1]
 
         factory = APIRequestFactory()
-        request = factory.get("api/users/activate/", {"user_id": signed_id})
+        request = factory.post("api/users/activate/")
 
-        response = UserActivateApi.as_view()(request, user_id=signed_id)
+        response = UserActivateApi.as_view()(request, signed_id=signed_id)
 
         assert 400 == response.status_code
 
@@ -30,8 +30,8 @@ class TestUserActivateApi:
         signed_id = sign_value(str(user.id))
 
         factory = APIRequestFactory()
-        request = factory.get("api/users/activate/", {"user_id": signed_id})
+        request = factory.post("api/users/activate/")
 
-        response = UserActivateApi.as_view()(request, user_id=signed_id)
+        response = UserActivateApi.as_view()(request, signed_id=signed_id)
 
         assert 200 == response.status_code

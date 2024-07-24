@@ -23,6 +23,17 @@ class EmailService:
         return email
 
     @staticmethod
+    def send_password_reset_email(user_email: str, url: str) -> Email:
+        prepared = EmailService._email_prepare(
+            user_email=user_email,
+            email_type=EmailType.PASSWORD_RESET,
+            context={"url": url},
+        )
+        email = EmailService.email_send(prepared)
+
+        return email
+
+    @staticmethod
     def email_send(email: Email) -> Email:
         if email.status != Email.Status.READY:
             raise EmailError("Email is not ready to be sent")

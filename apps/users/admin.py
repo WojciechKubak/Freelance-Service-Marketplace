@@ -34,7 +34,7 @@ class UserAdmin(admin.ModelAdmin):
         "updated_at",
     )
 
-    actions = ("resend_activation_email",)
+    actions = ("resend_activation_email", "send_password_reset_email")
 
     def save_model(self, request: HttpRequest, obj: User, form, change: bool) -> None:
         if change:
@@ -65,4 +65,28 @@ class UserAdmin(admin.ModelAdmin):
         if correct_count:
             self.message_user(
                 request, f"Activation email resent for {correct_count} users"
+            )
+
+    @admin.action(description="Password reset")
+    def send_password_reset_email(
+        self, request: HttpRequest, queryset: QuerySet
+    ) -> None:
+        errors = defaultdict(int)
+
+        for user in queryset:
+            try:
+                EmailService.user_reset_password_email_send(email=user.email)
+            except ValidationError as e:
+                errors[e.message] += 1
+
+        if errors:
+            for message, count in errors.items():
+                self.message_user(
+                    request, f"{message} for {count} users", messages.ERROR
+                )
+
+        correct_count = queryset.count() - sum(errors.values())
+        if correct_count:
+            self.message_user(
+                request, f"Password reset email sent for {correct_count} users"
             )
