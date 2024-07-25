@@ -5,6 +5,7 @@ from apps.users.apis import (
     UserActivationEmailSendApi,
     UserResetPasswordApi,
     UserResetPasswordEmailSendApi,
+    UserPasswordChangeApi,
 )
 from django.urls import path
 
@@ -19,7 +20,7 @@ urlpatterns = [
         name="activation-email-resend",
     ),
     path(
-        "reset-password//<str:signed_id>/",
+        "reset-password/<str:signed_id>/",
         UserResetPasswordApi.as_view(),
         name="password-reset",
     ),
@@ -28,4 +29,5 @@ urlpatterns = [
         UserResetPasswordEmailSendApi.as_view(),
         name="reset-password-email-send",
     ),
+    path("password-change/", UserPasswordChangeApi.as_view(), name="password-change"),
 ]

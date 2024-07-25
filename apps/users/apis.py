@@ -2,7 +2,7 @@ from apps.api.pagination import get_paginated_response
 from apps.users.models import User
 from apps.users.selectors import UserSelectors
 from apps.users.services import UserService, UserEmailService as EmailService
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -135,4 +135,29 @@ class UserResetPasswordApi(APIView):
         )
 
         output_serializer = self.OutputSerializer(result)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+
+class UserPasswordChangeApi(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    class InputSerializer(serializers.Serializer):
+        password = serializers.CharField()
+        new_password = serializers.CharField()
+        new_password_confirm = serializers.CharField()
+
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = ["id", "email"]
+
+    def post(self, request: Request) -> Response:
+        user = request.user
+
+        serializer = UserPasswordChangeApi.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = UserService.user_password_change(user=user, **serializer.validated_data)
+
+        output_serializer = UserPasswordChangeApi.OutputSerializer(user)
         return Response(output_serializer.data, status=status.HTTP_200_OK)

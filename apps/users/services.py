@@ -87,3 +87,19 @@ class UserService:
         user.save()
 
         return user
+
+    @staticmethod
+    def user_password_change(
+        *, user: User, password: str, new_password: str, new_password_confirm: str
+    ) -> User:
+        if not user.check_password(password):
+            raise ValidationError("Invalid password")
+
+        if new_password != new_password_confirm:
+            raise ValidationError("Passwords do not match")
+
+        user.set_password(new_password)
+        user.full_clean()
+        user.save()
+
+        return user
