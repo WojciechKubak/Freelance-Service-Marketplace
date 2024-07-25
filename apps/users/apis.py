@@ -1,7 +1,7 @@
 from apps.api.pagination import get_paginated_response
 from apps.users.models import User
 from apps.users.selectors import UserSelectors
-from apps.users.services import UserService, UserEmailService as EmailService
+from apps.users.services import UserService
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -66,7 +66,7 @@ class UserRegisterApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user = UserService.user_create(**serializer.validated_data)
+        user = UserService().user_create(**serializer.validated_data)
 
         output_serializer = self.OutputSerializer(user)
 
@@ -91,7 +91,7 @@ class UserActivationEmailSendApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        EmailService.user_activation_email_send(**serializer.validated_data)
+        UserService().user_activation_email_send(**serializer.validated_data)
 
         return Response(status=status.HTTP_200_OK)
 
@@ -109,7 +109,9 @@ class UserResetPasswordEmailSendApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        email = EmailService.user_reset_password_email_send(**serializer.validated_data)
+        email = UserService().user_reset_password_email_send(
+            **serializer.validated_data
+        )
 
         output_serializer = self.OutputSerializer({"email": email})
         return Response(output_serializer.data, status=status.HTTP_200_OK)

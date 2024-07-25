@@ -7,6 +7,7 @@ import pytest
 
 
 class TestUserCreate:
+    user_service = UserService()
 
     @pytest.mark.django_db
     def test_user_create_triggers_email_duplicate_error(self) -> None:
@@ -14,11 +15,11 @@ class TestUserCreate:
         UserFactory(email=email)
 
         with pytest.raises(ValidationError):
-            UserService.user_create(email=email, password="password")
+            self.user_service.user_create(email=email, password="password")
 
     @pytest.mark.django_db
     def test_user_create_sets_up_default_parameters(self) -> None:
-        UserService.user_create(email="example@domain.com", password="password")
+        self.user_service.user_create(email="example@domain.com", password="password")
 
         user = User.objects.first()
 
@@ -30,7 +31,7 @@ class TestUserCreate:
     def test_user_create_saves_user_to_db_and_calls_email_service(
         self, mock_send_activation_email
     ) -> None:
-        UserService.user_create(email="example@domain.com", password="password")
+        self.user_service.user_create(email="example@domain.com", password="password")
 
         mock_send_activation_email.assert_called_once_with(
             user_email="example@domain.com", url=ANY
