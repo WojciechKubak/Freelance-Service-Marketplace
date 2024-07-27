@@ -28,8 +28,8 @@ class TestCreateSuperUser:
 
         user = User.objects.first()
 
-        assert user.is_admin
-        assert not user.is_active
+        assert user.is_admin is True
+        assert user.is_active is True
 
     @pytest.mark.django_db
     def test_superuser_without_password_is_created_with_unusable_one(self) -> None:
