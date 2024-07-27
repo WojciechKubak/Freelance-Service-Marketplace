@@ -4,10 +4,10 @@ from rest_framework.test import APIRequestFactory
 import pytest
 
 
-class TestUserActivationEmailResendApi:
+class TestUserActivationEmailSendApi:
 
     @pytest.mark.django_db
-    def test_api_response_on_failed_due_to_already_active_user(self) -> None:
+    def test_api_response_on_already_activated_user(self) -> None:
         user = UserFactory(is_active=True)
 
         factory = APIRequestFactory()
@@ -17,10 +17,11 @@ class TestUserActivationEmailResendApi:
 
         response = UserActivationEmailSendApi.as_view()(request)
 
-        assert 400 == response.status_code
+        assert 200 == response.status_code
+        assert {"email": user.email} == response.data
 
     @pytest.mark.django_db
-    def test_api_response_on_successful_resend(self) -> None:
+    def test_api_response_on_successful_activation_email_send(self) -> None:
         user = UserFactory(is_active=False)
 
         factory = APIRequestFactory()
@@ -31,3 +32,4 @@ class TestUserActivationEmailResendApi:
         response = UserActivationEmailSendApi.as_view()(request)
 
         assert 200 == response.status_code
+        assert {"email": user.email} == response.data

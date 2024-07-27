@@ -94,13 +94,17 @@ class UserActivationEmailSendApi(APIView):
     class InputSerializer(serializers.Serializer):
         email = serializers.EmailField()
 
+    class OutputSerializer(serializers.Serializer):
+        email = serializers.EmailField()
+
     def post(self, request: Request) -> Response:
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        UserService().user_activation_email_send(**serializer.validated_data)
+        email = UserService().user_activation_email_send(**serializer.validated_data)
 
-        return Response(status=status.HTTP_200_OK)
+        output_serializer = self.OutputSerializer({"email": email})
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
 class UserResetPasswordEmailSendApi(APIView):

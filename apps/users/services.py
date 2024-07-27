@@ -84,16 +84,16 @@ class UserService:
 
         return user
 
-    def user_activation_email_send(self, *, email: str) -> User:
+    def user_activation_email_send(self, *, email: str) -> str:
         user = User.objects.get(email=email)
 
         if user.is_active:
-            raise ValidationError("User is already active")
+            return email
 
         url = self._url_generate(user_id=user.id, viewname=self.activation_viewname)
-        email = EmailService.send_activation_email(user_email=user.email, url=url)
+        _ = EmailService.send_activation_email(user_email=user.email, url=url)
 
-        return user
+        return email
 
     def user_reset_password_email_send(self, *, email: str) -> str:
         user = User.objects.filter(email=email).first()
