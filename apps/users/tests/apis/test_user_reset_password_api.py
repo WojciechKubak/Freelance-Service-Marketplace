@@ -1,5 +1,5 @@
 from apps.users.apis import UserResetPasswordApi
-from apps.users.utils import sign_data
+from apps.users.utils import sign_user_id
 from apps.users.tests.factories import UserFactory
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
@@ -43,7 +43,7 @@ class TestUserResetPasswordApi:
     @pytest.mark.django_db
     def test_api_response_on_failed_due_to_inactive_user(self) -> None:
         user = UserFactory(is_active=False)
-        signed_id = sign_data(str(user.id))
+        signed_id = sign_user_id(str(user.id))
 
         factory = APIRequestFactory()
         request = factory.post(self.url, {"value": signed_id, "password": "12345"})
@@ -60,7 +60,7 @@ class TestUserResetPasswordApi:
     @pytest.mark.django_db
     def test_api_response_on_successful_password_reset(self) -> None:
         user = UserFactory(is_active=True)
-        signed_id = sign_data(str(user.id))
+        signed_id = sign_user_id(str(user.id))
 
         factory = APIRequestFactory()
         request = factory.post(self.url, {"value": signed_id, "password": "12345"})

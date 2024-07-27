@@ -1,4 +1,4 @@
-from apps.users.utils import sign_data, unsign_data
+from apps.users.utils import sign_user_id, unsign_user_id
 from apps.users.models import User
 from apps.emails.services import EmailService
 from django.core.exceptions import ValidationError
@@ -14,7 +14,7 @@ class UserService:
 
     @staticmethod
     def user_activate(*, signed_id: str) -> User:
-        user_id = unsign_data(signed_id, max_age=settings.EMAIL_TIMEOUT)
+        user_id = unsign_user_id(signed_id, max_age=settings.EMAIL_TIMEOUT)
         if not user_id:
             raise ValidationError("Activation link is invalid")
 
@@ -28,7 +28,7 @@ class UserService:
 
     @staticmethod
     def user_reset_password(*, signed_id: str, password: str) -> User:
-        user_id = unsign_data(signed_id, max_age=settings.EMAIL_TIMEOUT)
+        user_id = unsign_user_id(signed_id, max_age=settings.EMAIL_TIMEOUT)
         if not user_id:
             raise ValidationError("Invalid value for password reset")
 
@@ -60,7 +60,7 @@ class UserService:
 
     @staticmethod
     def _url_generate(*, user_id: str, viewname: str) -> str:
-        signed_id = sign_data(user_id)
+        signed_id = sign_user_id(user_id)
         url = reverse(viewname, args=[signed_id])
         return f"{settings.BASE_BACKEND_URL}{url}"
 

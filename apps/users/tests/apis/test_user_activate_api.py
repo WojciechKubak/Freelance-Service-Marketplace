@@ -1,6 +1,6 @@
 from apps.users.tests.factories import UserFactory
 from apps.users.apis import UserActivateApi
-from apps.users.utils import sign_data
+from apps.users.utils import sign_user_id
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 import pytest
@@ -11,7 +11,7 @@ class TestUserActivateApi:
     url: str = "api/users/activate/"
 
     def test_api_response_on_failed_due_to_signature_error(self) -> None:
-        invalid_signed_id = sign_data(uuid.uuid4())[:-1]
+        invalid_signed_id = sign_user_id(uuid.uuid4())[:-1]
 
         factory = APIRequestFactory()
         request = factory.post(self.url)
@@ -29,7 +29,7 @@ class TestUserActivateApi:
     def test_api_response_on_successfull_user_activation(self) -> None:
         user = UserFactory(is_active=False)
 
-        signed_id = sign_data(str(user.id))
+        signed_id = sign_user_id(str(user.id))
 
         factory = APIRequestFactory()
         request = factory.post(self.url)
