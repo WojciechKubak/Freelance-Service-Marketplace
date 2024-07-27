@@ -1,12 +1,12 @@
 from apps.users.tests.factories import UserFactory
-from apps.users.apis import UserRegisterApi
+from apps.users.apis import UserSignupApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 import pytest
 
 
-class TestUserRegisterApi:
-    url: str = "api/users/register/"
+class TestUserSignupApi:
+    url: str = "api/users/signup/"
 
     @pytest.mark.django_db
     def test_api_response_on_failed_due_to_missing_required_field(self) -> None:
@@ -14,7 +14,7 @@ class TestUserRegisterApi:
             self.url,
             {"password": "password"},
         )
-        response = UserRegisterApi.as_view()(request)
+        response = UserSignupApi.as_view()(request)
 
         expected_response_data = OrderedDict(
             {"detail": {"email": ["This field is required."]}}
@@ -32,7 +32,7 @@ class TestUserRegisterApi:
             self.url,
             {"email": email, "password": "password"},
         )
-        response = UserRegisterApi.as_view()(request)
+        response = UserSignupApi.as_view()(request)
 
         expected_response_data = OrderedDict(
             {"detail": {"email": ["User with this Email address already exists."]}}
@@ -42,7 +42,7 @@ class TestUserRegisterApi:
         assert expected_response_data == response.data
 
     @pytest.mark.django_db
-    def test_api_response_on_successful_registration(self) -> None:
+    def test_api_response_on_successful_signup(self) -> None:
         email = "user@example.com"
 
         request = APIRequestFactory().post(
@@ -50,7 +50,7 @@ class TestUserRegisterApi:
             {"email": email, "password": "password"},
         )
 
-        response = UserRegisterApi.as_view()(request)
+        response = UserSignupApi.as_view()(request)
 
         expected_response_data = OrderedDict(
             {

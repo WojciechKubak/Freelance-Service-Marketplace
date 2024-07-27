@@ -50,7 +50,7 @@ class UserListApi(APIView):
         return response
 
 
-class UserRegisterApi(APIView):
+class UserSignupApi(APIView):
     permission_classes = (AllowAny,)
 
     class InputSerializer(serializers.Serializer):

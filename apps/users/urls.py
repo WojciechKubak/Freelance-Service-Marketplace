@@ -1,33 +1,39 @@
 from apps.users.apis import (
     UserListApi,
-    UserRegisterApi,
+    UserSignupApi,
     UserActivateApi,
     UserActivationEmailSendApi,
     UserResetPasswordApi,
     UserResetPasswordEmailSendApi,
     UserPasswordChangeApi,
 )
-from django.urls import path
+from django.urls import path, include
 
+
+user_patterns = [
+    path("", UserListApi.as_view(), name="user-list"),
+    path("signup/", UserSignupApi.as_view(), name="user-signup"),
+    path("activate/<str:signed_id>/", UserActivateApi.as_view(), name="user-activate"),
+    path("reset/<str:signed_id>/", UserResetPasswordApi.as_view(), name="user-reset"),
+    path(
+        "change-password/", UserPasswordChangeApi.as_view(), name="user-change-password"
+    ),
+]
+
+email_patterns = [
+    path(
+        "reset-password/",
+        UserResetPasswordEmailSendApi.as_view(),
+        name="reset-password",
+    ),
+    path(
+        "resend-activation/",
+        UserActivationEmailSendApi.as_view(),
+        name="resend-activation",
+    ),
+]
 
 urlpatterns = [
-    path("", UserListApi.as_view(), name="list"),
-    path("register/", UserRegisterApi.as_view(), name="register"),
-    path("activate/<str:signed_id>/", UserActivateApi.as_view(), name="activate"),
-    path(
-        "activation-email-resend/",
-        UserActivationEmailSendApi.as_view(),
-        name="activation-email-resend",
-    ),
-    path(
-        "reset-password/<str:signed_id>/",
-        UserResetPasswordApi.as_view(),
-        name="password-reset",
-    ),
-    path(
-        "reset-password-email-send/",
-        UserResetPasswordEmailSendApi.as_view(),
-        name="reset-password-email-send",
-    ),
-    path("password-change/", UserPasswordChangeApi.as_view(), name="password-change"),
+    path("", include((user_patterns, "users"), namespace="users")),
+    path("emails/", include((email_patterns, "emails"), namespace="emails")),
 ]

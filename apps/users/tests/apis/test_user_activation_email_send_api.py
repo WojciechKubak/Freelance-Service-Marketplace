@@ -5,15 +5,14 @@ import pytest
 
 
 class TestUserActivationEmailSendApi:
+    url: str = "/api/users/emails/resend-activation/"
 
     @pytest.mark.django_db
     def test_api_response_on_already_activated_user(self) -> None:
         user = UserFactory(is_active=True)
 
         factory = APIRequestFactory()
-        request = factory.post(
-            "/api/users/activation-email-resend/", {"email": user.email}
-        )
+        request = factory.post(self.url, {"email": user.email})
 
         response = UserActivationEmailSendApi.as_view()(request)
 
@@ -25,9 +24,7 @@ class TestUserActivationEmailSendApi:
         user = UserFactory(is_active=False)
 
         factory = APIRequestFactory()
-        request = factory.post(
-            "/api/users/activation-email-resend/", {"email": user.email}
-        )
+        request = factory.post(self.url, {"email": user.email})
 
         response = UserActivationEmailSendApi.as_view()(request)
 

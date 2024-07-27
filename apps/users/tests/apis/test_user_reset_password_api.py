@@ -7,7 +7,7 @@ import pytest
 
 
 class TestUserResetPasswordApi:
-    url = "/api/users/password-reset/"
+    url = "/api/users/reset/"
 
     def test_api_response_on_failed_due_to_missing_required_fields(self) -> None:
         request = APIRequestFactory().post(self.url)

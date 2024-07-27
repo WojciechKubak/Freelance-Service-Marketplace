@@ -6,7 +6,7 @@ import pytest
 
 
 class TestUserResetPasswordEmailSendApi:
-    url = "/api/users/reset-password-email-send/"
+    url = "/api/users/emails/reset-password/"
 
     @pytest.mark.django_db
     def test_api_response_on_failed_due_to_missing_required_email_field(self) -> None:

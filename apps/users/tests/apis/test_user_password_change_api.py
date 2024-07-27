@@ -8,7 +8,7 @@ import pytest
 
 
 class TestUserPasswordChangeApi:
-    url: str = "/api/users/password-change/"
+    url: str = "/api/users/change-password/"
 
     @pytest.mark.django_db
     def test_api_response_on_failed_due_to_missing_required_fields(

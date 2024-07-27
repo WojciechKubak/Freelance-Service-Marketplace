@@ -9,8 +9,8 @@ from django.urls import reverse
 
 @dataclass
 class UserService:
-    activation_viewname: str = "activate"
-    password_reset_viewname: str = "password-reset"
+    activation_viewname: str = "api:users:user-activate"
+    password_reset_viewname: str = "api:users:user-reset"
 
     @staticmethod
     def user_activate(*, signed_id: str) -> User:
