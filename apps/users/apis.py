@@ -76,9 +76,16 @@ class UserRegisterApi(APIView):
 class UserActivateApi(APIView):
     permission_classes = (AllowAny,)
 
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = ["id", "email", "is_active"]
+
     def post(self, _: Request, signed_id: str) -> Response:
-        UserService.user_activate(signed_id=signed_id)
-        return Response(status=status.HTTP_200_OK)
+        user = UserService.user_activate(signed_id=signed_id)
+
+        output_serializer = self.OutputSerializer(user)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
 class UserActivationEmailSendApi(APIView):

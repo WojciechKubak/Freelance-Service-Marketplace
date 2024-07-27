@@ -1,37 +1,44 @@
 from apps.users.tests.factories import UserFactory
 from apps.users.apis import UserActivateApi
-from django.core.signing import TimestampSigner
+from apps.users.utils import sign_data
 from rest_framework.test import APIRequestFactory
+from collections import OrderedDict
 import pytest
 import uuid
 
 
-def sign_value(value: str) -> str:
-    signer = TimestampSigner()
-    return signer.sign(value)
-
-
 class TestUserActivateApi:
+    url: str = "api/users/activate/"
 
     def test_api_response_on_failed_due_to_signature_error(self) -> None:
-        signed_id = sign_value(uuid.uuid4())[:-1]
+        invalid_signed_id = sign_data(uuid.uuid4())[:-1]
 
         factory = APIRequestFactory()
-        request = factory.post("api/users/activate/")
+        request = factory.post(self.url)
 
-        response = UserActivateApi.as_view()(request, signed_id=signed_id)
+        response = UserActivateApi.as_view()(request, signed_id=invalid_signed_id)
+
+        expected_response_data = OrderedDict(
+            {"detail": {"non_field_errors": ["Activation link is invalid"]}}
+        )
 
         assert 400 == response.status_code
+        assert expected_response_data == response.data
 
     @pytest.mark.django_db
     def test_api_response_on_successfull_user_activation(self) -> None:
         user = UserFactory(is_active=False)
 
-        signed_id = sign_value(str(user.id))
+        signed_id = sign_data(str(user.id))
 
         factory = APIRequestFactory()
-        request = factory.post("api/users/activate/")
+        request = factory.post(self.url)
 
         response = UserActivateApi.as_view()(request, signed_id=signed_id)
 
+        expected_response_data = OrderedDict(
+            {"id": user.id, "email": user.email, "is_active": True}
+        )
+
         assert 200 == response.status_code
+        assert expected_response_data == response.data

@@ -16,7 +16,7 @@ class UserService:
     def user_activate(*, signed_id: str) -> User:
         user_id = unsign_data(signed_id, max_age=settings.EMAIL_TIMEOUT)
         if not user_id:
-            raise ValidationError("Activation url is invalid")
+            raise ValidationError("Activation link is invalid")
 
         user = User.objects.get(id=user_id)
 
