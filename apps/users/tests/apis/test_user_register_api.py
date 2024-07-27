@@ -6,11 +6,12 @@ import pytest
 
 
 class TestUserRegisterApi:
+    url: str = "api/users/register/"
 
     @pytest.mark.django_db
     def test_api_response_on_failed_due_to_missing_required_field(self) -> None:
         request = APIRequestFactory().post(
-            "/api/users/register/",
+            self.url,
             {"password": "password"},
         )
         response = UserRegisterApi.as_view()(request)
@@ -28,7 +29,7 @@ class TestUserRegisterApi:
         UserFactory(email=email)
 
         request = APIRequestFactory().post(
-            "/api/users/register/",
+            self.url,
             {"email": email, "password": "password"},
         )
         response = UserRegisterApi.as_view()(request)
@@ -45,7 +46,7 @@ class TestUserRegisterApi:
         email = "user@example.com"
 
         request = APIRequestFactory().post(
-            "/api/users/register/",
+            self.url,
             {"email": email, "password": "password"},
         )
 
