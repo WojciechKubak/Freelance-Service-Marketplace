@@ -14,7 +14,7 @@ class UserService:
 
     @staticmethod
     def user_activate(*, signed_id: str) -> User:
-        user_id = unsign_data(signed_id, max_age=settings.EMAIL_ACTIVATION_TIMEOUT)
+        user_id = unsign_data(signed_id, max_age=settings.EMAIL_TIMEOUT)
         if not user_id:
             raise ValidationError("Activation url is invalid")
 
@@ -28,7 +28,7 @@ class UserService:
 
     @staticmethod
     def user_reset_password(*, signed_id: str, password: str) -> User:
-        user_id = unsign_data(signed_id, max_age=settings.EMAIL_ACTIVATION_TIMEOUT)
+        user_id = unsign_data(signed_id, max_age=settings.EMAIL_TIMEOUT)
         if not user_id:
             raise ValidationError("Invalid value for password reset")
 

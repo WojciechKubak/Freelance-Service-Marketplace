@@ -11,7 +11,7 @@ import pytest
 class TestUserResetPassword:
 
     def test_password_reset_raises_signature_expired(self, monkeypatch) -> None:
-        monkeypatch.setattr(settings, "EMAIL_ACTIVATION_TIMEOUT", 0)
+        monkeypatch.setattr(settings, "EMAIL_TIMEOUT", 0)
 
         value = sign_data("user_id")
 

@@ -7,7 +7,8 @@ EMAIL_SENDING_STRATEGY = env_to_enum(
     EmailSendingStrategy, os.environ.get("EMAIL_SENDING_STRATEGY", "console")
 )
 
-EMAIL_ACTIVATION_TIMEOUT = int(os.environ.get("EMAIL_ACTIVATION_TIMEOUT", 60 * 60 * 24))
+# general mail timeout, might split into more specific
+EMAIL_TIMEOUT = int(os.environ.get("EMAIL_TIMEOUT", 60 * 60 * 24))
 
 if EMAIL_SENDING_STRATEGY == EmailSendingStrategy.CONSOLE:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

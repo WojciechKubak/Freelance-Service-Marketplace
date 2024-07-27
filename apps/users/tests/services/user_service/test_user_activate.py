@@ -17,7 +17,7 @@ def sign_value(value: str) -> str:
 class TestUserActivate:
 
     def test_user_activate_raises_signature_expired(self, monkeypatch) -> None:
-        monkeypatch.setattr(settings, "EMAIL_ACTIVATION_TIMEOUT", 0)
+        monkeypatch.setattr(settings, "EMAIL_TIMEOUT", 0)
 
         value = sign_value("user_id")
 
