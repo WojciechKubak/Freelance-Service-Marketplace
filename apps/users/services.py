@@ -9,8 +9,8 @@ from django.urls import reverse
 
 @dataclass
 class UserService:
-    ACTIVATION_VIEWNAME: str = "activate"
-    PASSWORD_RESET_VIEWNAME: str = "password-reset"
+    activation_viewname: str = "activate"
+    password_reset_viewname: str = "password-reset"
 
     @staticmethod
     def user_activate(*, signed_id: str) -> User:
@@ -79,7 +79,7 @@ class UserService:
                 email=email, password=password, is_admin=is_admin
             )
 
-        url = self._url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
+        url = self._url_generate(user_id=user.id, viewname=self.activation_viewname)
         email = EmailService.send_activation_email(user_email=user.email, url=url)
 
         return user
@@ -90,7 +90,7 @@ class UserService:
         if user.is_active:
             raise ValidationError("User is already active")
 
-        url = self._url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
+        url = self._url_generate(user_id=user.id, viewname=self.activation_viewname)
         email = EmailService.send_activation_email(user_email=user.email, url=url)
 
         return user
@@ -101,7 +101,7 @@ class UserService:
         if not user or not user.is_active:
             return email
 
-        url = self._url_generate(user_id=user.id, viewname=self.PASSWORD_RESET_VIEWNAME)
+        url = self._url_generate(user_id=user.id, viewname=self.password_reset_viewname)
         email = EmailService.send_password_reset_email(user_email=user.email, url=url)
 
         return user.email
