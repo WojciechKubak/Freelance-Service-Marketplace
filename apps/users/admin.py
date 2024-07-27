@@ -7,6 +7,34 @@ from django.http import HttpRequest
 from collections import defaultdict
 
 
+def send_emails(
+    admin_instance,
+    request: HttpRequest,
+    queryset: QuerySet,
+    email_function,
+    success_message: str,
+) -> None:
+    errors = defaultdict(int)
+
+    for user in queryset:
+        try:
+            email_function(email=user.email)
+        except ValidationError as e:
+            errors[e.message] += 1
+
+    if errors:
+        for message, count in errors.items():
+            admin_instance.message_user(
+                request, f"'{message}' for {count} users", messages.ERROR
+            )
+
+    correct_count = queryset.count() - sum(errors.values())
+    if correct_count:
+        admin_instance.message_user(
+            request, f"{success_message} for {correct_count} users"
+        )
+
+
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
@@ -47,46 +75,22 @@ class UserAdmin(admin.ModelAdmin):
 
     @admin.action(description="Resend activation email")
     def resend_activation_email(self, request: HttpRequest, queryset: QuerySet) -> None:
-        errors = defaultdict(int)
-
-        for user in queryset:
-            try:
-                UserService().user_activation_email_send(email=user.email)
-            except ValidationError as e:
-                errors[e.message] += 1
-
-        if errors:
-            for message, count in errors.items():
-                self.message_user(
-                    request, f"{message} for {count} users", messages.ERROR
-                )
-
-        correct_count = queryset.count() - sum(errors.values())
-        if correct_count:
-            self.message_user(
-                request, f"Activation email resent for {correct_count} users"
-            )
+        send_emails(
+            self,
+            request,
+            queryset,
+            UserService().user_activation_email_send,
+            "Activation email resent",
+        )
 
     @admin.action(description="Password reset")
     def send_password_reset_email(
         self, request: HttpRequest, queryset: QuerySet
     ) -> None:
-        errors = defaultdict(int)
-
-        for user in queryset:
-            try:
-                UserService().user_reset_password_email_send(email=user.email)
-            except ValidationError as e:
-                errors[e.message] += 1
-
-        if errors:
-            for message, count in errors.items():
-                self.message_user(
-                    request, f"{message} for {count} users", messages.ERROR
-                )
-
-        correct_count = queryset.count() - sum(errors.values())
-        if correct_count:
-            self.message_user(
-                request, f"Password reset email sent for {correct_count} users"
-            )
+        send_emails(
+            self,
+            request,
+            queryset,
+            UserService().user_reset_password_email_send,
+            "Password reset email sent",
+        )
