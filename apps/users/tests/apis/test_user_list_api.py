@@ -8,6 +8,7 @@ import pytest
 
 
 class TestUserListApi:
+    url: str = "api/users/"
 
     @pytest.mark.django_db
     def test_api_returns_no_results_with_filter_provided(
@@ -15,7 +16,7 @@ class TestUserListApi:
     ) -> None:
         user = UserFactory(is_admin=True, is_active=True)
 
-        url = f"api/users/?email=other_{user.email}"
+        url = f"{self.url}?email=other_{user.email}"
 
         request = auth_request(user=user, method="GET", url=url)
         response = UserListApi.as_view()(request)
@@ -37,7 +38,7 @@ class TestUserListApi:
     ) -> None:
         user = UserFactory(is_admin=True, is_active=True)
 
-        url = f"api/users/?email={user.email}"
+        url = f"{self.url}?email={user.email}"
 
         request = auth_request(user=user, method="GET", url=url)
         response = UserListApi.as_view()(request)
@@ -69,7 +70,7 @@ class TestUserListApi:
         user1 = UserFactory(is_active=False)
         user2 = UserFactory(is_active=False)
 
-        url = "api/users/?is_active=False"
+        url = f"{self.url}?is_active=False"
 
         request = auth_request(user=auth_user, method="GET", url=url)
         response = UserListApi.as_view()(request)
