@@ -6,9 +6,11 @@ import pytest
 
 
 @pytest.fixture(scope="session")
-def auth_request() -> Callable[[User, str, str], APIRequestFactory]:
+def auth_request() -> (
+    Callable[[User, str, str, dict[str, Any] | None], APIRequestFactory]
+):
     def _make_request(
-        user: User, method: str, url: str, data: dict[str, Any] = None
+        user: User, method: str, url: str, data: dict[str, Any] | None = None
     ) -> APIRequestFactory:
         refresh = RefreshToken.for_user(user)
         factory = APIRequestFactory()

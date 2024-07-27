@@ -3,7 +3,7 @@ from apps.users.apis import UserListApi
 from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
-from typing import Callable
+from typing import Callable, Any
 import pytest
 
 
@@ -12,7 +12,10 @@ class TestUserListApi:
 
     @pytest.mark.django_db
     def test_api_returns_no_results_with_filter_provided(
-        self, auth_request: Callable[[User, str, str], APIRequestFactory]
+        self,
+        auth_request: Callable[
+            [User, str, str, dict[str, Any] | None], APIRequestFactory
+        ],
     ) -> None:
         user = UserFactory(is_admin=True, is_active=True)
 
@@ -34,7 +37,10 @@ class TestUserListApi:
 
     @pytest.mark.django_db
     def test_api_returns_single_results_with_filter_provided(
-        self, auth_request: Callable[[User, str, str], APIRequestFactory]
+        self,
+        auth_request: Callable[
+            [User, str, str, dict[str, Any] | None], APIRequestFactory
+        ],
     ) -> None:
         user = UserFactory(is_admin=True, is_active=True)
 
@@ -63,7 +69,10 @@ class TestUserListApi:
 
     @pytest.mark.django_db
     def test_api_returns_all_results_without_filters_provided(
-        self, auth_request: Callable[[User, str, str], APIRequestFactory]
+        self,
+        auth_request: Callable[
+            [User, str, str, dict[str, Any] | None], APIRequestFactory
+        ],
     ) -> None:
         auth_user = UserFactory(is_admin=True, is_active=True)
 

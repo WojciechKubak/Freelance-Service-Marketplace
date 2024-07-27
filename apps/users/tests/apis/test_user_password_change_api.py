@@ -1,36 +1,9 @@
-"""
-class UserPasswordChangeApi(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    class InputSerializer(serializers.Serializer):
-        password = serializers.CharField()
-        new_password = serializers.CharField()
-        new_password_confirm = serializers.CharField()
-
-    class OutputSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = User
-            fields = ["id", "email"]
-
-    def post(self, request: Request) -> Response:
-        user = request.user
-
-        serializer = UserPasswordChangeApi.InputSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        user = UserService.user_password_change(user=user, **serializer.validated_data)
-
-        output_serializer = UserPasswordChangeApi.OutputSerializer(user)
-        return Response(output_serializer.data, status=status.HTTP_200_OK)
-
-"""
-
 from apps.users.models import User
 from apps.users.apis import UserPasswordChangeApi
 from apps.users.tests.factories import UserFactory
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
-from typing import Callable
+from typing import Callable, Any
 import pytest
 
 
@@ -40,7 +13,9 @@ class TestUserPasswordChangeApi:
     @pytest.mark.django_db
     def test_api_response_on_failed_due_to_missing_required_fields(
         self,
-        auth_request: Callable[[User, str, str], APIRequestFactory],
+        auth_request: Callable[
+            [User, str, str, dict[str, Any] | None], APIRequestFactory
+        ],
     ) -> None:
         user = UserFactory(is_active=True)
         request = auth_request(user, "POST", self.url, data={})
@@ -62,7 +37,10 @@ class TestUserPasswordChangeApi:
 
     @pytest.mark.django_db
     def test_api_response_on_failed_due_to_incorrect_password(
-        self, auth_request: Callable[[User, str, str], APIRequestFactory]
+        self,
+        auth_request: Callable[
+            [User, str, str, dict[str, Any] | None], APIRequestFactory
+        ],
     ) -> None:
         user = UserFactory(is_active=True)
         request_data = {
@@ -83,7 +61,10 @@ class TestUserPasswordChangeApi:
 
     @pytest.mark.django_db
     def test_api_response_on_failed_due_to_incorrect_password_repeat(
-        self, auth_request: Callable[[User, str, str], APIRequestFactory]
+        self,
+        auth_request: Callable[
+            [User, str, str, dict[str, Any] | None], APIRequestFactory
+        ],
     ) -> None:
         user = UserFactory(is_active=True)
         request_data = {
@@ -104,7 +85,10 @@ class TestUserPasswordChangeApi:
 
     @pytest.mark.django_db
     def test_api_response_on_successful_password_change(
-        self, auth_request: Callable[[User, str, str], APIRequestFactory]
+        self,
+        auth_request: Callable[
+            [User, str, str, dict[str, Any] | None], APIRequestFactory
+        ],
     ) -> None:
         user = UserFactory(is_active=True)
         request_data = {
