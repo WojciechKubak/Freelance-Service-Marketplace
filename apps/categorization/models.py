@@ -6,20 +6,18 @@ from django.db import models
 class Category(BaseModel):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    tags = models.ManyToManyField("Tag", related_name="categories", blank=True)
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return self.name
+        return f"(Category: {self.name})"
 
 
 class Tag(BaseModel):
     name = models.CharField(max_length=100)
-    category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name="tags"
-    )
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"{self.category.name} - {self.name}"
+        return f"(Tag: {self.name})"
