@@ -10,13 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-from config.env import env_to_bool, BASE_DIR
+from config.env import BASE_DIR, APP_DIR, env_to_bool
 from dotenv import load_dotenv
 import os
 
 
 load_dotenv()
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -29,14 +28,22 @@ DEBUG = env_to_bool(os.environ.get("DJANGO_DEBUG"), True)
 
 ALLOWED_HOSTS = ["*"]
 
+BASE_BACKEND_URL = os.environ.get("DJANGO_BASE_BACKEND_URL", "http://localhost:8000")
+
 # Application definition
 
 LOCAL_APPS = [
-    "apps.api.apps",
+    "apps.api.apps.ApiConfig",
+    "apps.authentication.apps.AuthenticationConfig",
+    "apps.users.apps.UsersConfig",
+    "apps.common.apps.CommonConfig",
+    "apps.emails.apps.EmailsConfig",
+    "apps.core.apps.CoreConfig",
 ]
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework_simplejwt",
 ]
 
 INSTALLED_APPS = [
@@ -66,7 +73,9 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(APP_DIR, "emails/templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -95,6 +104,16 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAdminUser",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "EXCEPTION_HANDLER": "apps.api.exception_handler.custom_exception_handler",
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -113,6 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = "users.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -141,3 +161,6 @@ STORAGES = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+from config.settings.email_sending import *  # noqa
