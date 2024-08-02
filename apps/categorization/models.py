@@ -3,6 +3,9 @@ from apps.users.models import User
 from django.db import models
 
 
+# todo: add name field unique constraint + tests
+
+
 class Category(BaseModel):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)

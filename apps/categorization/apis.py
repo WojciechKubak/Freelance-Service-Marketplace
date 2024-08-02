@@ -5,7 +5,7 @@ from apps.categorization.models import Category
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -26,17 +26,36 @@ class CategoryListApi(APIView):
 
 
 class CategoryCreateApi(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAdminUser,)
 
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField()
         description = serializers.CharField()
+        tags = serializers.ListField(
+            child=serializers.IntegerField(),
+            min_length=2,
+            max_length=5,
+        )
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        name = serializers.CharField()
+        description = serializers.CharField()
+        tags = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "name": serializers.CharField(),
+            },
+            many=True,
+        )
 
     def post(self, request: Request) -> Response:
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        category = CategoryService.category_create(**input_serializer.validated_data)
+        category = CategoryService.category_create(
+            user=request.user, **input_serializer.validated_data
+        )
 
         output_serializer = self.OutputSerializer(category)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
@@ -69,6 +88,7 @@ class CategoryUpdateApi(APIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
+        # todo: handle <2, 5> tags range
         tags = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     class OutputSerializer(serializers.Serializer):

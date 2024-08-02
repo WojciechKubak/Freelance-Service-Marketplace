@@ -1,4 +1,5 @@
 from apps.categorization.models import Category
+from apps.users.models import User
 from dataclasses import dataclass
 
 
@@ -24,5 +25,18 @@ class CategoryService:
 
         category.full_clean()
         category.save()
+
+        return category
+
+    @staticmethod
+    def category_create(
+        *, user: User, name: str, description: str, tags: list[int]
+    ) -> Category:
+        category = Category(name=name, description=description, created_by=user)
+
+        category.full_clean()
+        category.save()
+
+        category.tags.set(tags)
 
         return category
