@@ -27,7 +27,7 @@ class TestTagList:
     @pytest.mark.django_db
     def test_selector_on_chained_simple_fields_filter(self) -> None:
         category = CategoryFactory()
-        tags = category.tags.all()
+        tags = TagFactory.create_batch(3, category=category)
 
         filter_found = {"name": tags[0].name, "category": category.name}
         filter_not_found = {

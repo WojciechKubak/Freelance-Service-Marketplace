@@ -1,4 +1,4 @@
-from apps.categorization.tests.factories import TagFactory, UserFactory, Category
+from apps.categorization.tests.factories import UserFactory, Category
 from apps.categorization.services import CategoryService
 import pytest
 
@@ -8,7 +8,6 @@ def test_create_category_creates_instance_with_expected_data_and_returns_it() ->
     data = {
         "name": "Test Category",
         "description": "Test Description",
-        "tags": [tag.id for tag in TagFactory.create_batch(3)],
         "user": UserFactory(),
     }
 
@@ -19,4 +18,3 @@ def test_create_category_creates_instance_with_expected_data_and_returns_it() ->
     assert data["name"] == result.name
     assert data["description"] == result.description
     assert data["user"].id == str(result.created_by.id)
-    assert data["tags"] == list(result.tags.values_list("id", flat=True))

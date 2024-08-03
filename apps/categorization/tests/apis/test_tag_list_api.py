@@ -42,7 +42,7 @@ class TestTagListApi:
     @pytest.mark.django_db
     def test_api_response_on_chained_simple_fields_filter(self) -> None:
         category = CategoryFactory()
-        tags = category.tags.all()
+        tags = TagFactory.create_batch(3, category=category)
 
         factory = APIRequestFactory()
         request = factory.get(

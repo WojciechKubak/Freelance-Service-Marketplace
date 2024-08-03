@@ -9,7 +9,6 @@ from django.db import models
 class Category(BaseModel):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    tags = models.ManyToManyField("Tag", related_name="categories", blank=True)
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -19,6 +18,9 @@ class Category(BaseModel):
 
 class Tag(BaseModel):
     name = models.CharField(max_length=100)
+    category = models.ForeignKey(
+        Category, related_name="tags", on_delete=models.CASCADE
+    )
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 

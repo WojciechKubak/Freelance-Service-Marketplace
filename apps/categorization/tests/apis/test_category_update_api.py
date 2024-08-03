@@ -1,4 +1,4 @@
-from apps.categorization.tests.factories import CategoryFactory, TagFactory
+from apps.categorization.tests.factories import CategoryFactory
 from apps.users.tests.factories import UserFactory, User
 from apps.categorization.apis import CategoryUpdateApi
 from rest_framework.test import APIRequestFactory
@@ -148,49 +148,6 @@ class TestCategoryUpdateApi:
                         }
                     )
                     for tag in category.tags.all().order_by("id")
-                ],
-            }
-        )
-
-        assert 200 == response.status_code
-        assert expected_response_data == response.data
-
-    @pytest.mark.django_db
-    def test_api_response_on_successful_m2m_tags_field_update(
-        self,
-        auth_request: Callable[
-            [User, str, str, dict[str, Any] | None], APIRequestFactory
-        ],
-    ) -> None:
-        user = UserFactory(is_active=True)
-        tags = TagFactory.create_batch(3)
-        *existing, new = tags
-
-        category = CategoryFactory(created_by=user, tags=existing)
-
-        request = auth_request(
-            user,
-            "PUT",
-            f"api/categorization/categories/{category.id}/update",
-            {"tags": [new.id]},
-        )
-
-        response = CategoryUpdateApi.as_view()(request, category.id)
-
-        # todo: easier way to get nested json responses
-        expected_response_data = OrderedDict(
-            {
-                "id": category.id,
-                "name": category.name,
-                "description": category.description,
-                "tags": [
-                    OrderedDict(
-                        {
-                            "id": tag.id,
-                            "name": tag.name,
-                        }
-                    )
-                    for tag in tags
                 ],
             }
         )
