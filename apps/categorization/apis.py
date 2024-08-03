@@ -1,6 +1,6 @@
 from apps.api.utils import inline_serializer
 from apps.api.permissions import IsOwner
-from apps.categorization.services import CategoryService
+from apps.categorization.services import CategoryService, TagService
 from apps.categorization.models import Category, Tag
 from apps.categorization.selectors import TagSelectors
 from rest_framework.views import APIView
@@ -135,16 +135,21 @@ class TagCreateApi(APIView):
         name = serializers.CharField()
         category_id = serializers.IntegerField()
 
-    class OutputSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = Tag
-            fields = ["id", "name"]
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        name = serializers.CharField()
+        category = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "name": serializers.CharField(),
+            }
+        )
 
     def post(self, request: Request) -> Response:
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        tag = CategoryService.tag_create(
+        tag = TagService.tag_create(
             user=request.user, **input_serializer.validated_data
         )
 
