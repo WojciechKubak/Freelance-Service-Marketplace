@@ -1,7 +1,8 @@
 from apps.api.utils import inline_serializer
 from apps.api.permissions import IsOwner
 from apps.categorization.services import CategoryService
-from apps.categorization.models import Category
+from apps.categorization.models import Category, Tag
+from apps.categorization.selectors import TagSelectors
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -116,4 +117,26 @@ class CategoryUpdateApi(APIView):
         )
 
         output_serializer = self.OutputSerializer(category)
+        return Response(output_serializer.data)
+
+
+class TagListApi(APIView):
+    permission_classes = (AllowAny,)
+
+    class FilterSerializer(serializers.Serializer):
+        id = serializers.IntegerField(required=False)
+        name = serializers.CharField(required=False)
+
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Tag
+            fields = ["id", "name"]
+
+    def get(self, request: Request) -> Response:
+        filter_serializer = self.FilterSerializer(data=request.query_params)
+        filter_serializer.is_valid(raise_exception=True)
+
+        tags = TagSelectors.tag_list(filters=filter_serializer.validated_data)
+
+        output_serializer = self.OutputSerializer(tags, many=True)
         return Response(output_serializer.data)
