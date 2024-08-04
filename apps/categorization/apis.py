@@ -155,3 +155,34 @@ class TagCreateApi(APIView):
 
         output_serializer = self.OutputSerializer(tag)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class TagUpdateApi(APIView):
+    permission_classes = (IsOwner,)
+
+    class InputSerializer(serializers.Serializer):
+        name = serializers.CharField(required=False)
+        category_id = serializers.IntegerField(required=False)
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        name = serializers.CharField()
+        category = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "name": serializers.CharField(),
+            }
+        )
+
+    def put(self, request: Request, tag_id: int) -> Response:
+        tag = get_object_or_404(Tag, id=tag_id)
+
+        self.check_object_permissions(request, tag)
+
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        tag = TagService.tag_update(tag=tag, **input_serializer.validated_data)
+
+        output_serializer = self.OutputSerializer(tag)
+        return Response(output_serializer.data)

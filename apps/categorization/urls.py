@@ -5,6 +5,7 @@ from apps.categorization.apis import (
     CategoryCreateApi,
     TagListApi,
     TagCreateApi,
+    TagUpdateApi,
 )
 from django.urls import path, include
 
@@ -21,6 +22,7 @@ category_patterns = [
 tag_patterns = [
     path("", TagListApi.as_view(), name="tag-list"),
     path("create/", TagCreateApi.as_view(), name="tag-create"),
+    path("<int:tag_id>/update/", TagUpdateApi.as_view(), name="tag-update"),
 ]
 
 
