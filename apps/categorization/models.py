@@ -12,8 +12,12 @@ class Category(BaseModel):
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
     def __str__(self) -> str:
-        return f"(Category: {self.name})"
+        return self.name
 
 
 class Tag(BaseModel):
@@ -25,4 +29,4 @@ class Tag(BaseModel):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"(Tag: {self.name})"
+        return self.name
