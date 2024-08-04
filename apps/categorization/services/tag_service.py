@@ -5,33 +5,6 @@ from dataclasses import dataclass
 
 
 @dataclass
-class CategoryService:
-
-    @staticmethod
-    def category_update(
-        *,
-        category: Category,
-        name: str | None = None,
-        description: str | None = None,
-    ) -> Category:
-        category.name = name if name else category.name
-        category.description = description if description else category.description
-
-        category.full_clean()
-        category.save()
-
-        return category
-
-    @staticmethod
-    def category_create(*, user: User, name: str, description: str) -> Category:
-        category = Category(name=name, description=description, created_by=user)
-
-        category.full_clean()
-        category.save()
-
-        return category
-
-
 class TagService:
 
     @staticmethod

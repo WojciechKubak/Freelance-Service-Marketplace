@@ -1,5 +1,5 @@
 from apps.categorization.tests.factories import UserFactory, Category
-from apps.categorization.services import CategoryService
+from apps.categorization.services.category_service import CategoryService
 import pytest
 
 

@@ -1,5 +1,5 @@
 from apps.categorization.tests.factories import TagFactory, CategoryFactory
-from apps.categorization.services import TagService
+from apps.categorization.services.tag_service import TagService
 from apps.categorization.models import Tag
 from django.core.exceptions import ValidationError
 import pytest

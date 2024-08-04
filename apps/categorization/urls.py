@@ -1,8 +1,10 @@
-from apps.categorization.apis import (
+from apps.categorization.apis.category_apis import (
     CategoryListApi,
     CategoryDetailApi,
     CategoryUpdateApi,
     CategoryCreateApi,
+)
+from apps.categorization.apis.tag_apis import (
     TagListApi,
     TagCreateApi,
     TagUpdateApi,

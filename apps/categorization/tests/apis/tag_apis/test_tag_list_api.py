@@ -1,5 +1,5 @@
 from apps.categorization.tests.factories import TagFactory, CategoryFactory
-from apps.categorization.apis import TagListApi
+from apps.categorization.apis.tag_apis import TagListApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 import pytest
