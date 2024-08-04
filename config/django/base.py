@@ -39,6 +39,7 @@ LOCAL_APPS = [
     "apps.common.apps.CommonConfig",
     "apps.emails.apps.EmailsConfig",
     "apps.core.apps.CoreConfig",
+    "apps.categorization.apps.CategorizationConfig",
 ]
 
 THIRD_PARTY_APPS = [
