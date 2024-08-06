@@ -13,6 +13,8 @@ class Consultation(BaseModel):
 
     tags = models.ManyToManyField(Tag)
 
+    is_visible = models.BooleanField(default=True)
+
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:

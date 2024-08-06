@@ -59,3 +59,12 @@ class ConsultationService:
         consultation.save()
 
         return consultation
+
+    @staticmethod
+    def consultation_change_visibility(
+        consultation: Consultation, is_visible: bool = False
+    ) -> Consultation:
+        consultation.is_visible = is_visible
+        consultation.save()
+
+        return consultation

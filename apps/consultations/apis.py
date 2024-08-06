@@ -83,3 +83,23 @@ class ConsultationUpdateApi(APIView):
 
         output_serializer = self.OutputSerializer(consultation)
         return Response(output_serializer.data)
+
+
+class ConsultationChangeVisibilityApi(APIView):
+    permission_classes = (IsOwner,)
+
+    class InputSerializer(serializers.Serializer):
+        is_visible = serializers.BooleanField(required=True)
+
+    def patch(self, request: Request, consultation_id: int) -> Response:
+        consultation = get_object_or_404(Consultation, id=consultation_id)
+        self.check_object_permissions(request, consultation)
+
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        ConsultationService.consultation_change_visibility(
+            consultation, is_visible=input_serializer.validated_data["is_visible"]
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
