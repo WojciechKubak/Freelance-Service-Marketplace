@@ -144,3 +144,28 @@ class ConsultationListApi(APIView):
 
         output_serializer = self.OutputSerializer(consultations, many=True)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+
+class ConsultationDetailApi(APIView):
+    permission_classes = (AllowAny,)
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        title = serializers.CharField()
+        description = serializers.CharField()
+        price = serializers.FloatField()
+        tags = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "name": serializers.CharField(),
+            },
+            many=True,
+        )
+
+    def get(self, _: Request, consultation_id: int) -> Response:
+        consultation = ConsultationSelectors.consultation_detail(
+            consultation_id=consultation_id
+        )
+
+        output_serializer = self.OutputSerializer(consultation)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
