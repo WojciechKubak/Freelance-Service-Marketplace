@@ -8,8 +8,9 @@ class UserFactory(DjangoModelFactory):
         model = User
 
     id = factory.Faker("uuid4")
+
     email = factory.Faker("email")
     password = factory.django.Password("password")
-    # todo: we might want to set this to True by default
-    is_active = factory.Faker("boolean")
-    is_admin = factory.Faker("boolean")
+
+    is_active = True
+    is_admin = False
