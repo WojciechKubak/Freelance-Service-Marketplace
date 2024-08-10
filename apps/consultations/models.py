@@ -26,6 +26,7 @@ class Consultation(BaseModel):
 
 class Slot(BaseModel):
 
+    # todo: this might get deleted, this property is for booking
     class Status(models.TextChoices):
         AVAILABLE = "available", "Available"
         BOOKED = "booked", "Booked"

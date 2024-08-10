@@ -4,6 +4,7 @@ from apps.consultations.apis import (
     ConsultationChangeVisibilityApi,
     ConsultationListApi,
     ConsultationDetailApi,
+    SlotCreateApi,
 )
 from django.urls import path, include
 
@@ -22,9 +23,14 @@ consultation_patterns = [
     ),
 ]
 
+slot_patterns = [
+    path("create/", SlotCreateApi.as_view(), name="create"),
+]
+
 urlpatterns = [
     path(
         "",
         include((consultation_patterns, "consultations"), namespace="consultations"),
     ),
+    path("slots/", include((slot_patterns, "slots"), namespace="slots")),
 ]

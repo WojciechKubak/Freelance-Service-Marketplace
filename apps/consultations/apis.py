@@ -1,4 +1,4 @@
-from apps.consultations.services import ConsultationService
+from apps.consultations.services import ConsultationService, SlotService
 from apps.consultations.models import Consultation
 from apps.consultations.selectors import ConsultationSelectors
 from apps.api.permissions import IsOwner
@@ -169,3 +169,47 @@ class ConsultationDetailApi(APIView):
 
         output_serializer = self.OutputSerializer(consultation)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+
+class SlotCreateApi(APIView):
+    permission_classes = (IsOwner,)
+
+    class InputSerializer(serializers.Serializer):
+        consultation_id = serializers.IntegerField()
+        start_time = serializers.DateTimeField()
+        end_time = serializers.DateTimeField()
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        start_time = serializers.DateTimeField()
+        end_time = serializers.DateTimeField()
+        consultation = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "title": serializers.CharField(),
+                "price": serializers.FloatField(),
+                "tags": inline_serializer(
+                    fields={
+                        "id": serializers.IntegerField(),
+                        "name": serializers.CharField(),
+                    },
+                    many=True,
+                ),
+            }
+        )
+
+    def post(self, request: Request) -> Response:
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        validated_data = input_serializer.validated_data
+
+        consultation = get_object_or_404(
+            Consultation, id=validated_data.pop("consultation_id")
+        )
+
+        self.check_object_permissions(request, consultation)
+
+        slot = SlotService(consultation=consultation).slot_create(**validated_data)
+
+        output_serializer = self.OutputSerializer(slot)
+        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
