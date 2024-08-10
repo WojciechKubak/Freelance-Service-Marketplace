@@ -56,9 +56,10 @@ class TestConsultationChangeVisibilityApi:
             [User, str, str, dict[str, Any] | None], APIRequestFactory
         ],
     ) -> None:
-        consultation = ConsultationFactory()
+        user = UserFactory(is_active=True)
+        consultation = ConsultationFactory(created_by=user)
         request = auth_request(
-            consultation.created_by,
+            user,
             "PATCH",
             f"/api/consultations/{consultation.id}/visibility",
             {"is_visible": True},
