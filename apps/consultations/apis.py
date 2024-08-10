@@ -1,11 +1,13 @@
 from apps.consultations.services import ConsultationService
 from apps.consultations.models import Consultation
+from apps.consultations.selectors import ConsultationSelectors
 from apps.api.permissions import IsOwner
 from apps.api.utils import inline_serializer
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import serializers
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -103,3 +105,42 @@ class ConsultationChangeVisibilityApi(APIView):
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ConsultationListApi(APIView):
+    permission_classes = (AllowAny,)
+
+    class Pagination(LimitOffsetPagination):
+        default_limit = 20
+        max_limit = 100
+        page_size_query_param = "count"
+
+    class FilterSerializer(serializers.Serializer):
+        title = serializers.CharField(required=False)
+        category_id = serializers.IntegerField(required=False)
+        tag_id = serializers.IntegerField(required=False)
+        price_min = serializers.FloatField(required=False)
+        price_max = serializers.FloatField(required=False)
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        title = serializers.CharField()
+        price = serializers.FloatField()
+        tags = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "name": serializers.CharField(),
+            },
+            many=True,
+        )
+
+    def get(self, request: Request) -> Response:
+        filter_serializer = self.FilterSerializer(data=request.query_params)
+        filter_serializer.is_valid(raise_exception=True)
+
+        consultations = ConsultationSelectors.consultation_list(
+            filters=filter_serializer.validated_data
+        )
+
+        output_serializer = self.OutputSerializer(consultations, many=True)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
