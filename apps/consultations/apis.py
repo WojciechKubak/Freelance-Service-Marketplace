@@ -1,5 +1,5 @@
 from apps.consultations.services import ConsultationService, SlotService
-from apps.consultations.models import Consultation
+from apps.consultations.models import Consultation, Slot
 from apps.consultations.selectors import ConsultationSelectors
 from apps.api.permissions import IsOwner
 from apps.api.utils import inline_serializer
@@ -213,3 +213,32 @@ class SlotCreateApi(APIView):
 
         output_serializer = self.OutputSerializer(slot)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class SlotUpdateApi(APIView):
+    permission_classes = (IsOwner,)
+
+    class InputSerializer(serializers.Serializer):
+        start_time = serializers.DateTimeField(required=False)
+        end_time = serializers.DateTimeField(required=False)
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        start_time = serializers.DateTimeField()
+        end_time = serializers.DateTimeField()
+
+    def put(self, request: Request, slot_id: int) -> Response:
+        slot = get_object_or_404(Slot, id=slot_id)
+        consultation = slot.consultation
+
+        self.check_object_permissions(request, consultation)
+
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        slot = SlotService(consultation=consultation).slot_update(
+            slot, **input_serializer.validated_data
+        )
+
+        output_serializer = self.OutputSerializer(slot)
+        return Response(output_serializer.data)

@@ -75,8 +75,8 @@ class ConsultationService:
 
 @dataclass
 class SlotService:
-    consultation: Consultation
     MINIMUM_SLOT_DURATION: ClassVar[timedelta] = timedelta(hours=1)
+    consultation: Consultation
 
     def slot_create(self, *, start_time: datetime, end_time: datetime) -> Slot:
         self._slot_validate_visibility()
@@ -86,6 +86,33 @@ class SlotService:
         slot = Slot(
             consultation=self.consultation, start_time=start_time, end_time=end_time
         )
+        slot.full_clean()
+        slot.save()
+
+        return slot
+
+    def slot_update(
+        self,
+        slot: Slot,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
+    ) -> Slot:
+        # todo: we might move this to __post_init__
+        self._slot_validate_visibility()
+
+        if isinstance(start_time, str):
+            start_time = datetime.fromisoformat(start_time)
+        if isinstance(end_time, str):
+            end_time = datetime.fromisoformat(end_time)
+
+        slot.start_time = start_time if start_time else slot.start_time
+        slot.end_time = end_time if end_time else slot.end_time
+
+        self._slot_validate_duration(start_time=slot.start_time, end_time=slot.end_time)
+        self._slot_validate_overlap(
+            start_time=slot.start_time, end_time=slot.end_time, slot_id=slot.id
+        )
+
         slot.full_clean()
         slot.save()
 
@@ -103,12 +130,16 @@ class SlotService:
             raise ValidationError("Slot duration must be at least 1 hour.")
 
     def _slot_validate_overlap(
-        self, *, start_time: datetime, end_time: datetime
+        self, *, start_time: datetime, end_time: datetime, slot_id: int | None = None
     ) -> None:
         start_time_overlap = Q(start_time__lt=end_time, start_time__gte=start_time)
         end_time_overlap = Q(end_time__gt=start_time, end_time__lte=end_time)
-
-        if self.consultation.slots.filter(
+        overlap_query = self.consultation.slots.filter(
             start_time_overlap | end_time_overlap
-        ).exists():
+        )
+
+        if slot_id:
+            overlap_query = overlap_query.exclude(id=slot_id)
+
+        if overlap_query.exists():
             raise ValidationError("Slot overlaps with existing slots.")
