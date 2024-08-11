@@ -292,3 +292,31 @@ class SlotListApi(APIView):
         )
 
         return response
+
+
+class SlotDetailApi(APIView):
+    permission_classes = (AllowAny,)
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        start_time = serializers.DateTimeField()
+        end_time = serializers.DateTimeField()
+        consultation = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "title": serializers.CharField(),
+                "price": serializers.FloatField(),
+                "tags": inline_serializer(
+                    fields={
+                        "id": serializers.IntegerField(),
+                        "name": serializers.CharField(),
+                    },
+                    many=True,
+                ),
+            }
+        )
+
+    def get(self, _: Request, slot_id: int) -> Response:
+        slot = SlotSelectors.slot_detail(slot_id=slot_id)
+        output_serializer = self.OutputSerializer(slot)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)

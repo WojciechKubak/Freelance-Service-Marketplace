@@ -10,6 +10,7 @@ from apps.consultations.apis import (
     SlotUpdateApi,
     SlotDeleteApi,
     SlotListApi,
+    SlotDetailApi,
 )
 from django.urls import path, include
 
@@ -30,6 +31,7 @@ consultation_patterns = [
 
 slot_patterns = [
     path("", SlotListApi.as_view(), name="list"),
+    path("<int:slot_id>/", SlotDetailApi.as_view(), name="detail"),
     path("create/", SlotCreateApi.as_view(), name="create"),
     path("<int:slot_id>/update/", SlotUpdateApi.as_view(), name="update"),
     path("<int:slot_id>/delete/", SlotDeleteApi.as_view(), name="delete"),

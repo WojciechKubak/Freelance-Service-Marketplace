@@ -34,3 +34,9 @@ class SlotSelectors:
         )
 
         return SlotFilter(filters, queryset).qs
+
+    @staticmethod
+    def slot_detail(*, slot_id: int) -> Slot:
+        return get_object_or_404(
+            Slot, id=slot_id, is_cancelled=False, consultation__is_visible=True
+        )
