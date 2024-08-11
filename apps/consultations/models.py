@@ -25,13 +25,6 @@ class Consultation(BaseModel):
 
 
 class Slot(BaseModel):
-
-    # todo: this might get deleted, this property is for booking
-    class Status(models.TextChoices):
-        AVAILABLE = "available", "Available"
-        BOOKED = "booked", "Booked"
-        BLOCKED = "blocked", "Blocked"
-
     consultation = models.ForeignKey(
         Consultation, related_name="slots", on_delete=models.CASCADE
     )
@@ -39,9 +32,7 @@ class Slot(BaseModel):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
-    status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.AVAILABLE
-    )
+    is_cancelled = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("start_time",)

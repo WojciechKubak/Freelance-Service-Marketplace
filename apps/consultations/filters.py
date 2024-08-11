@@ -1,4 +1,4 @@
-from apps.consultations.models import Consultation
+from apps.consultations.models import Consultation, Slot
 from django_filters import FilterSet
 import django_filters
 
@@ -22,4 +22,22 @@ class ConsultationFilter(FilterSet):
             "price_max",
             "category_id",
             "tag_id",
+        ]
+
+
+class SlotFilter(FilterSet):
+    consultation_id = django_filters.NumberFilter(
+        field_name="consultation__id", lookup_expr="exact"
+    )
+    start_time = django_filters.DateTimeFilter(
+        field_name="start_time", lookup_expr="gte"
+    )
+    end_time = django_filters.DateTimeFilter(field_name="end_time", lookup_expr="lte")
+
+    class Meta:
+        model = Slot
+        fields = [
+            "consultation_id",
+            "start_time",
+            "end_time",
         ]

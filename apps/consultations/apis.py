@@ -1,6 +1,7 @@
 from apps.consultations.services import ConsultationService, SlotService
 from apps.consultations.models import Consultation, Slot
-from apps.consultations.selectors import ConsultationSelectors
+from apps.consultations.selectors import ConsultationSelectors, SlotSelectors
+from apps.api.pagination import get_paginated_response
 from apps.api.permissions import IsOwner
 from apps.api.utils import inline_serializer
 from rest_framework.views import APIView
@@ -142,6 +143,7 @@ class ConsultationListApi(APIView):
             filters=filter_serializer.validated_data
         )
 
+        # todo: missing pagination call here
         output_serializer = self.OutputSerializer(consultations, many=True)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
@@ -242,3 +244,51 @@ class SlotUpdateApi(APIView):
 
         output_serializer = self.OutputSerializer(slot)
         return Response(output_serializer.data)
+
+
+class SlotDeleteApi(APIView):
+    permission_classes = (IsOwner,)
+
+    def delete(self, request: Request, slot_id: int) -> Response:
+        slot = get_object_or_404(Slot, id=slot_id)
+        consultation = slot.consultation
+
+        self.check_object_permissions(request, consultation)
+
+        SlotService(consultation=consultation).slot_delete(slot)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SlotListApi(APIView):
+    permission_classes = (AllowAny,)
+
+    class Pagination(LimitOffsetPagination):
+        default_limit = 20
+        max_limit = 100
+        page_size_query_param = "count"
+
+    class FilterSerializer(serializers.Serializer):
+        consultation_id = serializers.IntegerField(required=True)
+        start_time = serializers.DateTimeField(required=False)
+        end_time = serializers.DateTimeField(required=False)
+
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Slot
+            fields = ["id", "start_time", "end_time"]
+
+    def get(self, request: Request) -> Response:
+        filter_serializer = self.FilterSerializer(data=request.query_params)
+        filter_serializer.is_valid(raise_exception=True)
+
+        slots = SlotSelectors.slot_list(filters=filter_serializer.validated_data)
+
+        response = get_paginated_response(
+            queryset=slots,
+            pagination_class=self.Pagination,
+            serializer_class=self.OutputSerializer,
+            request=request,
+        )
+
+        return response

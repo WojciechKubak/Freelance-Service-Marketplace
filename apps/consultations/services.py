@@ -1,4 +1,4 @@
-from apps.consultations.models import Consultation, Slot
+from apps.consultations.models import Consultation, Slot, Booking
 from apps.categorization.models import Tag
 from apps.users.models import User
 from django.core.exceptions import ValidationError
@@ -67,6 +67,7 @@ class ConsultationService:
     def consultation_change_visibility(
         consultation: Consultation, is_visible: bool = False
     ) -> Consultation:
+        # todo: this will also affect slots and bookings in some way
         consultation.is_visible = is_visible
         consultation.save()
 
@@ -100,11 +101,6 @@ class SlotService:
         # todo: we might move this to __post_init__
         self._slot_validate_visibility()
 
-        if isinstance(start_time, str):
-            start_time = datetime.fromisoformat(start_time)
-        if isinstance(end_time, str):
-            end_time = datetime.fromisoformat(end_time)
-
         slot.start_time = start_time if start_time else slot.start_time
         slot.end_time = end_time if end_time else slot.end_time
 
@@ -117,6 +113,15 @@ class SlotService:
         slot.save()
 
         return slot
+
+    def slot_delete(self, slot: Slot) -> None:
+        bookings = slot.bookings.all()
+        if bookings.exists():
+            bookings.update(status=Booking.Status.CANCELLED)
+            slot.is_cancelled = True
+            slot.save()
+        else:
+            slot.delete()
 
     # todo: move error messages to constants
     def _slot_validate_visibility(self) -> None:
