@@ -5,6 +5,8 @@ from rest_framework.test import APIRequestFactory
 from typing import Any, Callable
 import pytest
 
+# todo: add "_api" for test filename
+
 
 class TestConsultationChangeVisibilityApi:
 

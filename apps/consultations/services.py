@@ -76,12 +76,18 @@ class ConsultationService:
 
 @dataclass
 class SlotService:
-    MINIMUM_SLOT_DURATION: ClassVar[timedelta] = timedelta(hours=1)
+    # todo: set this to hour unit also might export?
+    MINIMUM_MEETING_DURATION: ClassVar[timedelta] = timedelta(hours=1)
     consultation: Consultation
+
+    @staticmethod
+    def meeting_validate_duration(*, start_time: datetime, end_time: datetime) -> None:
+        if end_time - start_time < SlotService.MINIMUM_MEETING_DURATION:
+            raise ValidationError("Meeting duration must be at least 1 hour.")
 
     def slot_create(self, *, start_time: datetime, end_time: datetime) -> Slot:
         self._slot_validate_visibility()
-        self._slot_validate_duration(start_time=start_time, end_time=end_time)
+        self.meeting_validate_duration(start_time=start_time, end_time=end_time)
         self._slot_validate_overlap(start_time=start_time, end_time=end_time)
 
         slot = Slot(
@@ -104,7 +110,9 @@ class SlotService:
         slot.start_time = start_time if start_time else slot.start_time
         slot.end_time = end_time if end_time else slot.end_time
 
-        self._slot_validate_duration(start_time=slot.start_time, end_time=slot.end_time)
+        self.meeting_validate_duration(
+            start_time=slot.start_time, end_time=slot.end_time
+        )
         self._slot_validate_overlap(
             start_time=slot.start_time, end_time=slot.end_time, slot_id=slot.id
         )
@@ -128,12 +136,6 @@ class SlotService:
         if not self.consultation.is_visible:
             raise ValidationError("Consultation is not visible.")
 
-    def _slot_validate_duration(
-        self, *, start_time: datetime, end_time: datetime
-    ) -> None:
-        if end_time - start_time < SlotService.MINIMUM_SLOT_DURATION:
-            raise ValidationError("Slot duration must be at least 1 hour.")
-
     def _slot_validate_overlap(
         self, *, start_time: datetime, end_time: datetime, slot_id: int | None = None
     ) -> None:
@@ -148,3 +150,45 @@ class SlotService:
 
         if overlap_query.exists():
             raise ValidationError("Slot overlaps with existing slots.")
+
+
+@dataclass
+class BookingService:
+    slot: Slot
+
+    def booking_create(
+        self, *, user: User, start_time: datetime, end_time: datetime
+    ) -> Booking:
+        if self.slot.consultation.created_by == user:
+            raise ValidationError("Cannot book own slot.")
+
+        SlotService.meeting_validate_duration(start_time=start_time, end_time=end_time)
+        self._booking_validate_in_slot_range(start_time=start_time, end_time=end_time)
+        self._booking_validate_overlap(start_time=start_time, end_time=end_time)
+
+        booking = Booking(
+            slot=self.slot, booked_by=user, start_time=start_time, end_time=end_time
+        )
+        booking.full_clean()
+        booking.save()
+
+        return booking
+
+    def _booking_validate_in_slot_range(
+        self, *, start_time: datetime, end_time: datetime
+    ) -> None:
+        if not (self.slot.start_time <= start_time < self.slot.end_time) or not (
+            self.slot.start_time < end_time <= self.slot.end_time
+        ):
+            raise ValidationError("Booking time must be within the slot time range.")
+
+    def _booking_validate_overlap(
+        self, *, start_time: datetime, end_time: datetime
+    ) -> None:
+        # todo: might merge with _slot_validate_overlap
+        start_time_overlap = Q(start_time__lt=end_time, start_time__gte=start_time)
+        end_time_overlap = Q(end_time__gt=start_time, end_time__lte=end_time)
+        overlap_query = self.slot.bookings.filter(start_time_overlap | end_time_overlap)
+
+        if overlap_query.exists():
+            raise ValidationError("Booking overlaps with existing bookings.")

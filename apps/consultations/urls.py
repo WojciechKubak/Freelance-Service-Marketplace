@@ -12,6 +12,7 @@ from apps.consultations.apis import (
     SlotListApi,
     SlotDetailApi,
 )
+from apps.consultations.apis import BookingCreateApi
 from django.urls import path, include
 
 
@@ -37,10 +38,15 @@ slot_patterns = [
     path("<int:slot_id>/delete/", SlotDeleteApi.as_view(), name="delete"),
 ]
 
+booking_patterns = [
+    path("create/", BookingCreateApi.as_view(), name="create"),
+]
+
 urlpatterns = [
     path(
         "",
         include((consultation_patterns, "consultations"), namespace="consultations"),
     ),
     path("slots/", include((slot_patterns, "slots"), namespace="slots")),
+    path("bookings/", include((booking_patterns, "bookings"), namespace="bookings")),
 ]

@@ -1,4 +1,4 @@
-from apps.consultations.services import ConsultationService, SlotService
+from apps.consultations.services import ConsultationService, SlotService, BookingService
 from apps.consultations.models import Consultation, Slot
 from apps.consultations.selectors import ConsultationSelectors, SlotSelectors
 from apps.api.pagination import get_paginated_response
@@ -320,3 +320,52 @@ class SlotDetailApi(APIView):
         slot = SlotSelectors.slot_detail(slot_id=slot_id)
         output_serializer = self.OutputSerializer(slot)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+
+class BookingCreateApi(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    class InputSerializer(serializers.Serializer):
+        slot_id = serializers.IntegerField()
+        start_time = serializers.DateTimeField()
+        end_time = serializers.DateTimeField()
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        start_time = serializers.DateTimeField()
+        end_time = serializers.DateTimeField()
+        slot = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "start_time": serializers.DateTimeField(),
+                "end_time": serializers.DateTimeField(),
+                "consultation": inline_serializer(
+                    fields={
+                        "id": serializers.IntegerField(),
+                        "title": serializers.CharField(),
+                        "price": serializers.FloatField(),
+                        "tags": inline_serializer(
+                            fields={
+                                "id": serializers.IntegerField(),
+                                "name": serializers.CharField(),
+                            },
+                            many=True,
+                        ),
+                    }
+                ),
+            }
+        )
+
+    def post(self, request: Request) -> Response:
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        validated_data = input_serializer.validated_data
+
+        slot = get_object_or_404(Slot, id=validated_data.pop("slot_id"))
+
+        booking = BookingService(slot=slot).booking_create(
+            user=request.user, **validated_data
+        )
+
+        output_serializer = self.OutputSerializer(booking)
+        return Response(output_serializer.data, status=status.HTTP_201_CREATED)

@@ -110,11 +110,11 @@ class Migration(migrations.Migration):
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (
                     "id",
-                    models.UUIDField(
-                        default=uuid.uuid4,
-                        editable=False,
+                    models.BigAutoField(
+                        auto_created=True,
                         primary_key=True,
                         serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("start_time", models.DateTimeField()),

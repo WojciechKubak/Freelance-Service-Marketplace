@@ -14,14 +14,16 @@ class TestSlotUpdate:
         slot_service = SlotService(consultation=slot.consultation)
 
         start_time = timezone.now()
-        end_time = start_time + SlotService.MINIMUM_SLOT_DURATION - timedelta(minutes=1)
+        end_time = (
+            start_time + SlotService.MINIMUM_MEETING_DURATION - timedelta(minutes=1)
+        )
 
         with pytest.raises(ValidationError) as e:
             slot_service.slot_update(
                 slot=slot, start_time=start_time, end_time=end_time
             )
 
-        assert "['Slot duration must be at least 1 hour.']" == str(e.value)
+        assert "['Meeting duration must be at least 1 hour.']" == str(e.value)
 
     @pytest.mark.django_db
     def test_slot_update_raises_overlap_error(self) -> None:
@@ -47,7 +49,7 @@ class TestSlotUpdate:
             slot_service.slot_update(
                 slot=slot_service.consultation.slots.first(),
                 start_time=timezone.now(),
-                end_time=timezone.now() + SlotService.MINIMUM_SLOT_DURATION,
+                end_time=timezone.now() + SlotService.MINIMUM_MEETING_DURATION,
             )
 
         assert "['Consultation is not visible.']" == str(e.value)
@@ -58,7 +60,7 @@ class TestSlotUpdate:
         slot_service = SlotService(consultation=slot.consultation)
 
         new_start_time = timezone.now()
-        new_end_time = new_start_time + SlotService.MINIMUM_SLOT_DURATION
+        new_end_time = new_start_time + SlotService.MINIMUM_MEETING_DURATION
 
         result = slot_service.slot_update(
             slot=slot, start_time=new_start_time, end_time=new_end_time

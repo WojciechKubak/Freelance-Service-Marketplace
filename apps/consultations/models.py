@@ -1,9 +1,7 @@
 from apps.common.models import BaseModel
 from apps.categorization.models import Tag
 from apps.users.models import User
-from django.core.exceptions import ValidationError
 from django.db import models
-import uuid
 
 
 class Consultation(BaseModel):
@@ -50,12 +48,9 @@ class Slot(BaseModel):
 class Booking(BaseModel):
 
     class Status(models.TextChoices):
-        PENDING = "pending", "Pending"
         CONFIRMED = "confirmed", "Confirmed"
         CANCELLED = "cancelled", "Cancelled"
         COMPLETED = "completed", "Completed"
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
@@ -64,27 +59,13 @@ class Booking(BaseModel):
         Slot,
         on_delete=models.CASCADE,
         related_name="bookings",
-        help_text="OTM relationship - slot is available after cancellation",
+        help_text="There might be many bookings for single slot",
     )
     status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.PENDING
+        max_length=20, choices=Status.choices, default=Status.CONFIRMED
     )
 
     booked_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    class Meta:
-        unique_together = ("slot", "booked_by")
-
     def __str__(self) -> str:
         return f"Booking {self.id}"
-
-    def clean(self) -> None:
-        super().clean()
-        if not (self.slot.start_time <= self.start_time < self.slot.end_time):
-            raise ValidationError(
-                "Booking start time must be within the slot time range."
-            )
-        if not (self.slot.start_time < self.end_time <= self.slot.end_time):
-            raise ValidationError(
-                "Booking end time must be within the slot time range."
-            )

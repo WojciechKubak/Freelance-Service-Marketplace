@@ -1,5 +1,6 @@
-from apps.consultations.models import Consultation, Slot
+from apps.consultations.models import Consultation, Slot, Booking
 from apps.consultations.filters import ConsultationFilter, SlotFilter
+from apps.users.models import User
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 from datetime import datetime
@@ -40,3 +41,11 @@ class SlotSelectors:
         return get_object_or_404(
             Slot, id=slot_id, is_cancelled=False, consultation__is_visible=True
         )
+
+
+@dataclass
+class BookingSelectors:
+
+    @staticmethod
+    def booking_list(*, user: User) -> QuerySet[Booking]:
+        return Booking.objects.filter(booked_by=user)

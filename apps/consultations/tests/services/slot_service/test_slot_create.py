@@ -14,12 +14,14 @@ class TestSlotCreate:
         slot_service = SlotService(consultation=consultation)
 
         start_time = timezone.now()
-        end_time = start_time + SlotService.MINIMUM_SLOT_DURATION - timedelta(minutes=1)
+        end_time = (
+            start_time + SlotService.MINIMUM_MEETING_DURATION - timedelta(minutes=1)
+        )
 
         with pytest.raises(ValidationError) as e:
             slot_service.slot_create(start_time=start_time, end_time=end_time)
 
-        assert "['Slot duration must be at least 1 hour.']" == str(e.value)
+        assert "['Meeting duration must be at least 1 hour.']" == str(e.value)
 
     @pytest.mark.django_db
     def test_slot_create_raises_overlap_error(self) -> None:
@@ -49,7 +51,7 @@ class TestSlotCreate:
         slot_service = SlotService(consultation=consultation)
 
         start_time = timezone.now()
-        end_time = start_time + SlotService.MINIMUM_SLOT_DURATION
+        end_time = start_time + SlotService.MINIMUM_MEETING_DURATION
 
         result = slot_service.slot_create(start_time=start_time, end_time=end_time)
 

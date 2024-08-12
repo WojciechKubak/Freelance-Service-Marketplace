@@ -37,7 +37,9 @@ class TestSlotCreateApi:
         response = SlotCreateApi.as_view()(request)
 
         expected_response_data = {
-            "detail": {"non_field_errors": ["Slot duration must be at least 1 hour."]}
+            "detail": {
+                "non_field_errors": ["Meeting duration must be at least 1 hour."]
+            }
         }
 
         assert 400 == response.status_code
