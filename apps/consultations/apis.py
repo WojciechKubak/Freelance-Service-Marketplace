@@ -1,6 +1,10 @@
 from apps.consultations.services import ConsultationService, SlotService, BookingService
 from apps.consultations.models import Consultation, Slot
-from apps.consultations.selectors import ConsultationSelectors, SlotSelectors
+from apps.consultations.selectors import (
+    ConsultationSelectors,
+    SlotSelectors,
+    BookingSelectors,
+)
 from apps.api.pagination import get_paginated_response
 from apps.api.permissions import IsOwner
 from apps.api.utils import inline_serializer
@@ -369,3 +373,35 @@ class BookingCreateApi(APIView):
 
         output_serializer = self.OutputSerializer(booking)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class BookingListApi(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        start_time = serializers.DateTimeField()
+        end_time = serializers.DateTimeField()
+        slot = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "consultation": inline_serializer(
+                    fields={
+                        "id": serializers.IntegerField(),
+                        "title": serializers.CharField(),
+                        "created_by": inline_serializer(
+                            fields={
+                                "id": serializers.CharField(),
+                                "email": serializers.CharField(),
+                            }
+                        ),
+                    }
+                ),
+            }
+        )
+
+    def get(self, request: Request) -> Response:
+        bookings = BookingSelectors.booking_list(user=request.user)
+
+        output_serializer = self.OutputSerializer(bookings, many=True)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)

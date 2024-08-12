@@ -12,7 +12,10 @@ from apps.consultations.apis import (
     SlotListApi,
     SlotDetailApi,
 )
-from apps.consultations.apis import BookingCreateApi
+from apps.consultations.apis import (
+    BookingCreateApi,
+    BookingListApi,
+)
 from django.urls import path, include
 
 
@@ -40,6 +43,7 @@ slot_patterns = [
 
 booking_patterns = [
     path("create/", BookingCreateApi.as_view(), name="create"),
+    path("", BookingListApi.as_view(), name="list"),
 ]
 
 urlpatterns = [
