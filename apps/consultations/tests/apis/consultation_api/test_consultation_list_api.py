@@ -1,4 +1,4 @@
-from apps.consultations.apis import ConsultationListApi
+from apps.consultations.apis.consultation_api import ConsultationListApi
 from apps.consultations.tests.factories import ConsultationFactory
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict

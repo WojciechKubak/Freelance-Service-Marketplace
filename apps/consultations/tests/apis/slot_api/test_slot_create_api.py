@@ -1,7 +1,6 @@
-from apps.users.tests.factories import UserFactory
 from apps.consultations.tests.factories import SlotFactory
 from apps.consultations.tests.factories import ConsultationFactory
-from apps.consultations.apis import SlotUpdateApi
+from apps.consultations.apis.slot_api import SlotCreateApi
 from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
@@ -9,49 +8,33 @@ from typing import Callable, Any
 import pytest
 
 
-class TestSlotUpdateApi:
+class TestSlotCreateApi:
+    url: str = "/api/consultations/slots/"
     simple_field_data: dict[str, str] = {
         "start_time": "2021-01-01T00:00:00Z",
         "end_time": "2021-01-01T01:00:00Z",
     }
 
     @pytest.mark.django_db
-    def test_api_response_on_slot_not_found(
+    def test_api_response_raises_on_duration_error(
         self,
         auth_request: Callable[
             [User, str, str, dict[str, Any] | None], APIRequestFactory
         ],
     ) -> None:
+        consultation = ConsultationFactory()
         request = auth_request(
-            UserFactory(),
-            "PUT",
-            "/api/consultations/slots/999/update/",
-            self.simple_field_data,
-        )
-
-        response = SlotUpdateApi.as_view()(request, 999)
-
-        assert 404 == response.status_code
-
-    @pytest.mark.django_db
-    def test_api_response_on_duration_error(
-        self,
-        auth_request: Callable[
-            [User, str, str, dict[str, Any] | None], APIRequestFactory
-        ],
-    ) -> None:
-        slot = SlotFactory()
-        request = auth_request(
-            slot.consultation.created_by,
-            "PUT",
-            f"/api/consultations/slots/{slot.id}/update/",
+            consultation.created_by,
+            "POST",
+            self.url,
             {
+                "consultation_id": consultation.id,
                 "start_time": "2021-01-01T00:00:00Z",
                 "end_time": "2021-01-01T00:30:00Z",
             },
         )
 
-        response = SlotUpdateApi.as_view()(request, slot.id)
+        response = SlotCreateApi.as_view()(request)
 
         expected_response_data = {
             "detail": {
@@ -70,21 +53,20 @@ class TestSlotUpdateApi:
         ],
     ) -> None:
         pass
-        consultation = ConsultationFactory()
-        slot1, slot2 = SlotFactory.create_batch(2, consultation=consultation)
+        slot = SlotFactory()
 
         request = auth_request(
-            consultation.created_by,
-            "PUT",
-            f"/api/consultations/slots/{slot1.id}/update/",
+            slot.consultation.created_by,
+            "POST",
+            self.url,
             {
-                "consultation_id": consultation.id,
-                "start_time": slot2.start_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "end_time": slot2.end_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "consultation_id": slot.consultation.id,
+                "start_time": slot.start_time,
+                "end_time": slot.end_time,
             },
         )
 
-        response = SlotUpdateApi.as_view()(request, slot1.id)
+        response = SlotCreateApi.as_view()(request)
 
         expected_response_data = {
             "detail": {"non_field_errors": ["Slot overlaps with existing slots."]}
@@ -101,16 +83,15 @@ class TestSlotUpdateApi:
         ],
     ) -> None:
         consultation = ConsultationFactory(is_visible=False)
-        slot = SlotFactory(consultation=consultation)
 
         request = auth_request(
-            slot.consultation.created_by,
-            "PUT",
-            f"/api/consultations/slots/{slot.id}/update/",
+            consultation.created_by,
+            "POST",
+            self.url,
             {"consultation_id": consultation.id, **self.simple_field_data},
         )
 
-        response = SlotUpdateApi.as_view()(request, slot.id)
+        response = SlotCreateApi.as_view()(request)
 
         expected_response_data = {
             "detail": {"non_field_errors": ["Consultation is not visible."]}
@@ -120,27 +101,41 @@ class TestSlotUpdateApi:
         assert expected_response_data == response.data
 
     @pytest.mark.django_db
-    def test_api_response_on_successful_slot_update(
+    def test_api_response_on_successful_slot_creation(
         self,
         auth_request: Callable[
             [User, str, str, dict[str, Any] | None], APIRequestFactory
         ],
     ) -> None:
-        slot = SlotFactory()
+        consultation = ConsultationFactory(is_visible=True)
 
         request = auth_request(
-            slot.consultation.created_by,
-            "PUT",
-            f"/api/consultations/slots/{slot.id}/update/",
+            consultation.created_by,
+            "POST",
+            self.url,
             {
-                "id": slot.id,
+                "consultation_id": consultation.id,
                 **self.simple_field_data,
             },
         )
 
-        response = SlotUpdateApi.as_view()(request, slot.id)
+        response = SlotCreateApi.as_view()(request)
 
-        expected_response_data = OrderedDict({"id": 1, **self.simple_field_data})
+        expected_response_data = OrderedDict(
+            {
+                "id": 1,
+                **self.simple_field_data,
+                "consultation": {
+                    "id": consultation.id,
+                    "title": consultation.title,
+                    "price": float(consultation.price),
+                    "tags": [
+                        {"id": tag.id, "name": tag.name}
+                        for tag in consultation.tags.all()
+                    ],
+                },
+            }
+        )
 
-        assert 200 == response.status_code
+        assert 201 == response.status_code
         assert expected_response_data == response.data

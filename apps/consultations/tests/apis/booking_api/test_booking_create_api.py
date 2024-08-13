@@ -1,7 +1,7 @@
 from apps.consultations.tests.factories import SlotFactory, BookingFactory, UserFactory
 from apps.consultations.services import SlotService
 from apps.users.models import User
-from apps.consultations.apis import BookingCreateApi
+from apps.consultations.apis.booking_api import BookingCreateApi
 from rest_framework.test import APIRequestFactory
 from django.utils import timezone
 from typing import Callable, Any

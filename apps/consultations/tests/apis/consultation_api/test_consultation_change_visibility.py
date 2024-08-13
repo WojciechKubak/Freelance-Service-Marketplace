@@ -1,5 +1,5 @@
 from apps.consultations.tests.factories import ConsultationFactory
-from apps.consultations.apis import ConsultationChangeVisibilityApi
+from apps.consultations.apis.consultation_api import ConsultationChangeVisibilityApi
 from apps.users.tests.factories import UserFactory, User
 from rest_framework.test import APIRequestFactory
 from typing import Any, Callable

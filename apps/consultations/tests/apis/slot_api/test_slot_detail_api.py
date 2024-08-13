@@ -1,5 +1,5 @@
 from apps.consultations.tests.factories import SlotFactory
-from apps.consultations.apis import SlotDetailApi
+from apps.consultations.apis.slot_api import SlotDetailApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 import pytest
