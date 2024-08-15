@@ -167,3 +167,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 from config.settings.email_sending import *  # noqa
+from config.settings.zoom_meetings import *  # noqa
