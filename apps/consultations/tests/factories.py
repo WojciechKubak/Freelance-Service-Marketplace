@@ -110,8 +110,8 @@ class BookingFactory(factory.django.DjangoModelFactory):
         model = Booking
 
     slot = factory.SubFactory(SlotFactory)
-
     status = Booking.Status.CONFIRMED
+    url = factory.Faker("url")
 
     booked_by = factory.SubFactory(UserFactory)
 

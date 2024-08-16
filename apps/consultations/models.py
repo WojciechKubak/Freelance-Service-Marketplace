@@ -64,6 +64,7 @@ class Booking(BaseModel):
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.CONFIRMED
     )
+    url = models.URLField()
 
     booked_by = models.ForeignKey(User, on_delete=models.CASCADE)
 

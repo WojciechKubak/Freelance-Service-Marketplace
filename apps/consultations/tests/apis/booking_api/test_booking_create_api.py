@@ -144,6 +144,7 @@ class TestBookingCreateApi:
         auth_request: Callable[
             [User, str, str, dict[str, Any] | None], APIRequestFactory
         ],
+        mock_create_meeting,
     ) -> None:
         user = UserFactory()
         slot = SlotFactory(generate_bookings=False)
@@ -168,6 +169,7 @@ class TestBookingCreateApi:
                 "end_time": (slot.start_time + SlotService.MINIMUM_MEETING_DURATION)
                 .isoformat()
                 .replace("+00:00", "Z"),
+                "url": mock_create_meeting.return_value.join_url,
                 "slot": OrderedDict(
                     {
                         "id": slot.id,

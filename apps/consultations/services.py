@@ -1,4 +1,5 @@
 from apps.consultations.models import Consultation, Slot, Booking
+from apps.integrations.zoom.client import create_meeting
 from apps.categorization.models import Tag
 from apps.users.models import User
 from django.core.exceptions import ValidationError
@@ -166,8 +167,18 @@ class BookingService:
         self._booking_validate_in_slot_range(start_time=start_time, end_time=end_time)
         self._booking_validate_overlap(start_time=start_time, end_time=end_time)
 
+        meeting_details = create_meeting(
+            topic=self.slot.consultation.title,
+            start_time=start_time,
+            duration=(end_time - start_time).seconds // 60,
+        )
+
         booking = Booking(
-            slot=self.slot, booked_by=user, start_time=start_time, end_time=end_time
+            slot=self.slot,
+            booked_by=user,
+            start_time=start_time,
+            end_time=end_time,
+            url=meeting_details.join_url,
         )
         booking.full_clean()
         booking.save()

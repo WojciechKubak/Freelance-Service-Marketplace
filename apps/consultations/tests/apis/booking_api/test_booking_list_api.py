@@ -9,7 +9,8 @@ import pytest
 
 @pytest.mark.django_db
 def test_api_response_on_bookings_found(
-    auth_request: Callable[[User, str, str, dict[str, Any] | None], APIRequestFactory]
+    auth_request: Callable[[User, str, str, dict[str, Any] | None], APIRequestFactory],
+    mock_create_meeting,
 ) -> None:
     user = UserFactory()
     bookings = BookingFactory.create_batch(2, booked_by=user)
@@ -24,6 +25,7 @@ def test_api_response_on_bookings_found(
                 "id": booking.id,
                 "start_time": booking.start_time.isoformat().replace("+00:00", "Z"),
                 "end_time": booking.end_time.isoformat().replace("+00:00", "Z"),
+                "url": booking.url,
                 "slot": {
                     "id": booking.slot.id,
                     "consultation": {

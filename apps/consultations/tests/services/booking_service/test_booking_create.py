@@ -101,3 +101,30 @@ class TestBookingCreate:
         )
 
         assert slot.bookings.first() == result
+
+    @pytest.mark.django_db
+    def test_booking_create_calls_create_meeting_function_with_expected_arguments(
+        self, mock_create_meeting
+    ) -> None:
+        slot = SlotFactory(
+            bookings=[],
+            start_time=timezone.now(),
+            end_time=timezone.now() + timezone.timedelta(hours=3),
+        )
+        user = UserFactory()
+        booking_service = BookingService(slot=slot)
+
+        booking_service.booking_create(
+            user=user,
+            start_time=slot.start_time,
+            end_time=slot.start_time + SlotService.MINIMUM_MEETING_DURATION,
+        )
+
+        mock_create_meeting.assert_called_once_with(
+            topic=slot.consultation.title,
+            start_time=slot.start_time,
+            duration=(
+                slot.start_time + SlotService.MINIMUM_MEETING_DURATION - slot.start_time
+            ).seconds
+            // 60,
+        )

@@ -23,6 +23,7 @@ class BookingCreateApi(APIView):
         id = serializers.IntegerField()
         start_time = serializers.DateTimeField()
         end_time = serializers.DateTimeField()
+        url = serializers.URLField()
         slot = inline_serializer(
             fields={
                 "id": serializers.IntegerField(),
@@ -67,6 +68,7 @@ class BookingListApi(APIView):
         id = serializers.IntegerField()
         start_time = serializers.DateTimeField()
         end_time = serializers.DateTimeField()
+        url = serializers.URLField()
         slot = inline_serializer(
             fields={
                 "id": serializers.IntegerField(),

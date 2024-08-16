@@ -1,7 +1,8 @@
 from apps.users.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.test import APIRequestFactory
-from typing import Callable, Any
+from typing import Callable, Generator, Any
+from unittest.mock import Mock, patch
 import pytest
 
 
@@ -20,3 +21,11 @@ def auth_request() -> (
         return request
 
     return _make_request
+
+
+@pytest.fixture(scope="function", autouse=True)
+def mock_create_meeting() -> Generator[Mock, None, None]:
+    with patch("apps.consultations.services.create_meeting") as mock:
+        instance = mock.return_value
+        instance.join_url = "https://example.com/join"
+        yield mock
