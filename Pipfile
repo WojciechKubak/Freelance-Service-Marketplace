@@ -12,6 +12,7 @@ whitenoise = "*"
 psycopg2 = "*"
 djangorestframework-simplejwt = "*"
 django-filter = "*"
+httpx = "*"
 
 [dev-packages]
 flake8 = "*"
