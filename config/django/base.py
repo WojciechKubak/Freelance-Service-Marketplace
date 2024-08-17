@@ -42,6 +42,7 @@ LOCAL_APPS = [
     "apps.categorization.apps.CategorizationConfig",
     "apps.consultations.apps.ConsultationsConfig",
     "apps.integrations.apps.IntegrationsConfig",
+    "apps.storages.apps.StoragesConfig",
 ]
 
 THIRD_PARTY_APPS = [
