@@ -13,6 +13,7 @@ psycopg2 = "*"
 djangorestframework-simplejwt = "*"
 django-filter = "*"
 httpx = "*"
+boto3 = "*"
 
 [dev-packages]
 flake8 = "*"
