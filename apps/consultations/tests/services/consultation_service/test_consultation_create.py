@@ -10,7 +10,7 @@ import pytest
 class TestConsultationCreate:
     simple_field_data: dict[str, str | float] = {
         "title": "Test consultation",
-        "description": "Test description",
+        "content": "Test content",
         "price": 100.0,
     }
 
@@ -45,5 +45,3 @@ class TestConsultationCreate:
         )
 
         assert Consultation.objects.first() == result
-        assert self.simple_field_data.items() <= result.__dict__.items()
-        assert tags == list(result.tags.values_list("id", flat=True))

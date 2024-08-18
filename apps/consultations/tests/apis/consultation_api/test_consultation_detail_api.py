@@ -18,7 +18,7 @@ class TestConsultationDetailApi:
         assert {"detail": "Not found."} == response.data
 
     @pytest.mark.django_db
-    def test_api_response_on_success(self) -> None:
+    def test_api_response_on_success(self, mock_local_file_get_content) -> None:
         consultation = ConsultationFactory()
         request = self.factory.get(f"{self.url}{consultation.id}/")
 
@@ -30,7 +30,7 @@ class TestConsultationDetailApi:
             {
                 "id": consultation.id,
                 "title": consultation.title,
-                "description": consultation.description,
+                "content": mock_local_file_get_content.return_value,
                 "price": float(consultation.price),
                 "tags": [
                     OrderedDict({"id": tag.id, "name": tag.name})

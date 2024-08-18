@@ -10,7 +10,7 @@ import pytest
 class TestConsultationCreateApi:
     simple_field_data: dict[str, str] = {
         "title": "Consultation 1",
-        "description": "Description 1",
+        "content": "content 1",
         "price": 999.0,
     }
 
@@ -57,7 +57,8 @@ class TestConsultationCreateApi:
         expected_response_data = OrderedDict(
             {
                 "id": 1,
-                **self.simple_field_data,
+                "title": self.simple_field_data["title"],
+                "price": self.simple_field_data["price"],
                 "tags": [
                     OrderedDict(
                         {

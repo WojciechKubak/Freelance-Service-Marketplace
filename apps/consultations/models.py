@@ -6,7 +6,7 @@ from django.db import models
 
 class Consultation(BaseModel):
     title = models.CharField(max_length=50)
-    description = models.TextField(null=True)
+    content_path = models.CharField(max_length=255, null=True)
     price = models.DecimalField(max_digits=5, decimal_places=2)
 
     tags = models.ManyToManyField(Tag)

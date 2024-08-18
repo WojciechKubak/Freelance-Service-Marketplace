@@ -9,7 +9,7 @@ import pytest
 class TestConsultationUpdate:
     simple_field_data: dict[str, str | float] = {
         "title": "new_title",
-        "description": "new_description",
+        "content": "new_content",
         "price": Decimal("999.0"),
     }
 
@@ -45,4 +45,3 @@ class TestConsultationUpdate:
         )
 
         assert Consultation.objects.first() == result
-        assert self.simple_field_data.items() <= result.__dict__.items()

@@ -29,3 +29,17 @@ def mock_create_meeting() -> Generator[Mock, None, None]:
         instance = mock.return_value
         instance.join_url = "https://example.com/join"
         yield mock
+
+
+@pytest.fixture(scope="function", autouse=True)
+def mock_text_to_file_local_upload() -> Generator[Mock, None, None]:
+    with patch("apps.consultations.services.text_to_file_local_upload") as mock:
+        mock.return_value = None
+        yield mock
+
+
+@pytest.fixture(scope="function", autouse=True)
+def mock_local_file_get_content() -> Generator[Mock, None, None]:
+    with patch("apps.consultations.selectors.local_file_get_content") as mock:
+        mock.return_value = "content"
+        yield mock

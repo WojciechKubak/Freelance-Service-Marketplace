@@ -7,6 +7,7 @@ from django.db.models import Model
 from django.utils import timezone
 from datetime import datetime, timedelta
 from typing import Any
+import uuid
 import random
 import factory
 
@@ -31,7 +32,7 @@ class ConsultationFactory(DjangoModelFactory):
         skip_postgeneration_save = True
 
     title = factory.Faker("sentence", nb_words=4)
-    description = factory.Faker("paragraph")
+    content_path = uuid.uuid4().hex
     price = factory.Faker("pydecimal", left_digits=3, right_digits=2, positive=True)
 
     created_by = factory.SubFactory(UserFactory)

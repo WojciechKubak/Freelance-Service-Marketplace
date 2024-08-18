@@ -1,8 +1,12 @@
 from apps.consultations.models import Consultation, Slot, Booking
+from apps.storages.enums import StorageType
+from apps.consultations.utils import file_name_generate, text_to_file_local_upload
 from apps.integrations.zoom.client import create_meeting
+from apps.integrations.aws.client import text_to_file_upload
 from apps.categorization.models import Tag
 from apps.users.models import User
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.db.models import Q
 from datetime import datetime, timedelta
 from typing import ClassVar
@@ -16,7 +20,7 @@ class ConsultationService:
     def consultation_create(
         user: User,
         title: str,
-        description: str,
+        content: str,
         price: float,
         tags: list[int],
     ) -> Consultation:
@@ -25,10 +29,16 @@ class ConsultationService:
         if existing_tags.count() != len(tags):
             raise ValidationError("One or more tags do not exist.")
 
-        consultation = Consultation(
-            title=title, description=description, price=price, created_by=user
-        )
+        file_name = file_name_generate()
 
+        if settings.STORAGE_TYPE_STRATEGY == StorageType.S3:
+            text_to_file_upload(file_name=file_name, content=content)
+        else:
+            text_to_file_local_upload(file_name=file_name, content=content)
+
+        consultation = Consultation(
+            title=title, price=price, created_by=user, content_path=file_name
+        )
         consultation.full_clean()
         consultation.save()
 
@@ -40,7 +50,7 @@ class ConsultationService:
     def consultation_update(
         consultation: Consultation,
         title: str | None = None,
-        description: str | None = None,
+        content: str | None = None,
         price: float | None = None,
         tags: list[int] | None = None,
     ) -> Consultation:
@@ -53,10 +63,17 @@ class ConsultationService:
             consultation.tags.clear()
             consultation.tags.add(*existing_tags)
 
+        if content:
+            if settings.STORAGE_TYPE_STRATEGY == StorageType.S3:
+                text_to_file_upload(
+                    file_name=consultation.content_path, content=content
+                )
+            else:
+                text_to_file_local_upload(
+                    file_name=consultation.content_path, content=content
+                )
+
         consultation.title = title if title else consultation.title
-        consultation.description = (
-            description if description else consultation.description
-        )
         consultation.price = price if price else consultation.price
 
         consultation.full_clean()

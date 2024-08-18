@@ -77,14 +77,16 @@ def s3_get_client() -> boto3.client:
     )
 
 
-def text_to_file_upload(*, file_name: str, content: str) -> PutObjectResponse:
+def text_to_file_upload(
+    *, file_name: str, content: str, extension: str = ".txt"
+) -> PutObjectResponse:
     s3 = s3_get_client()
     credentials = s3_get_credentials()
 
     try:
         response = s3.put_object(
             Bucket=credentials.bucket_name,
-            Key=file_name,
+            Key=f"{file_name}{extension}",
             Body=content,
             ContentType="text/plain",
         )

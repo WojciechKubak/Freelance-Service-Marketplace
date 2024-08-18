@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from config.env import BASE_DIR, APP_DIR, env_to_bool
+from django.conf import settings
 from dotenv import load_dotenv
 import os
 
@@ -156,8 +157,11 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": settings.MEDIA_ROOT,
+        },
     },
 }
 
@@ -169,3 +173,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 from config.settings.email_sending import *  # noqa
 from config.settings.zoom_meetings import *  # noqa
+from config.settings.storages import *  # noqa

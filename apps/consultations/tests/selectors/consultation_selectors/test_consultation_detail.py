@@ -13,9 +13,21 @@ class TestConsultationDetail:
             ConsultationSelectors.consultation_detail(consultation_id=consultation.id)
 
     @pytest.mark.django_db
-    def test_consultation_detail_returns_consultation_obj(self) -> None:
+    def test_consultation_detail_returns_consultation_with_content(
+        self, mock_local_file_get_content
+    ) -> None:
         consultation = ConsultationFactory(is_visible=True)
+
         result = ConsultationSelectors.consultation_detail(
             consultation_id=consultation.id
         )
-        assert consultation == result
+
+        expected_result = {
+            "id": consultation.id,
+            "title": consultation.title,
+            "content": mock_local_file_get_content.return_value,
+            "price": consultation.price,
+            "tags": consultation.tags,
+        }
+
+        assert expected_result == result

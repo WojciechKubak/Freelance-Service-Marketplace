@@ -18,7 +18,7 @@ class ConsultationCreateApi(APIView):
 
     class InputSerializer(serializers.Serializer):
         title = serializers.CharField()
-        description = serializers.CharField()
+        content = serializers.CharField()
         price = serializers.FloatField()
         tags = serializers.ListField(
             child=serializers.IntegerField(), min_length=1, max_length=5
@@ -27,7 +27,6 @@ class ConsultationCreateApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         title = serializers.CharField()
-        description = serializers.CharField()
         price = serializers.FloatField()
         tags = inline_serializer(
             fields={
@@ -54,14 +53,13 @@ class ConsultationUpdateApi(APIView):
 
     class InputSerializer(serializers.Serializer):
         title = serializers.CharField(required=False)
-        description = serializers.CharField(required=False)
+        content = serializers.CharField(required=False)
         price = serializers.FloatField(required=False)
         tags = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         title = serializers.CharField()
-        description = serializers.CharField()
         price = serializers.FloatField()
         tags = inline_serializer(
             fields={
@@ -153,7 +151,7 @@ class ConsultationDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         title = serializers.CharField()
-        description = serializers.CharField()
+        content = serializers.CharField()
         price = serializers.FloatField()
         tags = inline_serializer(
             fields={

@@ -38,7 +38,7 @@ def test_text_to_file_upload_success(mock_boto3_client, example_response) -> Non
     mock_s3.put_object.return_value = example_response
     mock_boto3_client.return_value = mock_s3
 
-    result = text_to_file_upload(file_name="test_file.txt", content="test content")
+    result = text_to_file_upload(file_name="test_file", content="test content")
 
     mock_s3.put_object.assert_called_once_with(
         Bucket="test_bucket_name",

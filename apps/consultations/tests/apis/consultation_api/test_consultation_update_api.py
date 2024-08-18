@@ -12,7 +12,7 @@ import pytest
 class TestConsultationUpdateApi:
     simple_field_data: dict[str, str] = {
         "title": "Consultation 1",
-        "description": "Description 1",
+        "content": "content 1",
         "price": Decimal("999.0"),
     }
 
@@ -104,7 +104,6 @@ class TestConsultationUpdateApi:
             {
                 "id": consultation.id,
                 "title": consultation.title,
-                "description": consultation.description,
                 "price": float(consultation.price),
                 "tags": [
                     OrderedDict(
@@ -143,7 +142,8 @@ class TestConsultationUpdateApi:
         expected_response_data = OrderedDict(
             {
                 "id": consultation.id,
-                **self.simple_field_data,
+                "title": self.simple_field_data["title"],
+                "price": float(self.simple_field_data["price"]),
                 "tags": [
                     OrderedDict(
                         {
@@ -183,7 +183,6 @@ class TestConsultationUpdateApi:
             {
                 "id": consultation.id,
                 "title": consultation.title,
-                "description": consultation.description,
                 "price": float(consultation.price),
                 "tags": [
                     OrderedDict(
