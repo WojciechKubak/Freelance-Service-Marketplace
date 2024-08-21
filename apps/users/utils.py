@@ -1,5 +1,7 @@
 from django.core.signing import TimestampSigner
 from django.core.signing import BadSignature, SignatureExpired
+
+# todo: replace with timezone.timedelta
 from datetime import timedelta
 
 
