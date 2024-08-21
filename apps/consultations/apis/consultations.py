@@ -3,7 +3,10 @@ from apps.consultations.services.consultations import (
     consultation_create,
     consultation_update,
 )
-from apps.consultations.selectors import ConsultationSelectors
+from apps.consultations.selectors.consultations import (
+    consultation_list,
+    consultation_detail,
+)
 from apps.consultations.models import Consultation
 from apps.api.permissions import ResourceOwner
 from apps.api.utils import inline_serializer
@@ -141,9 +144,7 @@ class ConsultationListApi(APIView):
         filter_serializer = self.FilterSerializer(data=request.query_params)
         filter_serializer.is_valid(raise_exception=True)
 
-        consultations = ConsultationSelectors.consultation_list(
-            filters=filter_serializer.validated_data
-        )
+        consultations = consultation_list(filters=filter_serializer.validated_data)
 
         # todo: missing pagination call here
         output_serializer = self.OutputSerializer(consultations, many=True)
@@ -167,9 +168,7 @@ class ConsultationDetailApi(APIView):
         )
 
     def get(self, _: Request, consultation_id: int) -> Response:
-        consultation = ConsultationSelectors.consultation_detail(
-            consultation_id=consultation_id
-        )
+        consultation = consultation_detail(consultation_id=consultation_id)
 
         output_serializer = self.OutputSerializer(consultation)
         return Response(output_serializer.data, status=status.HTTP_200_OK)

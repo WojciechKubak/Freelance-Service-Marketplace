@@ -1,6 +1,6 @@
 from apps.consultations.tests.factories import ConsultationFactory
 from apps.categorization.tests.factories import CategoryFactory, TagFactory
-from apps.consultations.selectors import ConsultationSelectors
+from apps.consultations.selectors.consultations import consultation_list
 import pytest
 
 
@@ -11,7 +11,7 @@ class TestConsultationList:
         category1 = ConsultationFactory(is_visible=True)
         _ = ConsultationFactory(is_visible=False)
 
-        result = ConsultationSelectors.consultation_list()
+        result = consultation_list()
 
         assert [category1] == list(result)
 
@@ -22,9 +22,7 @@ class TestConsultationList:
         category2 = CategoryFactory()
         _ = ConsultationFactory(tags=[TagFactory(category=category2)])
 
-        result = ConsultationSelectors.consultation_list(
-            filters={"category_id": category1.id}
-        )
+        result = consultation_list(filters={"category_id": category1.id})
 
         assert [consultation1] == list(result)
 
@@ -35,7 +33,7 @@ class TestConsultationList:
         tag2 = TagFactory()
         _ = ConsultationFactory(tags=[tag2])
 
-        result = ConsultationSelectors.consultation_list(filters={"tag_id": tag1.id})
+        result = consultation_list(filters={"tag_id": tag1.id})
 
         assert [consultation1] == list(result)
 
@@ -44,12 +42,8 @@ class TestConsultationList:
         consultation1 = ConsultationFactory(price=350)
         consultation2 = ConsultationFactory(price=150)
 
-        result_price_min = ConsultationSelectors.consultation_list(
-            filters={"price_min": 330}
-        )
-        result_price_max = ConsultationSelectors.consultation_list(
-            filters={"price_max": 200}
-        )
+        result_price_min = consultation_list(filters={"price_min": 330})
+        result_price_max = consultation_list(filters={"price_max": 200})
 
         assert [consultation1] == list(result_price_min)
         assert [consultation2] == list(result_price_max)
@@ -69,7 +63,7 @@ class TestConsultationList:
         ConsultationFactory(price=150)
         ConsultationFactory(price=350)
 
-        result = ConsultationSelectors.consultation_list(
+        result = consultation_list(
             filters={"price_min": price_min, "price_max": price_max}
         )
 

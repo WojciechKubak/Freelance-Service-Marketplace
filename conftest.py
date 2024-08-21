@@ -42,6 +42,8 @@ def mock_text_to_file_local_upload() -> Generator[Mock, None, None]:
 
 @pytest.fixture(scope="function", autouse=True)
 def mock_local_file_get_content() -> Generator[Mock, None, None]:
-    with patch("apps.consultations.selectors.local_file_get_content") as mock:
+    with patch(
+        "apps.consultations.selectors.consultations.local_file_get_content"
+    ) as mock:
         mock.return_value = "content"
         yield mock

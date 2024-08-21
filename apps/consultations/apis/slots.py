@@ -1,6 +1,6 @@
 from apps.consultations.services.slots import SlotService
 from apps.consultations.models import Consultation, Slot
-from apps.consultations.selectors import SlotSelectors
+from apps.consultations.selectors.slots import slot_detail, slot_list
 from apps.api.pagination import get_paginated_response
 from apps.api.permissions import ResourceOwner
 from apps.api.utils import inline_serializer
@@ -123,7 +123,7 @@ class SlotListApi(APIView):
         filter_serializer = self.FilterSerializer(data=request.query_params)
         filter_serializer.is_valid(raise_exception=True)
 
-        slots = SlotSelectors.slot_list(filters=filter_serializer.validated_data)
+        slots = slot_list(filters=filter_serializer.validated_data)
 
         response = get_paginated_response(
             queryset=slots,
@@ -158,6 +158,6 @@ class SlotDetailApi(APIView):
         )
 
     def get(self, _: Request, slot_id: int) -> Response:
-        slot = SlotSelectors.slot_detail(slot_id=slot_id)
+        slot = slot_detail(slot_id=slot_id)
         output_serializer = self.OutputSerializer(slot)
         return Response(output_serializer.data, status=status.HTTP_200_OK)

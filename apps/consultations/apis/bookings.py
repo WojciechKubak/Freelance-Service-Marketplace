@@ -1,6 +1,6 @@
 from apps.consultations.services.bookings import BookingService
 from apps.consultations.models import Slot
-from apps.consultations.selectors import BookingSelectors
+from apps.consultations.selectors.bookings import booking_list
 from apps.api.utils import inline_serializer
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -88,7 +88,7 @@ class BookingListApi(APIView):
         )
 
     def get(self, request: Request) -> Response:
-        bookings = BookingSelectors.booking_list(user=request.user)
+        bookings = booking_list(user=request.user)
 
         output_serializer = self.OutputSerializer(bookings, many=True)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
