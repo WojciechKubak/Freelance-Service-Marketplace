@@ -9,6 +9,7 @@ from django.conf import settings
 
 
 def consultation_create(
+    *,
     user: User,
     title: str,
     content: str,
@@ -37,6 +38,7 @@ def consultation_create(
 
 
 def consultation_update(
+    *,
     consultation: Consultation,
     title: str | None = None,
     content: str | None = None,
@@ -70,7 +72,7 @@ def consultation_update(
 
 
 def consultation_change_visibility(
-    consultation: Consultation, is_visible: bool = False
+    *, consultation: Consultation, is_visible: bool = False
 ) -> Consultation:
     # todo: this will also affect slots and bookings in some way
     consultation.is_visible = is_visible

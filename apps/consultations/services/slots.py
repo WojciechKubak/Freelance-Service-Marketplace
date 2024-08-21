@@ -32,6 +32,7 @@ class SlotService:
 
     def slot_update(
         self,
+        *,
         slot: Slot,
         start_time: datetime | None = None,
         end_time: datetime | None = None,
@@ -54,7 +55,7 @@ class SlotService:
 
         return slot
 
-    def slot_delete(self, slot: Slot) -> None:
+    def slot_delete(self, *, slot: Slot) -> None:
         bookings = slot.bookings.all()
         if bookings.exists():
             bookings.update(status=Booking.Status.CANCELLED)

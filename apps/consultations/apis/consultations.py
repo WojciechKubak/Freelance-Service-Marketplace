@@ -82,7 +82,7 @@ class ConsultationUpdateApi(APIView):
         input_serializer.is_valid(raise_exception=True)
 
         consultation = consultation_update(
-            consultation, **input_serializer.validated_data
+            consultation=consultation, **input_serializer.validated_data
         )
 
         output_serializer = self.OutputSerializer(consultation)
@@ -103,7 +103,8 @@ class ConsultationChangeVisibilityApi(APIView):
         input_serializer.is_valid(raise_exception=True)
 
         consultation_change_visibility(
-            consultation, is_visible=input_serializer.validated_data["is_visible"]
+            consultation=consultation,
+            is_visible=input_serializer.validated_data["is_visible"],
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)

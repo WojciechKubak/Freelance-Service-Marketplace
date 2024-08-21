@@ -80,7 +80,7 @@ class SlotUpdateApi(APIView):
         input_serializer.is_valid(raise_exception=True)
 
         slot = SlotService(consultation=consultation).slot_update(
-            slot, **input_serializer.validated_data
+            slot=slot, **input_serializer.validated_data
         )
 
         output_serializer = self.OutputSerializer(slot)
@@ -96,7 +96,7 @@ class SlotDeleteApi(APIView):
 
         self.check_object_permissions(request, consultation)
 
-        SlotService(consultation=consultation).slot_delete(slot)
+        SlotService(consultation=consultation).slot_delete(slot=slot)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
