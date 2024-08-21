@@ -1,4 +1,5 @@
 from config.env import BASE_DIR
+from apps.storages.enums import StorageType
 from .base import *  # noqa
 
 
@@ -18,3 +19,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+
+STORAGE_TYPE_STRATEGY = StorageType.LOCAL

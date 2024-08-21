@@ -40,6 +40,9 @@ LOCAL_APPS = [
     "apps.emails.apps.EmailsConfig",
     "apps.core.apps.CoreConfig",
     "apps.categorization.apps.CategorizationConfig",
+    "apps.consultations.apps.ConsultationsConfig",
+    "apps.integrations.apps.IntegrationsConfig",
+    "apps.storages.apps.StoragesConfig",
 ]
 
 THIRD_PARTY_APPS = [
@@ -152,11 +155,6 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -165,3 +163,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 from config.settings.email_sending import *  # noqa
+from config.settings.zoom_meetings import *  # noqa
+from config.settings.storages import *  # noqa
