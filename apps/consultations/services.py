@@ -1,8 +1,8 @@
 from apps.consultations.models import Consultation, Slot, Booking
-from apps.storages.enums import StorageType
 from apps.consultations.utils import file_name_generate, text_to_file_local_upload
 from apps.integrations.zoom.client import create_meeting
 from apps.integrations.aws.client import text_to_file_upload
+from apps.storages.enums import StorageType
 from apps.categorization.models import Tag
 from apps.users.models import User
 from django.core.exceptions import ValidationError
@@ -24,7 +24,6 @@ class ConsultationService:
         price: float,
         tags: list[int],
     ) -> Consultation:
-
         existing_tags = Tag.objects.filter(id__in=tags)
         if existing_tags.count() != len(tags):
             raise ValidationError("One or more tags do not exist.")
@@ -41,7 +40,6 @@ class ConsultationService:
         )
         consultation.full_clean()
         consultation.save()
-
         consultation.tags.add(*existing_tags)
 
         return consultation
