@@ -2,7 +2,6 @@ from apps.consultations.tests.factories import ConsultationFactory, SlotFactory
 from apps.consultations.services import SlotService
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from datetime import timedelta
 import pytest
 
 
@@ -15,7 +14,9 @@ class TestSlotCreate:
 
         start_time = timezone.now()
         end_time = (
-            start_time + SlotService.MINIMUM_MEETING_DURATION - timedelta(minutes=1)
+            start_time
+            + SlotService.MINIMUM_MEETING_DURATION
+            - timezone.timedelta(minutes=1)
         )
 
         with pytest.raises(ValidationError) as e:

@@ -1,8 +1,6 @@
 from django.core.signing import TimestampSigner
 from django.core.signing import BadSignature, SignatureExpired
-
-# todo: replace with timezone.timedelta
-from datetime import timedelta
+from django.utils import timezone
 
 
 def sign_user_id(id_: str) -> str:
@@ -11,7 +9,7 @@ def sign_user_id(id_: str) -> str:
 
 
 def unsign_user_id(
-    signed_id: str, max_age: int | timedelta | None = None
+    signed_id: str, max_age: int | timezone.timedelta | None = None
 ) -> str | None:
     signer = TimestampSigner()
     try:
