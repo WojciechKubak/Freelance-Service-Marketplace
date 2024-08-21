@@ -1,5 +1,5 @@
 from apps.api.utils import inline_serializer
-from apps.api.permissions import IsOwner
+from apps.api.permissions import ResourceOwner
 from apps.categorization.services.category_service import CategoryService
 from apps.categorization.models import Category
 from rest_framework.views import APIView
@@ -71,7 +71,7 @@ class CategoryDetailApi(APIView):
 
 
 class CategoryUpdateApi(APIView):
-    permission_classes = (IsOwner,)
+    permission_classes = (ResourceOwner,)
 
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField(required=False)

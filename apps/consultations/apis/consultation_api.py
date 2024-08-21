@@ -1,7 +1,7 @@
 from apps.consultations.services import ConsultationService
 from apps.consultations.selectors import ConsultationSelectors
 from apps.consultations.models import Consultation
-from apps.api.permissions import IsOwner
+from apps.api.permissions import ResourceOwner
 from apps.api.utils import inline_serializer
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -49,7 +49,7 @@ class ConsultationCreateApi(APIView):
 
 
 class ConsultationUpdateApi(APIView):
-    permission_classes = (IsOwner,)
+    permission_classes = (ResourceOwner,)
 
     class InputSerializer(serializers.Serializer):
         title = serializers.CharField(required=False)
@@ -86,7 +86,7 @@ class ConsultationUpdateApi(APIView):
 
 
 class ConsultationChangeVisibilityApi(APIView):
-    permission_classes = (IsOwner,)
+    permission_classes = (ResourceOwner,)
 
     class InputSerializer(serializers.Serializer):
         is_visible = serializers.BooleanField(required=True)

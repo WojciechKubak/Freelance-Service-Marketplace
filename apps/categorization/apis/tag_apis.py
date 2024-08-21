@@ -1,5 +1,5 @@
 from apps.api.utils import inline_serializer
-from apps.api.permissions import IsOwner
+from apps.api.permissions import ResourceOwner
 from apps.categorization.services.tag_service import TagService
 from apps.categorization.models import Tag
 from apps.categorization.selectors import TagSelectors
@@ -64,7 +64,7 @@ class TagCreateApi(APIView):
 
 
 class TagUpdateApi(APIView):
-    permission_classes = (IsOwner,)
+    permission_classes = (ResourceOwner,)
 
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField(required=False)

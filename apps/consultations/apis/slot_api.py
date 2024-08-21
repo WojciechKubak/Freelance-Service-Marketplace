@@ -2,7 +2,7 @@ from apps.consultations.services import SlotService
 from apps.consultations.models import Consultation, Slot
 from apps.consultations.selectors import SlotSelectors
 from apps.api.pagination import get_paginated_response
-from apps.api.permissions import IsOwner
+from apps.api.permissions import ResourceOwner
 from apps.api.utils import inline_serializer
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -15,7 +15,7 @@ from django.shortcuts import get_object_or_404
 
 
 class SlotCreateApi(APIView):
-    permission_classes = (IsOwner,)
+    permission_classes = (ResourceOwner,)
 
     class InputSerializer(serializers.Serializer):
         consultation_id = serializers.IntegerField()
@@ -59,7 +59,7 @@ class SlotCreateApi(APIView):
 
 
 class SlotUpdateApi(APIView):
-    permission_classes = (IsOwner,)
+    permission_classes = (ResourceOwner,)
 
     class InputSerializer(serializers.Serializer):
         start_time = serializers.DateTimeField(required=False)
@@ -88,7 +88,7 @@ class SlotUpdateApi(APIView):
 
 
 class SlotDeleteApi(APIView):
-    permission_classes = (IsOwner,)
+    permission_classes = (ResourceOwner,)
 
     def delete(self, request: Request, slot_id: int) -> Response:
         slot = get_object_or_404(Slot, id=slot_id)
