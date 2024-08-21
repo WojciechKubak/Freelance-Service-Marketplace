@@ -1,6 +1,6 @@
 from apps.consultations.tests.factories import SlotFactory
 from apps.consultations.tests.factories import ConsultationFactory
-from apps.consultations.apis.slot_api import SlotCreateApi
+from apps.consultations.apis.slots import SlotCreateApi
 from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict

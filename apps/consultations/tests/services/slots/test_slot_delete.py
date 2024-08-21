@@ -1,5 +1,5 @@
 from apps.consultations.tests.factories import SlotFactory, Booking, Slot
-from apps.consultations.services import SlotService
+from apps.consultations.services.slots import SlotService
 import pytest
 
 

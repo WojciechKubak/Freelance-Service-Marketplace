@@ -1,7 +1,7 @@
 from apps.users.tests.factories import UserFactory
 from apps.categorization.tests.factories import TagFactory
 from apps.consultations.tests.factories import ConsultationFactory
-from apps.consultations.services import ConsultationService
+from apps.consultations.services.consultations import consultation_create
 from apps.consultations.models import Consultation
 from django.core.exceptions import ValidationError
 import pytest
@@ -21,7 +21,7 @@ class TestConsultationCreate:
         consultation = ConsultationFactory()
 
         with pytest.raises(ValidationError):
-            ConsultationService.consultation_create(
+            consultation_create(
                 user=consultation.created_by,
                 **self.simple_field_data,
                 tags=[TagFactory().id]
@@ -30,7 +30,7 @@ class TestConsultationCreate:
     @pytest.mark.django_db
     def test_method_fails_due_to_non_existing_tags_id(self) -> None:
         with pytest.raises(ValidationError):
-            ConsultationService.consultation_create(
+            consultation_create(
                 user=UserFactory(), **self.simple_field_data, tags=[999]
             )
 
@@ -40,7 +40,7 @@ class TestConsultationCreate:
     ) -> None:
         tags = [TagFactory().id, TagFactory().id]
 
-        result = ConsultationService.consultation_create(
+        result = consultation_create(
             user=UserFactory(), **self.simple_field_data, tags=tags
         )
 

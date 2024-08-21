@@ -1,6 +1,6 @@
 from apps.consultations.tests.factories import BookingFactory
 from apps.users.tests.factories import UserFactory, User
-from apps.consultations.apis.booking_api import BookingListApi
+from apps.consultations.apis.bookings import BookingListApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Any, Callable

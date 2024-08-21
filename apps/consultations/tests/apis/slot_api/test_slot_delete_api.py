@@ -1,5 +1,5 @@
 from apps.consultations.tests.factories import SlotFactory
-from apps.consultations.apis.slot_api import SlotDeleteApi
+from apps.consultations.apis.slots import SlotDeleteApi
 from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from typing import Callable, Any

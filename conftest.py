@@ -25,7 +25,7 @@ def auth_request() -> (
 
 @pytest.fixture(scope="function", autouse=True)
 def mock_create_meeting() -> Generator[Mock, None, None]:
-    with patch("apps.consultations.services.create_meeting") as mock:
+    with patch("apps.consultations.services.bookings.create_meeting") as mock:
         instance = mock.return_value
         instance.join_url = "https://example.com/join"
         yield mock
@@ -33,7 +33,9 @@ def mock_create_meeting() -> Generator[Mock, None, None]:
 
 @pytest.fixture(scope="function", autouse=True)
 def mock_text_to_file_local_upload() -> Generator[Mock, None, None]:
-    with patch("apps.consultations.services.text_to_file_local_upload") as mock:
+    with patch(
+        "apps.consultations.services.consultations.text_to_file_local_upload"
+    ) as mock:
         mock.return_value = None
         yield mock
 

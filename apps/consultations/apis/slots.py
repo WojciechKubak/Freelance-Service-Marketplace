@@ -1,4 +1,4 @@
-from apps.consultations.services import SlotService
+from apps.consultations.services.slots import SlotService
 from apps.consultations.models import Consultation, Slot
 from apps.consultations.selectors import SlotSelectors
 from apps.api.pagination import get_paginated_response

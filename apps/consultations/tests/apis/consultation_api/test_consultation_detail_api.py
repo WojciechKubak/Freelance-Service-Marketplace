@@ -1,5 +1,5 @@
 from apps.consultations.tests.factories import ConsultationFactory
-from apps.consultations.apis.consultation_api import ConsultationDetailApi
+from apps.consultations.apis.consultations import ConsultationDetailApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 import pytest

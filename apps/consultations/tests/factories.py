@@ -1,5 +1,5 @@
 from apps.consultations.models import Consultation, Slot, Booking
-from apps.consultations.services import SlotService
+from apps.consultations.services.slots import SlotService
 from apps.users.tests.factories import UserFactory
 from apps.categorization.tests.factories import TagFactory, Tag
 from factory.django import DjangoModelFactory

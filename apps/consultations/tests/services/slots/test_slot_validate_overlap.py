@@ -1,5 +1,5 @@
 from apps.consultations.tests.factories import SlotFactory
-from apps.consultations.services import SlotService
+from apps.consultations.services.slots import SlotService
 from django.core.exceptions import ValidationError
 import pytest
 

@@ -1,5 +1,5 @@
 from apps.consultations.tests.factories import BookingFactory
-from apps.consultations.services import BookingService, SlotService
+from apps.consultations.services.bookings import BookingService, SlotService
 from django.core.exceptions import ValidationError
 import pytest
 

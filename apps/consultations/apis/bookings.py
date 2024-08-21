@@ -1,4 +1,4 @@
-from apps.consultations.services import BookingService
+from apps.consultations.services.bookings import BookingService
 from apps.consultations.models import Slot
 from apps.consultations.selectors import BookingSelectors
 from apps.api.utils import inline_serializer

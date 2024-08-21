@@ -1,18 +1,18 @@
-from apps.consultations.apis.consultation_api import (
+from apps.consultations.apis.consultations import (
     ConsultationCreateApi,
     ConsultationUpdateApi,
     ConsultationChangeVisibilityApi,
     ConsultationListApi,
     ConsultationDetailApi,
 )
-from apps.consultations.apis.slot_api import (
+from apps.consultations.apis.slots import (
     SlotCreateApi,
     SlotUpdateApi,
     SlotDeleteApi,
     SlotListApi,
     SlotDetailApi,
 )
-from apps.consultations.apis.booking_api import (
+from apps.consultations.apis.bookings import (
     BookingCreateApi,
     BookingListApi,
 )

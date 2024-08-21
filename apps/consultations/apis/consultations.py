@@ -1,4 +1,8 @@
-from apps.consultations.services import ConsultationService
+from apps.consultations.services.consultations import (
+    consultation_change_visibility,
+    consultation_create,
+    consultation_update,
+)
 from apps.consultations.selectors import ConsultationSelectors
 from apps.consultations.models import Consultation
 from apps.api.permissions import ResourceOwner
@@ -40,7 +44,7 @@ class ConsultationCreateApi(APIView):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        consultation = ConsultationService.consultation_create(
+        consultation = consultation_create(
             user=request.user, **input_serializer.validated_data
         )
 
@@ -77,7 +81,7 @@ class ConsultationUpdateApi(APIView):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        consultation = ConsultationService.consultation_update(
+        consultation = consultation_update(
             consultation, **input_serializer.validated_data
         )
 
@@ -98,7 +102,7 @@ class ConsultationChangeVisibilityApi(APIView):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        ConsultationService.consultation_change_visibility(
+        consultation_change_visibility(
             consultation, is_visible=input_serializer.validated_data["is_visible"]
         )
 

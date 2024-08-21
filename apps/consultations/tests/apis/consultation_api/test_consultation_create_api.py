@@ -1,6 +1,6 @@
 from apps.users.tests.factories import UserFactory, User
 from apps.categorization.tests.factories import TagFactory
-from apps.consultations.apis.consultation_api import ConsultationCreateApi
+from apps.consultations.apis.consultations import ConsultationCreateApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any

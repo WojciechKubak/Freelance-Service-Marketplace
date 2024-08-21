@@ -1,6 +1,6 @@
 from apps.categorization.tests.factories import TagFactory
 from apps.consultations.tests.factories import ConsultationFactory, Consultation
-from apps.consultations.services import ConsultationService
+from apps.consultations.services.consultations import consultation_update
 from django.core.exceptions import ValidationError
 from decimal import Decimal
 import pytest
@@ -19,7 +19,7 @@ class TestConsultationUpdate:
     ) -> None:
         consultation = ConsultationFactory()
         with pytest.raises(ValidationError):
-            ConsultationService.consultation_update(
+            consultation_update(
                 consultation=consultation, **self.simple_field_data, tags=[999]
             )
 
@@ -29,9 +29,7 @@ class TestConsultationUpdate:
         tag = TagFactory()
         updated_tags = [tag.id]
 
-        result = ConsultationService.consultation_update(
-            consultation=consultation, tags=updated_tags
-        )
+        result = consultation_update(consultation=consultation, tags=updated_tags)
 
         assert Consultation.objects.first() == result
         assert updated_tags == list(result.tags.values_list("id", flat=True))
@@ -40,7 +38,7 @@ class TestConsultationUpdate:
     def test_method_updates_instance_simple_fields_and_returns_it(self) -> None:
         consultation = ConsultationFactory()
 
-        result = ConsultationService.consultation_update(
+        result = consultation_update(
             consultation=consultation, **self.simple_field_data
         )
 
