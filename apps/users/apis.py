@@ -1,6 +1,6 @@
 from apps.api.pagination import get_paginated_response
 from apps.users.models import User
-from apps.users.selectors import UserSelectors
+from apps.users.selectors import user_list
 from apps.users.services import UserService
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.views import APIView
@@ -38,7 +38,7 @@ class UserListApi(APIView):
         filters = self.FilterSerializer(data=request.query_params)
         filters.is_valid(raise_exception=True)
 
-        users = UserSelectors.user_list(filters=filters.validated_data)
+        users = user_list(filters=filters.validated_data)
 
         response = get_paginated_response(
             queryset=users,

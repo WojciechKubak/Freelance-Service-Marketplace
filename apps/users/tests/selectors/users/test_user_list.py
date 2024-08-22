@@ -1,5 +1,5 @@
 from apps.users.tests.factories import UserFactory
-from apps.users.selectors import UserSelectors
+from apps.users.selectors import user_list
 import pytest
 
 
@@ -12,7 +12,7 @@ class TestUserList:
 
         filters = {"email": f"other_{email}"}
 
-        assert not UserSelectors.user_list(filters=filters)
+        assert not user_list(filters=filters)
 
     @pytest.mark.django_db
     def test_user_list_returns_single_result_with_filter_provided(self) -> None:
@@ -21,7 +21,7 @@ class TestUserList:
 
         filters = {"email": email}
 
-        result = UserSelectors.user_list(filters=filters)
+        result = user_list(filters=filters)
 
         assert 1 == result.count()
 
@@ -31,7 +31,7 @@ class TestUserList:
 
         filters = {"is_admin": True}
 
-        result = UserSelectors.user_list(filters=filters)
+        result = user_list(filters=filters)
 
         assert 2 == result.count()
 
@@ -39,6 +39,6 @@ class TestUserList:
     def test_user_list_returns_all_users_without_filters_provided(self) -> None:
         UserFactory.create_batch(2)
 
-        result = UserSelectors.user_list(filters={})
+        result = user_list(filters={})
 
         assert 2 == result.count()
