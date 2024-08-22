@@ -1,5 +1,5 @@
 from apps.categorization.tests.factories import TagFactory, CategoryFactory
-from apps.categorization.selectors import TagSelectors
+from apps.categorization.selectors import tag_list
 import pytest
 
 
@@ -8,7 +8,7 @@ class TestTagList:
     @pytest.mark.django_db
     def test_selector_on_empty_filters_return_all_data(self) -> None:
         tags = TagFactory.create_batch(3)
-        result = TagSelectors.tag_list(filters={})
+        result = tag_list(filters={})
         assert tags == list(result)
 
     @pytest.mark.django_db
@@ -18,8 +18,8 @@ class TestTagList:
         filter_found = {"name": tags[0].name}
         filter_not_found = {"name": f"other_{tags[0].name}"}
 
-        result_found = TagSelectors.tag_list(filters=filter_found)
-        result_not_found = TagSelectors.tag_list(filters=filter_not_found)
+        result_found = tag_list(filters=filter_found)
+        result_not_found = tag_list(filters=filter_not_found)
 
         assert [tags[0]] == list(result_found)
         assert [] == list(result_not_found)
@@ -35,8 +35,8 @@ class TestTagList:
             "category": f"other_{category.name}",
         }
 
-        result_found = TagSelectors.tag_list(filters=filter_found)
-        result_not_found = TagSelectors.tag_list(filters=filter_not_found)
+        result_found = tag_list(filters=filter_found)
+        result_not_found = tag_list(filters=filter_not_found)
 
         assert [tags[0]] == list(result_found)
         assert [] == list(result_not_found)

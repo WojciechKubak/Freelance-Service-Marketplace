@@ -2,7 +2,7 @@ from apps.api.utils import inline_serializer
 from apps.api.permissions import ResourceOwner
 from apps.categorization.services.tags import tag_create, tag_update
 from apps.categorization.models import Tag
-from apps.categorization.selectors import TagSelectors
+from apps.categorization.selectors import tag_list
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -28,7 +28,7 @@ class TagListApi(APIView):
         filter_serializer = self.FilterSerializer(data=request.query_params)
         filter_serializer.is_valid(raise_exception=True)
 
-        tags = TagSelectors.tag_list(filters=filter_serializer.validated_data)
+        tags = tag_list(filters=filter_serializer.validated_data)
 
         output_serializer = self.OutputSerializer(tags, many=True)
         return Response(output_serializer.data)
