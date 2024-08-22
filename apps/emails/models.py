@@ -3,6 +3,7 @@ from django.db import models
 
 
 class Status(models.TextChoices):
+    # We move this out of model class to access Status in constraints
     READY = "READY", "Ready"
     SENT = "SENT", "Sent"
     FAILED = "FAILED", "Failed"
