@@ -1,5 +1,5 @@
 from apps.categorization.tests.factories import UserFactory
-from apps.categorization.apis.category_apis import CategoryCreateApi
+from apps.categorization.apis.categories import CategoryCreateApi
 from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict

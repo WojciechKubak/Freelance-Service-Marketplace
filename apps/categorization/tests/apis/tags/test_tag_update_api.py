@@ -1,6 +1,6 @@
 from apps.categorization.tests.factories import TagFactory, CategoryFactory
 from apps.users.tests.factories import UserFactory, User
-from apps.categorization.apis.tag_apis import TagUpdateApi
+from apps.categorization.apis.tags import TagUpdateApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any

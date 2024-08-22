@@ -1,6 +1,6 @@
 from apps.categorization.tests.factories import CategoryFactory
 from apps.users.tests.factories import UserFactory, User
-from apps.categorization.apis.category_apis import CategoryUpdateApi
+from apps.categorization.apis.categories import CategoryUpdateApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
