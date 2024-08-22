@@ -1,6 +1,6 @@
 from apps.api.utils import inline_serializer
 from apps.api.permissions import ResourceOwner
-from apps.categorization.services.tag_service import TagService
+from apps.categorization.services.tags import tag_create, tag_update
 from apps.categorization.models import Tag
 from apps.categorization.selectors import TagSelectors
 from rest_framework.views import APIView
@@ -55,9 +55,7 @@ class TagCreateApi(APIView):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        tag = TagService.tag_create(
-            user=request.user, **input_serializer.validated_data
-        )
+        tag = tag_create(user=request.user, **input_serializer.validated_data)
 
         output_serializer = self.OutputSerializer(tag)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
@@ -88,7 +86,7 @@ class TagUpdateApi(APIView):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        tag = TagService.tag_update(tag=tag, **input_serializer.validated_data)
+        tag = tag_update(tag=tag, **input_serializer.validated_data)
 
         output_serializer = self.OutputSerializer(tag)
         return Response(output_serializer.data)

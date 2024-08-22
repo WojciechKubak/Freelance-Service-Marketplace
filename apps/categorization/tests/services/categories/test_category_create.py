@@ -1,5 +1,5 @@
 from apps.categorization.tests.factories import UserFactory, Category
-from apps.categorization.services.category_service import CategoryService
+from apps.categorization.services.categories import category_create
 import pytest
 
 
@@ -11,7 +11,7 @@ def test_create_category_creates_instance_with_expected_data_and_returns_it() ->
         "user": UserFactory(),
     }
 
-    result = CategoryService.category_create(**data)
+    result = category_create(**data)
 
     assert Category.objects.get(id=result.id) == result
 

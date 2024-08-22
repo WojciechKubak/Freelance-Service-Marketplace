@@ -1,6 +1,6 @@
 from apps.categorization.tests.factories import UserFactory, CategoryFactory
 from apps.categorization.models import Tag
-from apps.categorization.services.tag_service import TagService
+from apps.categorization.services.tags import tag_create
 from django.core.exceptions import ValidationError
 import pytest
 
@@ -20,7 +20,7 @@ class TestTagCreate:
         }
 
         with pytest.raises(ValidationError):
-            TagService.tag_create(**data)
+            tag_create(**data)
 
     @pytest.mark.django_db
     def test_method_creates_instance_with_expected_data_and_returns_it(
@@ -34,7 +34,7 @@ class TestTagCreate:
             "user": user,
         }
 
-        result = TagService.tag_create(**data)
+        result = tag_create(**data)
 
         assert Tag.objects.get(id=result.id) == result
 

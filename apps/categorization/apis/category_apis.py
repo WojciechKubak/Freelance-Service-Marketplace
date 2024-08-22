@@ -1,6 +1,6 @@
 from apps.api.utils import inline_serializer
 from apps.api.permissions import ResourceOwner
-from apps.categorization.services.category_service import CategoryService
+from apps.categorization.services.categories import category_create, category_update
 from apps.categorization.models import Category
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -41,9 +41,7 @@ class CategoryCreateApi(APIView):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        category = CategoryService.category_create(
-            user=request.user, **input_serializer.validated_data
-        )
+        category = category_create(user=request.user, **input_serializer.validated_data)
 
         output_serializer = self.OutputSerializer(category)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
@@ -97,9 +95,7 @@ class CategoryUpdateApi(APIView):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        category = CategoryService.category_update(
-            category=category, **input_serializer.validated_data
-        )
+        category = category_update(category=category, **input_serializer.validated_data)
 
         output_serializer = self.OutputSerializer(category)
         return Response(output_serializer.data)

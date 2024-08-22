@@ -1,5 +1,5 @@
 from apps.categorization.tests.factories import CategoryFactory, Category
-from apps.categorization.services.category_service import CategoryService
+from apps.categorization.services.categories import category_update
 import pytest
 
 
@@ -12,7 +12,7 @@ def test_category_update_on_simple_fields_data() -> None:
         "description": f"new_{category.description}",
     }
 
-    result = CategoryService.category_update(category=category, **update_data)
+    result = category_update(category=category, **update_data)
 
     category = Category.objects.get(id=category.id)
 
