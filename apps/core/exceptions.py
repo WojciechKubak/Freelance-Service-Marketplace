@@ -13,6 +13,6 @@ class ZoomError(ApplicationError):
         super().__init__(message)
 
 
-class AWSS3Error(ApplicationError):
+class Boto3Error(ApplicationError):
     def __init__(self, message: str):
         super().__init__(message)

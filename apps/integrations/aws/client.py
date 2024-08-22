@@ -1,5 +1,5 @@
 from apps.common.utils import assert_settings
-from apps.core.exceptions import AWSS3Error
+from apps.core.exceptions import Boto3Error
 from botocore.exceptions import BotoCoreError, ClientError
 from dataclasses import dataclass
 from functools import lru_cache
@@ -93,7 +93,7 @@ def text_to_file_upload(
         return PutObjectResponse.from_response(response)
 
     except (BotoCoreError, ClientError):
-        raise AWSS3Error(f"Failed to upload file {file_name}")
+        raise Boto3Error(f"Failed to upload file {file_name}")
 
 
 def file_get_content(*, file_name: str) -> str:
@@ -105,4 +105,4 @@ def file_get_content(*, file_name: str) -> str:
         return response["Body"].read().decode("utf-8")
 
     except (BotoCoreError, ClientError):
-        raise AWSS3Error(f"Failed to get file {file_name}")
+        raise Boto3Error(f"Failed to get file {file_name}")
