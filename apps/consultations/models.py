@@ -36,7 +36,7 @@ class Slot(BaseModel):
         ordering = ("start_time",)
         constraints = (
             models.CheckConstraint(
-                check=models.Q(start_time__lt=models.F("end_time")),
+                condition=models.Q(start_time__lt=models.F("end_time")),
                 name="slot_start_time_lt_end_time",
             ),
         )

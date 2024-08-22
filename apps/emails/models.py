@@ -24,7 +24,7 @@ class Email(BaseModel):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=models.Q(sent_at__isnull=True) | models.Q(status=Status.SENT),
+                condition=models.Q(sent_at__isnull=True) | models.Q(status=Status.SENT),
                 name="check_email_sent_at_with_status",
             ),
         ]
