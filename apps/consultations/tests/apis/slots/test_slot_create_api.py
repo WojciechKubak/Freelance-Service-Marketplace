@@ -1,6 +1,12 @@
 from apps.consultations.tests.factories import SlotFactory
 from apps.consultations.tests.factories import ConsultationFactory
 from apps.consultations.apis.slots import SlotCreateApi
+from apps.consultations.services.slots import (
+    SLOT_VALIDATE_CONSULTATION_VISIBILITY,
+    SLOT_VALIDATE_MINIMAL_DURATION_TIME,
+    SLOT_VALIDATE_OVERLAP,
+    SlotService,
+)
 from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
@@ -38,7 +44,11 @@ class TestSlotCreateApi:
 
         expected_response_data = {
             "detail": {
-                "non_field_errors": ["Meeting duration must be at least 1 hour."]
+                "non_field_errors": [
+                    SLOT_VALIDATE_MINIMAL_DURATION_TIME.format(
+                        SlotService.SLOT_MINIMAL_DURATION_TIME_MINUTES
+                    )
+                ]
             }
         }
 
@@ -69,7 +79,7 @@ class TestSlotCreateApi:
         response = SlotCreateApi.as_view()(request)
 
         expected_response_data = {
-            "detail": {"non_field_errors": ["Slot overlaps with existing slots."]}
+            "detail": {"non_field_errors": [SLOT_VALIDATE_OVERLAP]}
         }
 
         assert 400 == response.status_code
@@ -94,7 +104,7 @@ class TestSlotCreateApi:
         response = SlotCreateApi.as_view()(request)
 
         expected_response_data = {
-            "detail": {"non_field_errors": ["Consultation is not visible."]}
+            "detail": {"non_field_errors": [SLOT_VALIDATE_CONSULTATION_VISIBILITY]}
         }
 
         assert 400 == response.status_code

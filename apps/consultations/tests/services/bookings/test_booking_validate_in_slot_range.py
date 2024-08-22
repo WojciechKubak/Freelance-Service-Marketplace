@@ -1,5 +1,8 @@
 from apps.consultations.tests.factories import SlotFactory
-from apps.consultations.services.bookings import BookingService
+from apps.consultations.services.bookings import (
+    BOOKING_VALIDATE_WITHING_SLOT_RANGE,
+    BookingService,
+)
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 import pytest
@@ -20,9 +23,7 @@ def test_booking_validate_in_slot_range() -> None:
     start_time = slot.start_time - timezone.timedelta(minutes=15)
     end_time = slot.end_time
 
-    with pytest.raises(ValidationError) as e:
+    with pytest.raises(ValidationError, match=BOOKING_VALIDATE_WITHING_SLOT_RANGE):
         booking_service._booking_validate_in_slot_range(
             start_time=start_time, end_time=end_time
         )
-
-    assert "Booking time must be within the slot time range." in str(e.value)

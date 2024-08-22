@@ -1,6 +1,14 @@
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from datetime import datetime, timedelta
 import uuid
+
+
+def is_minimal_duration_time_valid(
+    *, start_time: datetime, end_time: datetime, minimal_duration_time: int
+) -> bool:
+    minimal_duration = timedelta(minutes=minimal_duration_time)
+    return end_time - start_time >= minimal_duration
 
 
 def file_name_generate(extension: str = ".txt") -> str:

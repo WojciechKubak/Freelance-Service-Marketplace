@@ -1,6 +1,7 @@
 from apps.users.tests.factories import UserFactory, User
 from apps.categorization.tests.factories import TagFactory
 from apps.consultations.apis.consultations import ConsultationCreateApi
+from apps.consultations.services.consultations import CONSULTATION_VALIDATE_TAGS_EXIST
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
@@ -31,7 +32,7 @@ class TestConsultationCreateApi:
         response = ConsultationCreateApi.as_view()(request)
 
         expected_response_data = {
-            "detail": {"non_field_errors": ["One or more tags do not exist."]}
+            "detail": {"non_field_errors": [CONSULTATION_VALIDATE_TAGS_EXIST]}
         }
 
         assert 400 == response.status_code

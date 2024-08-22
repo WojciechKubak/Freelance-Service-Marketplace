@@ -1,5 +1,11 @@
-from apps.consultations.tests.factories import SlotFactory, BookingFactory, UserFactory
-from apps.consultations.services.slots import SlotService
+from apps.consultations.tests.factories import SlotFactory, UserFactory
+from apps.consultations.services.bookings import (
+    BOOKING_CANNOT_BOOK_OWN_SLOT,
+    BOOKING_VALIDATE_MINIMAL_DURATION_TIME,
+    BOOKING_VALIDATE_OVERLAP,
+    BOOKING_VALIDATE_WITHING_SLOT_RANGE,
+    BookingService,
+)
 from apps.users.models import User
 from apps.consultations.apis.bookings import BookingCreateApi
 from rest_framework.test import APIRequestFactory
@@ -28,7 +34,10 @@ class TestBookingCreateApi:
             {
                 "slot_id": slot.id,
                 "start_time": slot.start_time,
-                "end_time": slot.start_time + timezone.timedelta(minutes=15),
+                "end_time": slot.start_time
+                + timezone.timedelta(
+                    minutes=BookingService.BOOKING_MINIMAL_DURATION_TIME_MINUTES - 1
+                ),
             },
         )
 
@@ -36,7 +45,11 @@ class TestBookingCreateApi:
 
         expected_response_data = {
             "detail": {
-                "non_field_errors": ["Meeting duration must be at least 1 hour."]
+                "non_field_errors": [
+                    BOOKING_VALIDATE_MINIMAL_DURATION_TIME.format(
+                        BookingService.BOOKING_MINIMAL_DURATION_TIME_MINUTES
+                    )
+                ]
             }
         }
 
@@ -67,9 +80,7 @@ class TestBookingCreateApi:
         response = BookingCreateApi.as_view()(request)
 
         expected_response_data = {
-            "detail": {
-                "non_field_errors": ["Booking time must be within the slot time range."]
-            }
+            "detail": {"non_field_errors": [BOOKING_VALIDATE_WITHING_SLOT_RANGE]}
         }
 
         assert 400 == response.status_code
@@ -83,8 +94,7 @@ class TestBookingCreateApi:
         ],
     ) -> None:
         user = UserFactory()
-        booking = BookingFactory()
-        slot = SlotFactory(bookings=[booking])
+        slot = SlotFactory(generate_bookings=True)
 
         request = auth_request(
             user,
@@ -92,17 +102,15 @@ class TestBookingCreateApi:
             "/api/consultations/bookings/",
             {
                 "slot_id": slot.id,
-                "start_time": booking.start_time,
-                "end_time": booking.end_time,
+                "start_time": slot.bookings.first().start_time,
+                "end_time": slot.bookings.first().end_time,
             },
         )
 
         response = BookingCreateApi.as_view()(request)
 
         expected_response_data = {
-            "detail": {
-                "non_field_errors": ["Booking time must be within the slot time range."]
-            }
+            "detail": {"non_field_errors": [BOOKING_VALIDATE_OVERLAP]}
         }
 
         assert 400 == response.status_code
@@ -132,7 +140,7 @@ class TestBookingCreateApi:
         response = BookingCreateApi.as_view()(request)
 
         expected_response_data = {
-            "detail": {"non_field_errors": ["Cannot book own slot."]}
+            "detail": {"non_field_errors": [BOOKING_CANNOT_BOOK_OWN_SLOT]}
         }
 
         assert 400 == response.status_code
@@ -156,7 +164,10 @@ class TestBookingCreateApi:
             {
                 "slot_id": slot.id,
                 "start_time": slot.start_time,
-                "end_time": slot.start_time + SlotService.MINIMUM_MEETING_DURATION,
+                "end_time": slot.start_time
+                + timezone.timedelta(
+                    minutes=BookingService.BOOKING_MINIMAL_DURATION_TIME_MINUTES
+                ),
             },
         )
 
@@ -166,7 +177,12 @@ class TestBookingCreateApi:
             {
                 "id": 1,
                 "start_time": slot.start_time.isoformat().replace("+00:00", "Z"),
-                "end_time": (slot.start_time + SlotService.MINIMUM_MEETING_DURATION)
+                "end_time": (
+                    slot.start_time
+                    + timezone.timedelta(
+                        minutes=BookingService.BOOKING_MINIMAL_DURATION_TIME_MINUTES
+                    )
+                )
                 .isoformat()
                 .replace("+00:00", "Z"),
                 "url": mock_create_meeting.return_value.join_url,

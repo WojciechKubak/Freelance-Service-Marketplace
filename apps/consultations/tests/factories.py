@@ -63,7 +63,8 @@ class SlotFactory(factory.django.DjangoModelFactory):
     start_time = factory.LazyFunction(lambda: timezone.now())
     end_time = factory.LazyFunction(
         lambda: timezone.now()
-        + SlotService.MINIMUM_MEETING_DURATION * random.randint(4, 8)
+        + timedelta(minutes=SlotService.SLOT_MINIMAL_DURATION_TIME_MINUTES)
+        * random.randint(4, 8)
     )
 
     is_cancelled = False
@@ -78,7 +79,9 @@ class SlotFactory(factory.django.DjangoModelFactory):
         if generate_bookings:
             time_slots = generate_time_slots(
                 start_time=instance.start_time,
-                duration=SlotService.MINIMUM_MEETING_DURATION,
+                duration=timezone.timedelta(
+                    minutes=SlotService.SLOT_MINIMAL_DURATION_TIME_MINUTES
+                ),
                 n=3,
             )
             for start, end in time_slots:
@@ -122,4 +125,6 @@ class BookingFactory(factory.django.DjangoModelFactory):
 
     @factory.lazy_attribute
     def end_time(self) -> datetime:
-        return self.slot.start_time + SlotService.MINIMUM_MEETING_DURATION
+        return self.slot.start_time + timezone.timedelta(
+            minutes=SlotService.SLOT_MINIMAL_DURATION_TIME_MINUTES
+        )

@@ -8,6 +8,9 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 
 
+CONSULTATION_VALIDATE_TAGS_EXIST: str = "One or more tags do not exist."
+
+
 def consultation_create(
     *,
     user: User,
@@ -18,7 +21,7 @@ def consultation_create(
 ) -> Consultation:
     existing_tags = Tag.objects.filter(id__in=tags)
     if existing_tags.count() != len(tags):
-        raise ValidationError("One or more tags do not exist.")
+        raise ValidationError(CONSULTATION_VALIDATE_TAGS_EXIST)
 
     file_name = file_name_generate()
 
@@ -49,7 +52,7 @@ def consultation_update(
     if tags:
         existing_tags = Tag.objects.filter(id__in=tags)
         if existing_tags.count() != len(tags):
-            raise ValidationError("One or more tags do not exist.")
+            raise ValidationError(CONSULTATION_VALIDATE_TAGS_EXIST)
 
         consultation.tags.clear()
         consultation.tags.add(*existing_tags)

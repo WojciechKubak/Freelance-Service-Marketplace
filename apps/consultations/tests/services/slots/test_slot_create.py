@@ -1,5 +1,10 @@
 from apps.consultations.tests.factories import ConsultationFactory, SlotFactory
-from apps.consultations.services.slots import SlotService
+from apps.consultations.services.slots import (
+    SLOT_VALIDATE_OVERLAP,
+    SLOT_VALIDATE_CONSULTATION_VISIBILITY,
+    SLOT_VALIDATE_MINIMAL_DURATION_TIME,
+    SlotService,
+)
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 import pytest
@@ -13,16 +18,17 @@ class TestSlotCreate:
         slot_service = SlotService(consultation=consultation)
 
         start_time = timezone.now()
-        end_time = (
-            start_time
-            + SlotService.MINIMUM_MEETING_DURATION
-            - timezone.timedelta(minutes=1)
+        end_time = start_time + timezone.timedelta(
+            minutes=SlotService.SLOT_MINIMAL_DURATION_TIME_MINUTES - 1
         )
 
-        with pytest.raises(ValidationError) as e:
+        with pytest.raises(
+            ValidationError,
+            match=SLOT_VALIDATE_MINIMAL_DURATION_TIME.format(
+                SlotService.SLOT_MINIMAL_DURATION_TIME_MINUTES
+            ),
+        ):
             slot_service.slot_create(start_time=start_time, end_time=end_time)
-
-        assert "['Meeting duration must be at least 1 hour.']" == str(e.value)
 
     @pytest.mark.django_db
     def test_slot_create_raises_overlap_error(self) -> None:
@@ -31,20 +37,18 @@ class TestSlotCreate:
 
         slot_service = SlotService(consultation=consultation)
 
-        with pytest.raises(ValidationError) as e:
+        with pytest.raises(ValidationError, match=SLOT_VALIDATE_OVERLAP):
             slot_service.slot_create(start_time=slot.start_time, end_time=slot.end_time)
-
-        assert "['Slot overlaps with existing slots.']" == str(e.value)
 
     @pytest.mark.django_db
     def test_slot_create_raises_visibility_error(self) -> None:
         consultation = ConsultationFactory(is_visible=False)
         slot_service = SlotService(consultation=consultation)
 
-        with pytest.raises(ValidationError) as e:
+        with pytest.raises(
+            ValidationError, match=SLOT_VALIDATE_CONSULTATION_VISIBILITY
+        ):
             slot_service._slot_validate_visibility()
-
-        assert "['Consultation is not visible.']" == str(e.value)
 
     @pytest.mark.django_db
     def test_slot_create_creates_db_instance_and_returns_it(self) -> None:
@@ -52,7 +56,9 @@ class TestSlotCreate:
         slot_service = SlotService(consultation=consultation)
 
         start_time = timezone.now()
-        end_time = start_time + SlotService.MINIMUM_MEETING_DURATION
+        end_time = start_time + timezone.timedelta(
+            SlotService.SLOT_MINIMAL_DURATION_TIME_MINUTES
+        )
 
         result = slot_service.slot_create(start_time=start_time, end_time=end_time)
 

@@ -1,5 +1,9 @@
 from apps.consultations.tests.factories import BookingFactory
-from apps.consultations.services.bookings import BookingService, SlotService
+from apps.consultations.services.bookings import (
+    BOOKING_VALIDATE_OVERLAP,
+    BookingService,
+)
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 import pytest
 
@@ -12,12 +16,11 @@ def test_booking_validate_overlap() -> None:
 
     booking_service._booking_validate_overlap(
         start_time=booking.end_time,
-        end_time=booking.end_time + SlotService.MINIMUM_MEETING_DURATION,
+        end_time=booking.end_time
+        + timezone.timedelta(BookingService.BOOKING_MINIMAL_DURATION_TIME_MINUTES),
     )
 
-    with pytest.raises(ValidationError) as e:
+    with pytest.raises(ValidationError, match=BOOKING_VALIDATE_OVERLAP):
         booking_service._booking_validate_overlap(
             start_time=booking.start_time, end_time=booking.end_time
         )
-
-    assert "Booking overlaps with existing bookings." in str(e.value)
