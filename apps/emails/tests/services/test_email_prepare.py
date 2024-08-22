@@ -1,5 +1,5 @@
 from apps.users.tests.factories import UserFactory
-from apps.emails.services import EmailService
+from apps.emails.services import _email_prepare
 from apps.emails.templates import EmailType
 from apps.emails.models import Email
 from django.template.loader import render_to_string
@@ -11,10 +11,8 @@ def test_email_prepare_correctly_creates_email_instance() -> None:
     user = UserFactory()
     context = {"url": "http://example.com/example"}
 
-    result = EmailService._email_prepare(
-        user_email=user.email,
-        email_type=EmailType.ACTIVATION,
-        context=context,
+    result = _email_prepare(
+        user_email=user.email, email_type=EmailType.ACTIVATION, context=context
     )
 
     assert Email.objects.first() == result

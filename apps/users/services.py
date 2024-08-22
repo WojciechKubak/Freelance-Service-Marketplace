@@ -1,6 +1,6 @@
 from apps.users.utils import sign_user_id, unsign_user_id
 from apps.users.models import User
-from apps.emails.services import EmailService
+from apps.emails.services import send_password_reset_email, send_activation_email
 from django.core.exceptions import ValidationError
 from dataclasses import dataclass
 from django.conf import settings
@@ -80,7 +80,7 @@ class UserService:
             )
 
         url = self._url_generate(user_id=user.id, viewname=self.activation_viewname)
-        email = EmailService.send_activation_email(user_email=user.email, url=url)
+        send_activation_email(user_email=user.email, url=url)
 
         return user
 
@@ -91,7 +91,7 @@ class UserService:
             return email
 
         url = self._url_generate(user_id=user.id, viewname=self.activation_viewname)
-        _ = EmailService.send_activation_email(user_email=user.email, url=url)
+        send_activation_email(user_email=user.email, url=url)
 
         return email
 
@@ -102,6 +102,6 @@ class UserService:
             return email
 
         url = self._url_generate(user_id=user.id, viewname=self.password_reset_viewname)
-        email = EmailService.send_password_reset_email(user_email=user.email, url=url)
+        send_password_reset_email(user_email=user.email, url=url)
 
         return user.email

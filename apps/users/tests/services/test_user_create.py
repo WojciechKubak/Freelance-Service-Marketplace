@@ -27,7 +27,7 @@ class TestUserCreate:
         assert not user.is_active
 
     @pytest.mark.django_db
-    @patch("apps.users.services.EmailService.send_activation_email")
+    @patch("apps.users.services.send_activation_email")
     def test_user_create_saves_user_to_db_and_calls_email_service(
         self, mock_send_activation_email
     ) -> None:

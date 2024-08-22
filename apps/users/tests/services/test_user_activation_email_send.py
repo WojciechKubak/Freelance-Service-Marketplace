@@ -8,7 +8,7 @@ class TestUserActivationEmailSend:
     user_service = UserService()
 
     @pytest.mark.django_db
-    @patch("apps.users.services.EmailService.send_activation_email")
+    @patch("apps.users.services.send_activation_email")
     def test_user_activation_email_send_fails_on_already_active_user(
         self, mock_send_activation_email: Mock
     ) -> None:
@@ -20,7 +20,7 @@ class TestUserActivationEmailSend:
         assert user.email == result
 
     @pytest.mark.django_db
-    @patch("apps.users.services.EmailService.send_activation_email")
+    @patch("apps.users.services.send_activation_email")
     def test_user_activation_email_send_sucesfully_resends_email(
         self, mock_send_activation_email
     ) -> None:
