@@ -1,3 +1,4 @@
+from apps.core.exceptions import ApplicationError
 from django.core.exceptions import PermissionDenied
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.signing import BadSignature, SignatureExpired
@@ -20,6 +21,9 @@ def custom_exception_handler(exc: Exception, ctx: dict[str, Any]) -> Response:
 
     if isinstance(exc, (BadSignature, SignatureExpired)):
         exc = exceptions.AuthenticationFailed(detail="Invalid or expired signature")
+
+    if isinstance(exc, ApplicationError):
+        exc = exceptions.APIException(detail=exc.message)
 
     response = exception_handler(exc, ctx)
 
