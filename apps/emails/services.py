@@ -7,25 +7,25 @@ from django.utils import timezone
 from smtplib import SMTPException
 
 
-def send_activation_email(user_email: str, url: str) -> Email:
+def send_activation_email(*, user_email: str, url: str) -> Email:
     prepared = _email_prepare(
         user_email=user_email, email_type=EmailType.ACTIVATION, context={"url": url}
     )
-    email = email_send(prepared)
+    email = email_send(email=prepared)
 
     return email
 
 
-def send_password_reset_email(user_email: str, url: str) -> Email:
+def send_password_reset_email(*, user_email: str, url: str) -> Email:
     prepared = _email_prepare(
         user_email=user_email, email_type=EmailType.PASSWORD_RESET, context={"url": url}
     )
-    email = email_send(prepared)
+    email = email_send(email=prepared)
 
     return email
 
 
-def email_send(email: Email) -> Email:
+def email_send(*, email: Email) -> Email:
     if email.status != Email.Status.READY:
         raise EmailError("Email is not ready to be sent")
 

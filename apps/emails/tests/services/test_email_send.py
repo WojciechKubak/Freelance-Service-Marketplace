@@ -13,7 +13,7 @@ class TestEmailSend:
     def test_email_status_is_not_ready(self) -> None:
         with pytest.raises(EmailError):
             email = EmailFactory(status=Email.Status.SENT)
-            email_send(email)
+            email_send(email=email)
 
     @pytest.mark.django_db
     @patch("apps.emails.services.EmailMultiAlternatives.send")
@@ -24,7 +24,7 @@ class TestEmailSend:
 
         email = EmailFactory()
 
-        email_send(email)
+        email_send(email=email)
 
         assert Email.Status.FAILED == Email.objects.first().status
 
@@ -33,7 +33,7 @@ class TestEmailSend:
     def test_email_send_correctly_sends_email(self, mock_send) -> None:
         email = EmailFactory()
 
-        email_send(email)
+        email_send(email=email)
 
         mock_send.assert_called_once()
         assert Email.Status.SENT == Email.objects.first().status
