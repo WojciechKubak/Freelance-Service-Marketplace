@@ -6,6 +6,12 @@ from unittest.mock import Mock, patch
 import pytest
 
 
+# https://pytest-django.readthedocs.io/en/latest/faq.html#how-can-i-give-database-access-to-all-my-tests-without-the-django-db-marker
+@pytest.fixture(autouse=True)
+def enable_db_access_for_all_tests(db) -> None:
+    pass
+
+
 @pytest.fixture(scope="session")
 def auth_request() -> (
     Callable[[User, str, str, dict[str, Any] | None], APIRequestFactory]
@@ -25,7 +31,7 @@ def auth_request() -> (
 
 @pytest.fixture(scope="function", autouse=True)
 def mock_create_meeting() -> Generator[Mock, None, None]:
-    with patch("apps.consultations.services.create_meeting") as mock:
+    with patch("apps.consultations.services.bookings.create_meeting") as mock:
         instance = mock.return_value
         instance.join_url = "https://example.com/join"
         yield mock
@@ -33,13 +39,17 @@ def mock_create_meeting() -> Generator[Mock, None, None]:
 
 @pytest.fixture(scope="function", autouse=True)
 def mock_text_to_file_local_upload() -> Generator[Mock, None, None]:
-    with patch("apps.consultations.services.text_to_file_local_upload") as mock:
+    with patch(
+        "apps.consultations.services.consultations.text_to_file_local_upload"
+    ) as mock:
         mock.return_value = None
         yield mock
 
 
 @pytest.fixture(scope="function", autouse=True)
 def mock_local_file_get_content() -> Generator[Mock, None, None]:
-    with patch("apps.consultations.selectors.local_file_get_content") as mock:
+    with patch(
+        "apps.consultations.selectors.consultations.local_file_get_content"
+    ) as mock:
         mock.return_value = "content"
         yield mock

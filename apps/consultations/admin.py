@@ -1,5 +1,11 @@
 from apps.consultations.models import Consultation, Slot, Booking
-from apps.consultations.services import BookingService, ConsultationService, SlotService
+from apps.consultations.services.bookings import BookingService
+from apps.consultations.services.slots import SlotService
+from apps.consultations.services.consultations import (
+    consultation_change_visibility,
+    consultation_create,
+    consultation_update,
+)
 from django.core.exceptions import ValidationError
 from django.contrib.admin import ModelAdmin
 from django.db.models.query import QuerySet
@@ -45,7 +51,7 @@ class ConsultationAdmin(admin.ModelAdmin):
         modeladmin: ModelAdmin, request: HttpRequest, queryset: QuerySet[Any]
     ) -> None:
         for consultation in queryset:
-            ConsultationService.consultation_change_visibility(
+            consultation_change_visibility(
                 consultation=consultation, is_visible=not consultation.is_visible
             )
         modeladmin.message_user(
@@ -69,13 +75,9 @@ class ConsultationAdmin(admin.ModelAdmin):
     ) -> None:
         try:
             (
-                ConsultationService.consultation_update(
-                    consultation=obj, **form.cleaned_data
-                )
+                consultation_update(consultation=obj, **form.cleaned_data)
                 if change
-                else ConsultationService.consultation_create(
-                    user=request.user, **form.cleaned_data
-                )
+                else consultation_create(user=request.user, **form.cleaned_data)
             )
         except ValidationError as exc:
             self.message_user(request, str(exc), messages.ERROR)

@@ -1,22 +1,49 @@
-from apps.users.utils import sign_user_id, unsign_user_id
 from apps.users.models import User
-from apps.emails.services import EmailService
+from apps.emails.services import send_password_reset_email, send_activation_email
 from django.core.exceptions import ValidationError
-from dataclasses import dataclass
+from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
+from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
+from dataclasses import dataclass
+from typing import ClassVar
+
+
+USER_ACTIVATION_LINK_INVALID: str = "Activation link is invalid."
+USER_PASSWORD_RESET_LINK_INVALID: str = "Password reset link is invalid."
+USER_NOT_ACTIVE: str = "User is not active."
+USER_INVALID_PASSWORD: str = "Invalid password."
+USER_INVALID_PASSWORD_CONFIRM: str = "Passwords do not match."
+
+
+def sign_user_id(id_: str) -> str:
+    signer = TimestampSigner()
+    return signer.sign(id_)
+
+
+def unsign_user_id(
+    signed_id: str, max_age: int | timezone.timedelta | None = None
+) -> str | None:
+    signer = TimestampSigner()
+    try:
+        return signer.unsign(signed_id, max_age=max_age)
+    except (SignatureExpired, BadSignature):
+        return None
 
 
 @dataclass
 class UserService:
-    activation_viewname: str = "api:users:user-activate"
-    password_reset_viewname: str = "api:users:user-reset"
+    ACTIVATION_VIEWNAME: ClassVar[str] = "api:users:user-activate"
+    PASSWORD_RESET_VIEWNAME: ClassVar[str] = "api:users:user-reset"
+
+    # general mail timeout, might split into more specific
+    EMAIL_TIMEOUT: ClassVar[int] = 60 * 60 * 24
 
     @staticmethod
     def user_activate(*, signed_id: str) -> User:
-        user_id = unsign_user_id(signed_id, max_age=settings.EMAIL_TIMEOUT)
+        user_id = unsign_user_id(signed_id, max_age=UserService.EMAIL_TIMEOUT)
         if not user_id:
-            raise ValidationError("Activation link is invalid")
+            raise ValidationError(USER_ACTIVATION_LINK_INVALID)
 
         user = User.objects.get(id=user_id)
 
@@ -28,13 +55,13 @@ class UserService:
 
     @staticmethod
     def user_reset_password(*, signed_id: str, password: str) -> User:
-        user_id = unsign_user_id(signed_id, max_age=settings.EMAIL_TIMEOUT)
+        user_id = unsign_user_id(signed_id, max_age=UserService.EMAIL_TIMEOUT)
         if not user_id:
-            raise ValidationError("Invalid value for password reset")
+            raise ValidationError(USER_PASSWORD_RESET_LINK_INVALID)
 
         user = User.objects.get(id=user_id)
         if not user.is_active:
-            raise ValidationError("User is not active")
+            raise ValidationError(USER_NOT_ACTIVE)
 
         user.set_password(password)
         user.full_clean()
@@ -47,10 +74,10 @@ class UserService:
         *, user: User, password: str, new_password: str, new_password_confirm: str
     ) -> User:
         if not user.check_password(password):
-            raise ValidationError("Invalid password")
+            raise ValidationError(USER_INVALID_PASSWORD)
 
         if new_password != new_password_confirm:
-            raise ValidationError("Passwords do not match")
+            raise ValidationError(USER_INVALID_PASSWORD_CONFIRM)
 
         user.set_password(new_password)
         user.full_clean()
@@ -59,7 +86,7 @@ class UserService:
         return user
 
     @staticmethod
-    def _url_generate(*, user_id: str, viewname: str) -> str:
+    def url_generate(*, user_id: str, viewname: str) -> str:
         signed_id = sign_user_id(user_id)
         url = reverse(viewname, args=[signed_id])
         return f"{settings.BASE_BACKEND_URL}{url}"
@@ -79,8 +106,8 @@ class UserService:
                 email=email, password=password, is_admin=is_admin
             )
 
-        url = self._url_generate(user_id=user.id, viewname=self.activation_viewname)
-        email = EmailService.send_activation_email(user_email=user.email, url=url)
+        url = self.url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
+        send_activation_email(user_email=user.email, url=url)
 
         return user
 
@@ -90,8 +117,8 @@ class UserService:
         if user.is_active:
             return email
 
-        url = self._url_generate(user_id=user.id, viewname=self.activation_viewname)
-        _ = EmailService.send_activation_email(user_email=user.email, url=url)
+        url = self.url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
+        send_activation_email(user_email=user.email, url=url)
 
         return email
 
@@ -101,7 +128,7 @@ class UserService:
         if not user or not user.is_active:
             return email
 
-        url = self._url_generate(user_id=user.id, viewname=self.password_reset_viewname)
-        email = EmailService.send_password_reset_email(user_email=user.email, url=url)
+        url = self.url_generate(user_id=user.id, viewname=self.PASSWORD_RESET_VIEWNAME)
+        send_password_reset_email(user_email=user.email, url=url)
 
         return user.email

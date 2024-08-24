@@ -1,9 +1,8 @@
 from apps.users.tests.factories import UserFactory
 from apps.users.apis import UserActivateApi
-from apps.users.utils import sign_user_id
+from apps.users.services import USER_ACTIVATION_LINK_INVALID, sign_user_id
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
-import pytest
 import uuid
 
 
@@ -19,13 +18,12 @@ class TestUserActivateApi:
         response = UserActivateApi.as_view()(request, signed_id=invalid_signed_id)
 
         expected_response_data = OrderedDict(
-            {"detail": {"non_field_errors": ["Activation link is invalid"]}}
+            {"detail": {"non_field_errors": [USER_ACTIVATION_LINK_INVALID]}}
         )
 
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successfull_user_activation(self) -> None:
         user = UserFactory(is_active=False)
 

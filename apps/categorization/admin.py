@@ -1,6 +1,6 @@
 from apps.categorization.models import Category, Tag
-from apps.categorization.services.category_service import CategoryService
-from apps.categorization.services.tag_service import TagService
+from apps.categorization.services.categories import category_update, category_create
+from apps.categorization.services.tags import tag_create, tag_update
 from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
 from django.contrib import admin, messages
@@ -38,11 +38,9 @@ class CategoryAdmin(admin.ModelAdmin):
     ) -> None:
         try:
             (
-                CategoryService.category_update(category=obj, **form.cleaned_data)
+                category_update(category=obj, **form.cleaned_data)
                 if change
-                else CategoryService.category_create(
-                    user=request.user, **form.cleaned_data
-                )
+                else category_create(user=request.user, **form.cleaned_data)
             )
         except ValidationError as exc:
             self.message_user(request, str(exc), messages.ERROR)
@@ -82,9 +80,9 @@ class TagAdmin(admin.ModelAdmin):
             form.cleaned_data["category_id"] = category_instance.id
 
             (
-                TagService.tag_update(tag=obj, **form.cleaned_data)
+                tag_update(tag=obj, **form.cleaned_data)
                 if change
-                else TagService.tag_create(user=request.user, **form.cleaned_data)
+                else tag_create(user=request.user, **form.cleaned_data)
             )
 
         except ValidationError as exc:

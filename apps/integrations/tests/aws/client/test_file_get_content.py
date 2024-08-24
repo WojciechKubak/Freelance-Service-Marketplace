@@ -1,4 +1,4 @@
-from apps.integrations.aws.client import AWSS3Error, file_get_content
+from apps.integrations.aws.client import Boto3Error, file_get_content
 from botocore.exceptions import BotoCoreError, ClientError
 from unittest.mock import MagicMock
 import pytest
@@ -23,7 +23,7 @@ def test_file_get_content_failure(mock_boto3_client) -> None:
     mock_s3.get_object.side_effect = ClientError({"Error": {}}, "get_object")
     mock_boto3_client.return_value = mock_s3
 
-    with pytest.raises(AWSS3Error, match="Failed to get file test_file.txt"):
+    with pytest.raises(Boto3Error, match="Failed to get file test_file.txt"):
         file_get_content(file_name="test_file.txt")
 
 
@@ -32,5 +32,5 @@ def test_file_get_content_boto_core_error(mock_boto3_client) -> None:
     mock_s3.get_object.side_effect = BotoCoreError
     mock_boto3_client.return_value = mock_s3
 
-    with pytest.raises(AWSS3Error, match="Failed to get file test_file.txt"):
+    with pytest.raises(Boto3Error, match="Failed to get file test_file.txt"):
         file_get_content(file_name="test_file.txt")
