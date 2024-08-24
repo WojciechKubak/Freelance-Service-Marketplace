@@ -5,12 +5,13 @@ from django.core.exceptions import ValidationError
 from dataclasses import dataclass
 from django.conf import settings
 from django.urls import reverse
+from typing import ClassVar
 
 
 @dataclass
 class UserService:
-    activation_viewname: str = "api:users:user-activate"
-    password_reset_viewname: str = "api:users:user-reset"
+    ACTIVATION_VIEWNAME: ClassVar[str] = "api:users:user-activate"
+    PASSWORD_RESET_VIEWNAME: ClassVar[str] = "api:users:user-reset"
 
     @staticmethod
     def user_activate(*, signed_id: str) -> User:
@@ -79,7 +80,7 @@ class UserService:
                 email=email, password=password, is_admin=is_admin
             )
 
-        url = self._url_generate(user_id=user.id, viewname=self.activation_viewname)
+        url = self._url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
         send_activation_email(user_email=user.email, url=url)
 
         return user
@@ -90,7 +91,7 @@ class UserService:
         if user.is_active:
             return email
 
-        url = self._url_generate(user_id=user.id, viewname=self.activation_viewname)
+        url = self._url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
         send_activation_email(user_email=user.email, url=url)
 
         return email
@@ -101,7 +102,7 @@ class UserService:
         if not user or not user.is_active:
             return email
 
-        url = self._url_generate(user_id=user.id, viewname=self.password_reset_viewname)
+        url = self._url_generate(user_id=user.id, viewname=self.PASSWORD_RESET_VIEWNAME)
         send_password_reset_email(user_email=user.email, url=url)
 
         return user.email
