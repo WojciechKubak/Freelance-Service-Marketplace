@@ -1,6 +1,6 @@
 from apps.categorization.tests.factories import UserFactory, CategoryFactory
 from apps.categorization.models import Tag
-from apps.categorization.services.tags import tag_create
+from apps.categorization.services.tags import TAG_MISSING_CATEGORY, tag_create
 from django.core.exceptions import ValidationError
 import pytest
 
@@ -19,7 +19,7 @@ class TestTagCreate:
             "user": user,
         }
 
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match=TAG_MISSING_CATEGORY):
             tag_create(**data)
 
     @pytest.mark.django_db

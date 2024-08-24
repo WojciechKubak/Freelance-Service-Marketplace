@@ -1,5 +1,5 @@
 from apps.categorization.tests.factories import TagFactory, CategoryFactory
-from apps.categorization.services.tags import tag_update
+from apps.categorization.services.tags import TAG_MISSING_CATEGORY, tag_update
 from apps.categorization.models import Tag
 from django.core.exceptions import ValidationError
 import pytest
@@ -12,7 +12,7 @@ class TestTagUpdate:
         self,
     ) -> None:
         tag = TagFactory()
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match=TAG_MISSING_CATEGORY):
             tag_update(tag=tag, name=f"new_{tag.name}", category_id=999)
 
     @pytest.mark.django_db
