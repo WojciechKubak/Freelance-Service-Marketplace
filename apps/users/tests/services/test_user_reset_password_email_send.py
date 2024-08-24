@@ -42,7 +42,7 @@ class TestUserResetPasswordEmailSend:
 
         mock_send_password_reset_email.assert_called_once_with(
             user_email=user.email,
-            url=self.user_service._url_generate(
+            url=self.user_service.url_generate(
                 user_id=user.id, viewname="api:users:user-reset"
             ),
         )

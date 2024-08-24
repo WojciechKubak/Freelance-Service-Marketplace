@@ -62,7 +62,7 @@ class UserService:
         return user
 
     @staticmethod
-    def _url_generate(*, user_id: str, viewname: str) -> str:
+    def url_generate(*, user_id: str, viewname: str) -> str:
         signed_id = sign_user_id(user_id)
         url = reverse(viewname, args=[signed_id])
         return f"{settings.BASE_BACKEND_URL}{url}"
@@ -82,7 +82,7 @@ class UserService:
                 email=email, password=password, is_admin=is_admin
             )
 
-        url = self._url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
+        url = self.url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
         send_activation_email(user_email=user.email, url=url)
 
         return user
@@ -93,7 +93,7 @@ class UserService:
         if user.is_active:
             return email
 
-        url = self._url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
+        url = self.url_generate(user_id=user.id, viewname=self.ACTIVATION_VIEWNAME)
         send_activation_email(user_email=user.email, url=url)
 
         return email
@@ -104,7 +104,7 @@ class UserService:
         if not user or not user.is_active:
             return email
 
-        url = self._url_generate(user_id=user.id, viewname=self.PASSWORD_RESET_VIEWNAME)
+        url = self.url_generate(user_id=user.id, viewname=self.PASSWORD_RESET_VIEWNAME)
         send_password_reset_email(user_email=user.email, url=url)
 
         return user.email
