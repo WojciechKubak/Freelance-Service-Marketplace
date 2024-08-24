@@ -9,7 +9,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from collections import OrderedDict
-import pytest
 
 
 class ExampleListView(APIView):
@@ -38,7 +37,6 @@ class ExampleListView(APIView):
 
 class TestGetPaginatedResponse:
 
-    @pytest.mark.django_db
     def test_response_is_paginated_correctly(self) -> None:
         users = UserFactory.create_batch(2)
         first, second = sorted(users, key=lambda user: user.email)

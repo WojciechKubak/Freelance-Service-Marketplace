@@ -1,7 +1,7 @@
 from apps.integrations.aws.client import (
     text_to_file_upload,
     PutObjectResponse,
-    AWSS3Error,
+    Boto3Error,
 )
 from botocore.exceptions import BotoCoreError, ClientError
 from typing import Any
@@ -54,7 +54,7 @@ def test_text_to_file_upload_failure(mock_boto3_client) -> None:
     mock_s3.put_object.side_effect = ClientError({"Error": {}}, "put_object")
     mock_boto3_client.return_value = mock_s3
 
-    with pytest.raises(AWSS3Error, match="Failed to upload file test_file.txt"):
+    with pytest.raises(Boto3Error, match="Failed to upload file test_file.txt"):
         text_to_file_upload(file_name="test_file.txt", content="test content")
 
 
@@ -63,5 +63,5 @@ def test_text_to_file_upload_boto_core_error(mock_boto3_client) -> None:
     mock_s3.put_object.side_effect = BotoCoreError
     mock_boto3_client.return_value = mock_s3
 
-    with pytest.raises(AWSS3Error, match="Failed to upload file test_file.txt"):
+    with pytest.raises(Boto3Error, match="Failed to upload file test_file.txt"):
         text_to_file_upload(file_name="test_file.txt", content="test content")

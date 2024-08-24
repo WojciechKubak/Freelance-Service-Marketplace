@@ -1,5 +1,5 @@
 from apps.consultations.models import Consultation, Slot
-from django_filters import FilterSet
+from django_filters.rest_framework import FilterSet
 import django_filters
 
 

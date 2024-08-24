@@ -1,5 +1,5 @@
 from django.core.signing import TimestampSigner
-from apps.users.utils import sign_user_id
+from apps.users.services import sign_user_id
 
 
 def test_sign_user_id_on_successed_value_signing() -> None:

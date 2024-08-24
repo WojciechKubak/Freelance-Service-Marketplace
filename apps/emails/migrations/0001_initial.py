@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="email",
             constraint=models.CheckConstraint(
-                check=models.Q(
+                condition=models.Q(
                     ("sent_at__isnull", True), ("status", "SENT"), _connector="OR"
                 ),
                 name="check_email_sent_at_with_status",
