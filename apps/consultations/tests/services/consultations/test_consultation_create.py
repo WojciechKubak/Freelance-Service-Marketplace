@@ -17,7 +17,6 @@ class TestConsultationCreate:
         "price": 100.0,
     }
 
-    @pytest.mark.django_db
     def test_method_fails_due_to_single_consultation_for_user_constraint(
         self,
     ) -> None:
@@ -30,14 +29,12 @@ class TestConsultationCreate:
                 tags=[TagFactory().id]
             )
 
-    @pytest.mark.django_db
     def test_method_fails_due_to_non_existing_tags_id(self) -> None:
         with pytest.raises(ValidationError, match=CONSULTATION_VALIDATE_TAGS_EXIST):
             consultation_create(
                 user=UserFactory(), **self.simple_field_data, tags=[999]
             )
 
-    @pytest.mark.django_db
     def test_method_creates_instance_with_expected_data_and_returns_it(
         self,
     ) -> None:

@@ -11,7 +11,6 @@ import pytest
 class TestUserPasswordChange:
     password: str = "password"
 
-    @pytest.mark.django_db
     def test_password_reset_on_failed_due_to_incorrect_password(self) -> None:
         user = UserFactory(password=self.password)
 
@@ -23,7 +22,6 @@ class TestUserPasswordChange:
                 new_password_confirm="new_password",
             )
 
-    @pytest.mark.django_db
     def test_password_reset_on_failed_due_to_incorrect_password_repeat(self) -> None:
         user = UserFactory(password=self.password)
 
@@ -35,7 +33,6 @@ class TestUserPasswordChange:
                 new_password_confirm="new_password_incorrect",
             )
 
-    @pytest.mark.django_db
     def test_user_password_change_succesfully_sets_new_password(self) -> None:
         user = UserFactory(password=self.password)
 

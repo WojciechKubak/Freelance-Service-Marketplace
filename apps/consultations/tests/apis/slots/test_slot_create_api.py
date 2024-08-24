@@ -11,7 +11,6 @@ from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
-import pytest
 
 
 class TestSlotCreateApi:
@@ -21,7 +20,6 @@ class TestSlotCreateApi:
         "end_time": "2021-01-01T01:00:00Z",
     }
 
-    @pytest.mark.django_db
     def test_api_response_raises_on_duration_error(
         self,
         auth_request: Callable[
@@ -55,7 +53,6 @@ class TestSlotCreateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_slot_overlap_error(
         self,
         auth_request: Callable[
@@ -85,7 +82,6 @@ class TestSlotCreateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_consultation_visibility_error(
         self,
         auth_request: Callable[
@@ -110,7 +106,6 @@ class TestSlotCreateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successful_slot_creation(
         self,
         auth_request: Callable[

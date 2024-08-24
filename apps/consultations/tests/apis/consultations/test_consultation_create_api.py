@@ -5,7 +5,6 @@ from apps.consultations.services.consultations import CONSULTATION_VALIDATE_TAGS
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
-import pytest
 
 
 class TestConsultationCreateApi:
@@ -15,7 +14,6 @@ class TestConsultationCreateApi:
         "price": 999.0,
     }
 
-    @pytest.mark.django_db
     def test_api_response_on_non_existing_tag(
         self,
         auth_request: Callable[
@@ -38,7 +36,6 @@ class TestConsultationCreateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_success(
         self,
         auth_request: Callable[

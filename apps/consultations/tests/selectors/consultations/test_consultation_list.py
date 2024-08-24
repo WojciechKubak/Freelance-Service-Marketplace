@@ -6,7 +6,6 @@ import pytest
 
 class TestConsultationList:
 
-    @pytest.mark.django_db
     def test_consultation_list_returns_only_visible_data(self) -> None:
         category1 = ConsultationFactory(is_visible=True)
         _ = ConsultationFactory(is_visible=False)
@@ -15,7 +14,6 @@ class TestConsultationList:
 
         assert [category1] == list(result)
 
-    @pytest.mark.django_db
     def test_consultation_list_filters_by_related_category_id(self) -> None:
         category1 = CategoryFactory()
         consultation1 = ConsultationFactory(tags=[TagFactory(category=category1)])
@@ -26,7 +24,6 @@ class TestConsultationList:
 
         assert [consultation1] == list(result)
 
-    @pytest.mark.django_db
     def test_consultation_list_filters_by_related_tag_id(self) -> None:
         tag1 = TagFactory()
         consultation1 = ConsultationFactory(tags=[tag1])
@@ -37,7 +34,6 @@ class TestConsultationList:
 
         assert [consultation1] == list(result)
 
-    @pytest.mark.django_db
     def test_consultation_list_filters_one_side_of_price_range(self) -> None:
         consultation1 = ConsultationFactory(price=350)
         consultation2 = ConsultationFactory(price=150)
@@ -48,7 +44,6 @@ class TestConsultationList:
         assert [consultation1] == list(result_price_min)
         assert [consultation2] == list(result_price_max)
 
-    @pytest.mark.django_db
     @pytest.mark.parametrize(
         "price_min, price_max, expected_count",
         [

@@ -13,7 +13,6 @@ import pytest
 
 class TestBookingCreate:
 
-    @pytest.mark.django_db
     def test_booking_create_raises_meeting_duration_validation_error(
         self,
     ) -> None:
@@ -36,7 +35,6 @@ class TestBookingCreate:
                 user=user, start_time=start_time, end_time=end_time
             )
 
-    @pytest.mark.django_db
     def test_booking_create_raises_out_of_slot_time_range_validation_error(
         self,
     ) -> None:
@@ -52,7 +50,6 @@ class TestBookingCreate:
                 end_time=slot.end_time,
             )
 
-    @pytest.mark.django_db
     def test_booking_create_raises_booking_overlap_validation_error(
         self,
     ) -> None:
@@ -67,7 +64,6 @@ class TestBookingCreate:
                 user=user, start_time=slot.start_time, end_time=slot.end_time
             )
 
-    @pytest.mark.django_db
     def test_booking_create_raises_same_user_booking_model_validation_error(
         self,
     ) -> None:
@@ -89,7 +85,6 @@ class TestBookingCreate:
                 ),
             )
 
-    @pytest.mark.django_db
     def test_booking_create_creates_db_instance_and_returns_it(self) -> None:
         # todo: this slot logic was also implemented in factory
         slot = SlotFactory(
@@ -111,7 +106,6 @@ class TestBookingCreate:
 
         assert slot.bookings.first() == result
 
-    @pytest.mark.django_db
     def test_booking_create_calls_create_meeting_function_with_expected_arguments(
         self, mock_create_meeting
     ) -> None:

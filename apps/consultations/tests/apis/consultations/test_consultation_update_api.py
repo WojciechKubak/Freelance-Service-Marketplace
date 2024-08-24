@@ -6,7 +6,6 @@ from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
 from decimal import Decimal
-import pytest
 
 
 class TestConsultationUpdateApi:
@@ -16,7 +15,6 @@ class TestConsultationUpdateApi:
         "price": Decimal("999.0"),
     }
 
-    @pytest.mark.django_db
     def test_api_response_on_unauthorized_user(self) -> None:
         consultation = ConsultationFactory()
 
@@ -35,7 +33,6 @@ class TestConsultationUpdateApi:
         assert 401 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_invalid_consultation_id(
         self,
         auth_request: Callable[
@@ -58,7 +55,6 @@ class TestConsultationUpdateApi:
         assert 404 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_for_user_that_is_not_instance_creator(
         self,
         auth_request: Callable[
@@ -84,7 +80,6 @@ class TestConsultationUpdateApi:
         assert 403 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_missing_all_data_fields(
         self,
         auth_request: Callable[
@@ -120,7 +115,6 @@ class TestConsultationUpdateApi:
         assert 200 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successful_simple_fields_update(
         self,
         auth_request: Callable[
@@ -159,7 +153,6 @@ class TestConsultationUpdateApi:
         assert 200 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_m2m_field_update(
         self,
         auth_request: Callable[

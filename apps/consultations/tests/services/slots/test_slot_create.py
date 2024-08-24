@@ -12,7 +12,6 @@ import pytest
 
 class TestSlotCreate:
 
-    @pytest.mark.django_db
     def test_slot_create_raises_duration_error(self) -> None:
         consultation = ConsultationFactory()
         slot_service = SlotService(consultation=consultation)
@@ -30,7 +29,6 @@ class TestSlotCreate:
         ):
             slot_service.slot_create(start_time=start_time, end_time=end_time)
 
-    @pytest.mark.django_db
     def test_slot_create_raises_overlap_error(self) -> None:
         consultation = ConsultationFactory()
         slot = SlotFactory(consultation=consultation)
@@ -40,7 +38,6 @@ class TestSlotCreate:
         with pytest.raises(ValidationError, match=SLOT_VALIDATE_OVERLAP):
             slot_service.slot_create(start_time=slot.start_time, end_time=slot.end_time)
 
-    @pytest.mark.django_db
     def test_slot_create_raises_visibility_error(self) -> None:
         consultation = ConsultationFactory(is_visible=False)
         slot_service = SlotService(consultation=consultation)
@@ -50,7 +47,6 @@ class TestSlotCreate:
         ):
             slot_service._slot_validate_visibility()
 
-    @pytest.mark.django_db
     def test_slot_create_creates_db_instance_and_returns_it(self) -> None:
         consultation = ConsultationFactory(is_visible=True)
         slot_service = SlotService(consultation=consultation)

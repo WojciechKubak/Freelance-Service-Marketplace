@@ -4,7 +4,6 @@ from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
-import pytest
 
 
 class TestCategoryCreateApi:
@@ -13,7 +12,6 @@ class TestCategoryCreateApi:
         "description": "Description 1",
     }
 
-    @pytest.mark.django_db
     def test_api_response_on_unauthorized_user(self) -> None:
         factory = APIRequestFactory()
         request = factory.post("api/categories/create", self.simple_field_data)
@@ -27,7 +25,6 @@ class TestCategoryCreateApi:
         assert 401 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successfully_created_category(
         self,
         auth_request: Callable[

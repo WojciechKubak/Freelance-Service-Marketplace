@@ -2,13 +2,11 @@ from apps.users.tests.factories import UserFactory
 from apps.users.apis import UserSignupApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
-import pytest
 
 
 class TestUserSignupApi:
     url: str = "api/users/signup/"
 
-    @pytest.mark.django_db
     def test_api_response_on_failed_due_to_missing_required_field(self) -> None:
         request = APIRequestFactory().post(
             self.url,
@@ -23,7 +21,6 @@ class TestUserSignupApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_failed_due_to_unique_email_constraint(self) -> None:
         email = "user@example.com"
         UserFactory(email=email)
@@ -41,7 +38,6 @@ class TestUserSignupApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successful_signup(self) -> None:
         email = "user@example.com"
 

@@ -27,14 +27,12 @@ class TestUserResetPassword:
         with pytest.raises(ValidationError, match=USER_PASSWORD_RESET_LINK_INVALID):
             UserService.user_reset_password(signed_id=value, password="password")
 
-    @pytest.mark.django_db
     def test_password_reset_raises_object_does_not_exist(self) -> None:
         value = sign_user_id(str(uuid.uuid4()))
 
         with pytest.raises(ObjectDoesNotExist):
             UserService.user_reset_password(signed_id=value, password="password")
 
-    @pytest.mark.django_db
     def test_password_reset_raises_user_not_active(self) -> None:
         user = UserFactory(is_active=False)
         value = sign_user_id(str(user.id))
@@ -42,7 +40,6 @@ class TestUserResetPassword:
         with pytest.raises(ValidationError, match=USER_NOT_ACTIVE):
             UserService.user_reset_password(signed_id=value, password="password")
 
-    @pytest.mark.django_db
     def test_password_reset_on_success(self) -> None:
         user = UserFactory(is_active=True)
         value = sign_user_id(str(user.id))

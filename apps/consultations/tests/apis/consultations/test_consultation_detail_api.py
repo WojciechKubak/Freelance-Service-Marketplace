@@ -2,14 +2,12 @@ from apps.consultations.tests.factories import ConsultationFactory
 from apps.consultations.apis.consultations import ConsultationDetailApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
-import pytest
 
 
 class TestConsultationDetailApi:
     factory: APIRequestFactory = APIRequestFactory()
     url: str = "/api/consultations/"
 
-    @pytest.mark.django_db
     def test_api_response_on_failed_due_to_not_found_result(self) -> None:
         request = self.factory.get(f"{self.url}999/")
         response = ConsultationDetailApi.as_view()(request, consultation_id=1)
@@ -17,7 +15,6 @@ class TestConsultationDetailApi:
         assert 404 == response.status_code
         assert {"detail": "Not found."} == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_success(self, mock_local_file_get_content) -> None:
         consultation = ConsultationFactory()
         request = self.factory.get(f"{self.url}{consultation.id}/")

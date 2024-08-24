@@ -23,14 +23,12 @@ class TestUserActivate:
         with pytest.raises(ValidationError, match=USER_ACTIVATION_LINK_INVALID):
             UserService.user_activate(signed_id=value)
 
-    @pytest.mark.django_db
     def test_user_activate_raises_object_does_not_exist(self) -> None:
         value = sign_user_id(uuid.uuid4())
 
         with pytest.raises(ObjectDoesNotExist):
             UserService.user_activate(signed_id=value)
 
-    @pytest.mark.django_db
     def test_user_activate_correctly_activates_user(self) -> None:
         user = UserFactory(is_active=False)
         value = sign_user_id(str(user.id))

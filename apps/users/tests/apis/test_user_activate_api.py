@@ -3,7 +3,6 @@ from apps.users.apis import UserActivateApi
 from apps.users.services import USER_ACTIVATION_LINK_INVALID, sign_user_id
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
-import pytest
 import uuid
 
 
@@ -25,7 +24,6 @@ class TestUserActivateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successfull_user_activation(self) -> None:
         user = UserFactory(is_active=False)
 

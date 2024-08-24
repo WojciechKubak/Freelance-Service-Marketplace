@@ -1,17 +1,14 @@
 from apps.categorization.tests.factories import TagFactory, CategoryFactory
 from apps.categorization.selectors import tag_list
-import pytest
 
 
 class TestTagList:
 
-    @pytest.mark.django_db
     def test_selector_on_empty_filters_return_all_data(self) -> None:
         tags = TagFactory.create_batch(3)
         result = tag_list(filters={})
         assert tags == list(result)
 
-    @pytest.mark.django_db
     def test_selector_on_single_simple_field_filter(self) -> None:
         tags = TagFactory.create_batch(3)
 
@@ -24,7 +21,6 @@ class TestTagList:
         assert [tags[0]] == list(result_found)
         assert [] == list(result_not_found)
 
-    @pytest.mark.django_db
     def test_selector_on_chained_simple_fields_filter(self) -> None:
         category = CategoryFactory()
         tags = TagFactory.create_batch(3, category=category)

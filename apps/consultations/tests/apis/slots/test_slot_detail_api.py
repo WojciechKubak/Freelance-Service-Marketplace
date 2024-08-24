@@ -2,12 +2,10 @@ from apps.consultations.tests.factories import SlotFactory
 from apps.consultations.apis.slots import SlotDetailApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
-import pytest
 
 
 class TestSlotDetailApi:
 
-    @pytest.mark.django_db
     def test_api_response_on_not_found_slot(self) -> None:
         request = APIRequestFactory().get("/api/consultations/slots/999/")
 
@@ -15,7 +13,6 @@ class TestSlotDetailApi:
 
         assert 404 == response.status_code
 
-    @pytest.mark.django_db
     def test_api_response_on_success(self) -> None:
         slot = SlotFactory()
         request = APIRequestFactory().get(f"/api/consultations/slots/{slot.id}/")

@@ -12,7 +12,6 @@ import pytest
 
 class TestSlotUpdate:
 
-    @pytest.mark.django_db
     def test_slot_update_raises_duration_error(self) -> None:
         slot = SlotFactory()
         slot_service = SlotService(consultation=slot.consultation)
@@ -32,7 +31,6 @@ class TestSlotUpdate:
                 slot=slot, start_time=start_time, end_time=end_time
             )
 
-    @pytest.mark.django_db
     def test_slot_update_raises_overlap_error(self) -> None:
         consultation = ConsultationFactory()
         slot1, slot2 = SlotFactory.create_batch(2, consultation=consultation)
@@ -43,7 +41,6 @@ class TestSlotUpdate:
                 slot=slot1, start_time=slot2.start_time, end_time=slot2.end_time
             )
 
-    @pytest.mark.django_db
     def test_slot_update_raises_visibility_error(self) -> None:
         consultation = ConsultationFactory(is_visible=False)
         SlotFactory(consultation=consultation)
@@ -62,7 +59,6 @@ class TestSlotUpdate:
                 ),
             )
 
-    @pytest.mark.django_db
     def test_slot_update_modifies_db_instance_and_returns_it(self) -> None:
         slot = SlotFactory()
         slot_service = SlotService(consultation=slot.consultation)

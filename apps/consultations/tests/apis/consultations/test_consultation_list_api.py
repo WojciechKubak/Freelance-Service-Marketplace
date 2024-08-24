@@ -2,14 +2,12 @@ from apps.consultations.apis.consultations import ConsultationListApi
 from apps.consultations.tests.factories import ConsultationFactory
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
-import pytest
 
 
 class TestConsultationListApi:
     factory: APIRequestFactory = APIRequestFactory()
     url: str = "/api/consultations/"
 
-    @pytest.mark.django_db
     def test_api_response_returns_no_results_on_filter_provided(self) -> None:
         title = "Consultation 1"
         ConsultationFactory(title=title)
@@ -20,7 +18,6 @@ class TestConsultationListApi:
         assert 200 == response.status_code
         assert [] == response.data
 
-    @pytest.mark.django_db
     def test_api_response_returns_results_on_filter_provided(self) -> None:
         title = "Consultation 1"
         consultation = ConsultationFactory(title=title)

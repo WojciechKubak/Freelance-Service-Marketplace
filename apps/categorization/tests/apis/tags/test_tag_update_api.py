@@ -4,12 +4,10 @@ from apps.categorization.apis.tags import TagUpdateApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
-import pytest
 
 
 class TestTagUpdateApi:
 
-    @pytest.mark.django_db
     def test_api_response_on_unauthorized_user(self) -> None:
         tag = TagFactory()
 
@@ -28,7 +26,6 @@ class TestTagUpdateApi:
         assert 401 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_invalid_tag_id(
         self,
         auth_request: Callable[
@@ -51,7 +48,6 @@ class TestTagUpdateApi:
         assert 404 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_for_user_that_is_not_instance_creator(
         self,
         auth_request: Callable[
@@ -77,7 +73,6 @@ class TestTagUpdateApi:
         assert 403 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successful_simple_fields_update(
         self,
         auth_request: Callable[
@@ -112,7 +107,6 @@ class TestTagUpdateApi:
         assert 200 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successful_foreign_key_field_update(
         self,
         auth_request: Callable[

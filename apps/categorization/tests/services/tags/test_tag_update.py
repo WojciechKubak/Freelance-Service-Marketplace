@@ -7,7 +7,6 @@ import pytest
 
 class TestTagUpdate:
 
-    @pytest.mark.django_db
     def test_method_fails_due_to_non_existing_category_id_and_raises_validation_error(
         self,
     ) -> None:
@@ -15,7 +14,6 @@ class TestTagUpdate:
         with pytest.raises(ValidationError, match=TAG_MISSING_CATEGORY):
             tag_update(tag=tag, name=f"new_{tag.name}", category_id=999)
 
-    @pytest.mark.django_db
     def test_method_updates_instance_simple_field_and_returns_it(self) -> None:
         tag = TagFactory()
         category = CategoryFactory()
@@ -30,7 +28,6 @@ class TestTagUpdate:
         assert Tag.objects.get(id=result.id) == result
         assert updated_name == result.name
 
-    @pytest.mark.django_db
     def test_method_updates_foreign_key_field_and_returns_it(self) -> None:
         tag = TagFactory()
         category = CategoryFactory()

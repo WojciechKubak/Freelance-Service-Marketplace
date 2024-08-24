@@ -5,13 +5,11 @@ from apps.users.tests.factories import UserFactory
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
-import pytest
 
 
 class TestUserPasswordChangeApi:
     url: str = "/api/users/change-password/"
 
-    @pytest.mark.django_db
     def test_api_response_on_failed_due_to_missing_required_fields(
         self,
         auth_request: Callable[
@@ -36,7 +34,6 @@ class TestUserPasswordChangeApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_failed_due_to_incorrect_password(
         self,
         auth_request: Callable[
@@ -60,7 +57,6 @@ class TestUserPasswordChangeApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_failed_due_to_incorrect_password_repeat(
         self,
         auth_request: Callable[
@@ -84,7 +80,6 @@ class TestUserPasswordChangeApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successful_password_change(
         self,
         auth_request: Callable[

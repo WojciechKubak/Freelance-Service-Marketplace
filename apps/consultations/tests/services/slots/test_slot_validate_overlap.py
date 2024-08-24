@@ -6,7 +6,6 @@ import pytest
 
 class TestSlotValidateOverlap:
 
-    @pytest.mark.django_db
     def test_slot_validate_overlap_without_excluding_existing_slot(self) -> None:
         slot = SlotFactory()
         slot_service = SlotService(consultation=slot.consultation)
@@ -18,7 +17,6 @@ class TestSlotValidateOverlap:
 
         assert "['Slot overlaps with existing slots.']" == str(e.value)
 
-    @pytest.mark.django_db
     def test_slot_validate_overlap_with_slot_id_excluded(self) -> None:
         slot = SlotFactory()
         slot_service = SlotService(consultation=slot.consultation)

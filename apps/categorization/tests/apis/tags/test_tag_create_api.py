@@ -4,13 +4,11 @@ from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
-import pytest
 
 
 class TestTagCreateApi:
     simple_field_data: dict[str, Any] = {"name": "Tag 1"}
 
-    @pytest.mark.django_db
     def test_api_response_on_unauthorized_user(self) -> None:
         factory = APIRequestFactory()
         request = factory.post("api/categories/tags/create", self.simple_field_data)
@@ -24,7 +22,6 @@ class TestTagCreateApi:
         assert 401 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_missing_required_field(
         self,
         auth_request: Callable[
@@ -47,7 +44,6 @@ class TestTagCreateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successfully_created_tag(
         self,
         auth_request: Callable[

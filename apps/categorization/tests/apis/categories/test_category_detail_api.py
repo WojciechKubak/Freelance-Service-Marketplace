@@ -2,13 +2,11 @@ from apps.categorization.tests.factories import CategoryFactory
 from apps.categorization.apis.categories import CategoryDetailApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
-import pytest
 
 
 class TestCategoryDetailApi:
     url = "api/categorization/categories"
 
-    @pytest.mark.django_db
     def test_api_response_on_successfully_found_category(self) -> None:
         category = CategoryFactory()
         tags = sorted(category.tags.all(), key=lambda tag: tag.id)
@@ -30,7 +28,6 @@ class TestCategoryDetailApi:
         assert response.status_code == 200
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_category_not_found(self) -> None:
         factory = APIRequestFactory()
         request = factory.get(f"{self.url}/999")

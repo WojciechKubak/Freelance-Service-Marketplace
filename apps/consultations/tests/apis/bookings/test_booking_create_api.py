@@ -12,12 +12,10 @@ from rest_framework.test import APIRequestFactory
 from django.utils import timezone
 from typing import Callable, Any
 from collections import OrderedDict
-import pytest
 
 
 class TestBookingCreateApi:
 
-    @pytest.mark.django_db
     def test_api_response_on_meeting_duration_validation_error(
         self,
         auth_request: Callable[
@@ -56,7 +54,6 @@ class TestBookingCreateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_out_of_slot_time_range_validation_error(
         self,
         auth_request: Callable[
@@ -86,7 +83,6 @@ class TestBookingCreateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_booking_overlap_validation_error(
         self,
         auth_request: Callable[
@@ -116,7 +112,6 @@ class TestBookingCreateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_same_user_booking_model_validation_error(
         self,
         auth_request: Callable[
@@ -146,7 +141,6 @@ class TestBookingCreateApi:
         assert 400 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_succesful_booking_create(
         self,
         auth_request: Callable[

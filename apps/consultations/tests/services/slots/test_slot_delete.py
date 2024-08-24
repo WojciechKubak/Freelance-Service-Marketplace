@@ -1,11 +1,9 @@
 from apps.consultations.tests.factories import SlotFactory, Booking, Slot
 from apps.consultations.services.slots import SlotService
-import pytest
 
 
 class TestSlotDelete:
 
-    @pytest.mark.django_db
     def test_call_on_slot_with_bookings_sets_is_cancelled_flag_and_all_bookings_status(
         self,
     ) -> None:
@@ -21,7 +19,6 @@ class TestSlotDelete:
             for booking in slot.bookings.all()
         )
 
-    @pytest.mark.django_db
     def test_call_on_slot_without_bookings_deletes_instance(self) -> None:
         slot = SlotFactory(generate_bookings=False)
         slot_service = SlotService(consultation=slot.consultation)

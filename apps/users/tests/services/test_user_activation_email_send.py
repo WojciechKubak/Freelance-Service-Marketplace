@@ -1,13 +1,11 @@
 from apps.users.tests.factories import UserFactory
 from apps.users.services import UserService
 from unittest.mock import Mock, patch
-import pytest
 
 
 class TestUserActivationEmailSend:
     user_service = UserService()
 
-    @pytest.mark.django_db
     @patch("apps.users.services.send_activation_email")
     def test_user_activation_email_send_fails_on_already_active_user(
         self, mock_send_activation_email: Mock
@@ -20,7 +18,6 @@ class TestUserActivationEmailSend:
 
         assert user.email == result
 
-    @pytest.mark.django_db
     @patch("apps.users.services.send_activation_email")
     def test_user_activation_email_send_sucesfully_resends_email(
         self, mock_send_activation_email

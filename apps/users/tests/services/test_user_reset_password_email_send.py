@@ -1,13 +1,11 @@
 from apps.users.tests.factories import UserFactory
 from apps.users.services import UserService
 from unittest.mock import Mock, MagicMock, patch
-import pytest
 
 
 class TestUserResetPasswordEmailSend:
     user_service = UserService()
 
-    @pytest.mark.django_db
     @patch("apps.users.services.send_password_reset_email")
     def test_function_on_failed_due_to_non_existing_user(
         self, mock_send_password_reset_email: Mock
@@ -20,7 +18,6 @@ class TestUserResetPasswordEmailSend:
 
         assert "user@example.com" == result
 
-    @pytest.mark.django_db
     @patch("apps.users.services.send_password_reset_email")
     def test_function_on_failed_due_to_inactive_user(
         self, mock_send_password_reset_email: Mock
@@ -33,7 +30,6 @@ class TestUserResetPasswordEmailSend:
 
         assert user.email == result
 
-    @pytest.mark.django_db
     @patch("apps.users.services.send_password_reset_email")
     def test_service_method_sucesfully_sends_password_reset_email(
         self, mock_send_password_reset_email: MagicMock

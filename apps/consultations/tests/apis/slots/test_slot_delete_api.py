@@ -3,12 +3,10 @@ from apps.consultations.apis.slots import SlotDeleteApi
 from apps.users.models import User
 from rest_framework.test import APIRequestFactory
 from typing import Callable, Any
-import pytest
 
 
 class TestSlotDeleteApi:
 
-    @pytest.mark.django_db
     def test_api_response_on_instance_not_found(
         self,
         auth_request: Callable[
@@ -26,7 +24,6 @@ class TestSlotDeleteApi:
 
         assert 404 == response.status_code
 
-    @pytest.mark.django_db
     def test_api_response_on_successful_delete(
         self,
         auth_request: Callable[

@@ -4,7 +4,6 @@ from apps.categorization.apis.categories import CategoryUpdateApi
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 from typing import Callable, Any
-import pytest
 
 
 class TestCategoryUpdateApi:
@@ -13,7 +12,6 @@ class TestCategoryUpdateApi:
         "description": "Description 1",
     }
 
-    @pytest.mark.django_db
     def test_api_response_on_unauthorized_user(self) -> None:
         category = CategoryFactory()
 
@@ -32,7 +30,6 @@ class TestCategoryUpdateApi:
         assert 401 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_invalid_category_id(
         self,
         auth_request: Callable[
@@ -55,7 +52,6 @@ class TestCategoryUpdateApi:
         assert 404 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_for_user_that_is_not_instance_creator(
         self,
         auth_request: Callable[
@@ -81,7 +77,6 @@ class TestCategoryUpdateApi:
         assert 403 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_missing_all_data_fields(
         self,
         auth_request: Callable[
@@ -117,7 +112,6 @@ class TestCategoryUpdateApi:
         assert 200 == response.status_code
         assert expected_response_data == response.data
 
-    @pytest.mark.django_db
     def test_api_response_on_successful_simple_fields_update(
         self,
         auth_request: Callable[

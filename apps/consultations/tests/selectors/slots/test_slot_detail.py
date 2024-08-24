@@ -6,13 +6,11 @@ import pytest
 
 class TestSlotDetail:
 
-    @pytest.mark.django_db
     def test_slot_detail_raises_404_on_non_existing_slot(self) -> None:
         slot = SlotFactory(is_cancelled=True)
         with pytest.raises(Http404):
             slot_detail(slot_id=slot.id)
 
-    @pytest.mark.django_db
     def test_slot_detail_returns_obj_on_success(self) -> None:
         slot = SlotFactory()
         result = slot_detail(slot_id=slot.id)
