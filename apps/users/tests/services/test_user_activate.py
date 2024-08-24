@@ -1,7 +1,7 @@
 from apps.users.tests.factories import UserFactory
 from apps.users.models import User
 from apps.users.services import UserService
-from apps.users.utils import sign_user_id
+from apps.users.services import sign_user_id
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 import uuid

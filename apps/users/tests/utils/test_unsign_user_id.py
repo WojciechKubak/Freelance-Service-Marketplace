@@ -1,5 +1,5 @@
 from django.core.signing import TimestampSigner
-from apps.users.utils import unsign_user_id
+from apps.users.services import unsign_user_id
 
 
 class TestUnsignUserId:

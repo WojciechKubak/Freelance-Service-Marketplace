@@ -1,11 +1,27 @@
-from apps.users.utils import sign_user_id, unsign_user_id
 from apps.users.models import User
 from apps.emails.services import send_password_reset_email, send_activation_email
 from django.core.exceptions import ValidationError
+from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
+from django.utils import timezone
 from dataclasses import dataclass
 from django.conf import settings
 from django.urls import reverse
 from typing import ClassVar
+
+
+def sign_user_id(id_: str) -> str:
+    signer = TimestampSigner()
+    return signer.sign(id_)
+
+
+def unsign_user_id(
+    signed_id: str, max_age: int | timezone.timedelta | None = None
+) -> str | None:
+    signer = TimestampSigner()
+    try:
+        return signer.unsign(signed_id, max_age=max_age)
+    except (SignatureExpired, BadSignature):
+        return None
 
 
 @dataclass

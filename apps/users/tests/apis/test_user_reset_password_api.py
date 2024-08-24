@@ -1,5 +1,5 @@
 from apps.users.apis import UserResetPasswordApi
-from apps.users.utils import sign_user_id
+from apps.users.services import sign_user_id
 from apps.users.tests.factories import UserFactory
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict

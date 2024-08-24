@@ -1,6 +1,6 @@
 from apps.users.tests.factories import UserFactory
 from apps.users.apis import UserActivateApi
-from apps.users.utils import sign_user_id
+from apps.users.services import sign_user_id
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 import pytest
