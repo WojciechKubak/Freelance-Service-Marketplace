@@ -1,4 +1,4 @@
-from apps.integrations.zoom.client import ZoomError, create_meeting
+from apps.integrations.zoom.meetings import ZoomError, create_meeting
 from django.utils import timezone
 from unittest.mock import Mock, MagicMock, patch
 from typing import Generator
@@ -8,7 +8,7 @@ import json
 
 @pytest.fixture(scope="session", autouse=True)
 def mock_get_oauth_token() -> Generator[Mock, None, None]:
-    with patch("apps.integrations.zoom.client._get_oauth_token") as mock:
+    with patch("apps.integrations.zoom.meetings._get_oauth_token") as mock:
         mock.return_value = "fake_access_token"
         yield mock
 
@@ -19,7 +19,7 @@ def mock_post() -> Generator[Mock, None, None]:
         yield mock
 
 
-@patch("apps.integrations.zoom.client.MeetingDetails.from_response")
+@patch("apps.integrations.zoom.meetings.MeetingDetails.from_response")
 def test_create_meeting_success(mock_from_response, mock_post) -> None:
     mock_response = MagicMock()
     mock_response.status_code = 201

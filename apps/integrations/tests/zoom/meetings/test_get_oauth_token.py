@@ -1,4 +1,4 @@
-from apps.integrations.zoom.client import ZoomError, _get_oauth_token
+from apps.integrations.zoom.meetings import ZoomError, _get_oauth_token
 from unittest.mock import MagicMock, Mock, patch
 from typing import Generator
 import pytest
@@ -7,7 +7,7 @@ import base64
 
 @pytest.fixture(scope="session", autouse=True)
 def mock_get_credentials() -> Generator[Mock, None, None]:
-    with patch("apps.integrations.zoom.client.get_credentials") as mock:
+    with patch("apps.integrations.zoom.meetings.get_credentials") as mock:
         yield mock
 
 

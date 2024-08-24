@@ -1,6 +1,6 @@
 from apps.consultations.models import Slot, Booking
 from apps.consultations.utils import is_minimal_duration_time_valid
-from apps.integrations.zoom.client import create_meeting
+from apps.integrations.zoom.meetings import create_meeting
 from apps.users.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Q
