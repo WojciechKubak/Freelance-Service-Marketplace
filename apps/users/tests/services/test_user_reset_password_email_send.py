@@ -17,6 +17,7 @@ class TestUserResetPasswordEmailSend:
         )
 
         mock_send_password_reset_email.assert_not_called()
+
         assert "user@example.com" == result
 
     @pytest.mark.django_db
@@ -29,6 +30,7 @@ class TestUserResetPasswordEmailSend:
         result = self.user_service.user_reset_password_email_send(email=user.email)
 
         mock_send_password_reset_email.assert_not_called()
+
         assert user.email == result
 
     @pytest.mark.django_db
@@ -46,4 +48,5 @@ class TestUserResetPasswordEmailSend:
                 user_id=user.id, viewname="api:users:user-reset"
             ),
         )
+
         assert user.email == result

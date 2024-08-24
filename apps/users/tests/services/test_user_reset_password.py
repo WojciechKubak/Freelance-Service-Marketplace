@@ -1,6 +1,10 @@
 from apps.users.tests.factories import UserFactory
-from apps.users.services import UserService
-from apps.users.services import sign_user_id
+from apps.users.services import (
+    USER_PASSWORD_RESET_LINK_INVALID,
+    USER_NOT_ACTIVE,
+    UserService,
+    sign_user_id,
+)
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 import uuid
@@ -14,13 +18,13 @@ class TestUserResetPassword:
 
         value = sign_user_id("user_id")
 
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match=USER_PASSWORD_RESET_LINK_INVALID):
             UserService.user_reset_password(signed_id=value, password="password")
 
     def test_password_reset_raises_bad_signature(self) -> None:
         value = sign_user_id("user_id")[:-1]
 
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match=USER_PASSWORD_RESET_LINK_INVALID):
             UserService.user_reset_password(signed_id=value, password="password")
 
     @pytest.mark.django_db
@@ -35,7 +39,7 @@ class TestUserResetPassword:
         user = UserFactory(is_active=False)
         value = sign_user_id(str(user.id))
 
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match=USER_NOT_ACTIVE):
             UserService.user_reset_password(signed_id=value, password="password")
 
     @pytest.mark.django_db

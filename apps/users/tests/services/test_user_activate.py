@@ -1,7 +1,6 @@
 from apps.users.tests.factories import UserFactory
 from apps.users.models import User
-from apps.users.services import UserService
-from apps.users.services import sign_user_id
+from apps.users.services import USER_ACTIVATION_LINK_INVALID, UserService, sign_user_id
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 import uuid
@@ -15,13 +14,13 @@ class TestUserActivate:
 
         value = sign_user_id("user_id")
 
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match=USER_ACTIVATION_LINK_INVALID):
             UserService.user_activate(signed_id=value)
 
     def test_user_activate_raises_bad_signature(self) -> None:
         value = sign_user_id("user_id")[:-1]
 
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match=USER_ACTIVATION_LINK_INVALID):
             UserService.user_activate(signed_id=value)
 
     @pytest.mark.django_db

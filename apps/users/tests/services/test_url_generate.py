@@ -19,4 +19,5 @@ def test_url_generate_creates_expected_url(mock_sign) -> None:
     expected = f"{settings.BASE_BACKEND_URL}{endpoint}"
 
     mock_sign.assert_called_once_with(user_id)
+
     assert expected == result

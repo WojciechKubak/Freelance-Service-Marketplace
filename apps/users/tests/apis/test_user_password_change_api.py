@@ -1,5 +1,6 @@
 from apps.users.models import User
 from apps.users.apis import UserPasswordChangeApi
+from apps.users.services import USER_INVALID_PASSWORD, USER_INVALID_PASSWORD_CONFIRM
 from apps.users.tests.factories import UserFactory
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
@@ -53,7 +54,7 @@ class TestUserPasswordChangeApi:
         response = UserPasswordChangeApi.as_view()(request)
 
         expected_response_data = OrderedDict(
-            {"detail": {"non_field_errors": ["Invalid password"]}}
+            {"detail": {"non_field_errors": [USER_INVALID_PASSWORD]}}
         )
 
         assert 400 == response.status_code
@@ -77,7 +78,7 @@ class TestUserPasswordChangeApi:
         response = UserPasswordChangeApi.as_view()(request)
 
         expected_response_data = OrderedDict(
-            {"detail": {"non_field_errors": ["Passwords do not match"]}}
+            {"detail": {"non_field_errors": [USER_INVALID_PASSWORD_CONFIRM]}}
         )
 
         assert 400 == response.status_code

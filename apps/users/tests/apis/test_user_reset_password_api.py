@@ -1,6 +1,7 @@
 from apps.users.apis import UserResetPasswordApi
 from apps.users.services import sign_user_id
 from apps.users.tests.factories import UserFactory
+from apps.users.services import USER_PASSWORD_RESET_LINK_INVALID, USER_NOT_ACTIVE
 from rest_framework.test import APIRequestFactory
 from collections import OrderedDict
 import pytest
@@ -34,7 +35,7 @@ class TestUserResetPasswordApi:
         )
 
         expected_response_data = OrderedDict(
-            {"detail": {"non_field_errors": ["Invalid value for password reset"]}}
+            {"detail": {"non_field_errors": [USER_PASSWORD_RESET_LINK_INVALID]}}
         )
 
         assert 400 == response.status_code
@@ -51,7 +52,7 @@ class TestUserResetPasswordApi:
         response = UserResetPasswordApi.as_view()(request, signed_id=signed_id)
 
         expected_response_data = OrderedDict(
-            {"detail": {"non_field_errors": ["User is not active"]}}
+            {"detail": {"non_field_errors": [USER_NOT_ACTIVE]}}
         )
 
         assert 400 == response.status_code

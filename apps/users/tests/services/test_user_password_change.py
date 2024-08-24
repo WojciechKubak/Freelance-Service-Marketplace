@@ -1,5 +1,9 @@
 from apps.users.tests.factories import UserFactory
-from apps.users.services import UserService
+from apps.users.services import (
+    USER_INVALID_PASSWORD,
+    USER_INVALID_PASSWORD_CONFIRM,
+    UserService,
+)
 from django.core.exceptions import ValidationError
 import pytest
 
@@ -11,7 +15,7 @@ class TestUserPasswordChange:
     def test_password_reset_on_failed_due_to_incorrect_password(self) -> None:
         user = UserFactory(password=self.password)
 
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match=USER_INVALID_PASSWORD):
             UserService.user_password_change(
                 user=user,
                 password=f"{self.password}_incorrect",
@@ -23,10 +27,10 @@ class TestUserPasswordChange:
     def test_password_reset_on_failed_due_to_incorrect_password_repeat(self) -> None:
         user = UserFactory(password=self.password)
 
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match=USER_INVALID_PASSWORD_CONFIRM):
             UserService.user_password_change(
                 user=user,
-                password=f"{self.password}_incorrect",
+                password=f"{self.password}",
                 new_password="new_password",
                 new_password_confirm="new_password_incorrect",
             )

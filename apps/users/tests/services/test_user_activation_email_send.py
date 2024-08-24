@@ -17,6 +17,7 @@ class TestUserActivationEmailSend:
         result = self.user_service.user_activation_email_send(email=user.email)
 
         mock_send_activation_email.assert_not_called()
+
         assert user.email == result
 
     @pytest.mark.django_db

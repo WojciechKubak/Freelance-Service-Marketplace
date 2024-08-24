@@ -3,10 +3,17 @@ from apps.emails.services import send_password_reset_email, send_activation_emai
 from django.core.exceptions import ValidationError
 from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
 from django.utils import timezone
-from dataclasses import dataclass
 from django.conf import settings
 from django.urls import reverse
+from dataclasses import dataclass
 from typing import ClassVar
+
+
+USER_ACTIVATION_LINK_INVALID: str = "Activation link is invalid."
+USER_PASSWORD_RESET_LINK_INVALID: str = "Password reset link is invalid."
+USER_NOT_ACTIVE: str = "User is not active."
+USER_INVALID_PASSWORD: str = "Invalid password."
+USER_INVALID_PASSWORD_CONFIRM: str = "Passwords do not match."
 
 
 def sign_user_id(id_: str) -> str:
@@ -28,6 +35,7 @@ def unsign_user_id(
 class UserService:
     ACTIVATION_VIEWNAME: ClassVar[str] = "api:users:user-activate"
     PASSWORD_RESET_VIEWNAME: ClassVar[str] = "api:users:user-reset"
+
     # general mail timeout, might split into more specific
     EMAIL_TIMEOUT: ClassVar[int] = 60 * 60 * 24
 
@@ -35,7 +43,7 @@ class UserService:
     def user_activate(*, signed_id: str) -> User:
         user_id = unsign_user_id(signed_id, max_age=UserService.EMAIL_TIMEOUT)
         if not user_id:
-            raise ValidationError("Activation link is invalid")
+            raise ValidationError(USER_ACTIVATION_LINK_INVALID)
 
         user = User.objects.get(id=user_id)
 
@@ -49,11 +57,11 @@ class UserService:
     def user_reset_password(*, signed_id: str, password: str) -> User:
         user_id = unsign_user_id(signed_id, max_age=UserService.EMAIL_TIMEOUT)
         if not user_id:
-            raise ValidationError("Invalid value for password reset")
+            raise ValidationError(USER_PASSWORD_RESET_LINK_INVALID)
 
         user = User.objects.get(id=user_id)
         if not user.is_active:
-            raise ValidationError("User is not active")
+            raise ValidationError(USER_NOT_ACTIVE)
 
         user.set_password(password)
         user.full_clean()
@@ -66,10 +74,10 @@ class UserService:
         *, user: User, password: str, new_password: str, new_password_confirm: str
     ) -> User:
         if not user.check_password(password):
-            raise ValidationError("Invalid password")
+            raise ValidationError(USER_INVALID_PASSWORD)
 
         if new_password != new_password_confirm:
-            raise ValidationError("Passwords do not match")
+            raise ValidationError(USER_INVALID_PASSWORD_CONFIRM)
 
         user.set_password(new_password)
         user.full_clean()
