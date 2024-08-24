@@ -12,10 +12,12 @@ from typing import ClassVar
 class UserService:
     ACTIVATION_VIEWNAME: ClassVar[str] = "api:users:user-activate"
     PASSWORD_RESET_VIEWNAME: ClassVar[str] = "api:users:user-reset"
+    # general mail timeout, might split into more specific
+    EMAIL_TIMEOUT: ClassVar[int] = 60 * 60 * 24
 
     @staticmethod
     def user_activate(*, signed_id: str) -> User:
-        user_id = unsign_user_id(signed_id, max_age=settings.EMAIL_TIMEOUT)
+        user_id = unsign_user_id(signed_id, max_age=UserService.EMAIL_TIMEOUT)
         if not user_id:
             raise ValidationError("Activation link is invalid")
 
@@ -29,7 +31,7 @@ class UserService:
 
     @staticmethod
     def user_reset_password(*, signed_id: str, password: str) -> User:
-        user_id = unsign_user_id(signed_id, max_age=settings.EMAIL_TIMEOUT)
+        user_id = unsign_user_id(signed_id, max_age=UserService.EMAIL_TIMEOUT)
         if not user_id:
             raise ValidationError("Invalid value for password reset")
 

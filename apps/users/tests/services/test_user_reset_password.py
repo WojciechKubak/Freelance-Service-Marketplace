@@ -3,7 +3,6 @@ from apps.users.services import UserService
 from apps.users.utils import sign_user_id
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
-from django.conf import settings
 import uuid
 import pytest
 
@@ -11,7 +10,7 @@ import pytest
 class TestUserResetPassword:
 
     def test_password_reset_raises_signature_expired(self, monkeypatch) -> None:
-        monkeypatch.setattr(settings, "EMAIL_TIMEOUT", 0)
+        monkeypatch.setattr(UserService, "EMAIL_TIMEOUT", 0)
 
         value = sign_user_id("user_id")
 
