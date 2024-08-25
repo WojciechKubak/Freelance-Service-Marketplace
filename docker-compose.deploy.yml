@@ -45,6 +45,14 @@ services:
     networks:
       - web_app
 
+  # certbot:
+  #   image: certbot/certbot:latest
+  #   volumes:
+  #     - /var/certbot/conf:/etc/letsencrypt/:rw
+  #     - /var/certbot/www/:/var/www/certbot/:rw
+  #   depends_on:
+  #     - proxy
+
 networks:
   web_app:
 
