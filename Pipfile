@@ -14,6 +14,7 @@ djangorestframework-simplejwt = "*"
 django-filter = "*"
 httpx = "*"
 boto3 = "*"
+drf-spectacular = "*"
 
 [dev-packages]
 flake8 = "*"

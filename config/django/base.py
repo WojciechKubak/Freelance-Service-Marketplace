@@ -43,6 +43,7 @@ LOCAL_APPS = [
     "apps.consultations.apps.ConsultationsConfig",
     "apps.integrations.apps.IntegrationsConfig",
     "apps.storages.apps.StoragesConfig",
+    "drf_spectacular",
 ]
 
 THIRD_PARTY_APPS = [
@@ -116,6 +117,13 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "EXCEPTION_HANDLER": "apps.api.exception_handler.custom_exception_handler",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Freelance Service Marketplace DRF API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 # Password validation
