@@ -22,6 +22,7 @@ black = "*"
 pre-commit = "*"
 pytest-django = "*"
 factory-boy = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.12"
