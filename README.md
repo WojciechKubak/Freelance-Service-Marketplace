@@ -1,6 +1,6 @@
 # Freelance Service Marketplace
 
-**Table of contents:**
+# Table of Contents
 
 1. [Project Overview](#project-overview)  
 2. [Purpose](#purpose)  
@@ -51,10 +51,7 @@
     - [Coverage](#coverage)  
 14. [Sources](#sources)
 
-## What is this?
-
 This project is a Django-based service marketplace where freelancers can list their services, and clients can search for and hire them. It features functionalities such as service booking, user management, and search capabilities, demonstrating how Django can be used to build a comprehensive e-commerce platform. The application provides a practical example of integrating various components to create a fully operational web service.
-
 
 ## What is it for?
 The primary purpose of this project was to enhance my skills in organizing code effectively within a web application. By working on this project, I aimed to learn and apply best practices for structuring and maintaining Django applications. Additionally, I focused on deploying the application and preparing it for production environments, which included configuring Docker for containerization and using Docker Compose for managing services. The project also involved integrating with external APIs and services to enrich functionality 
@@ -168,27 +165,27 @@ This Django project provides several API endpoints organized into different cate
 
 **Authentication**
 
-- **`/auth/`**: Includes endpoints for user authentication, such as login and token management. This is configured in the `apps.authentication.urls` module.
+- `/auth/`: Includes endpoints for user authentication, such as login and token management. This is configured in the `apps.authentication.urls` module.
 
 **User Management**
 
-- **`/users/`**: Manages user-related operations, such as user profiles and account details. This is configured in the `apps.users.urls` module.
+- `/users/`: Manages user-related operations, such as user profiles and account details. This is configured in the `apps.users.urls` module.
 
 **Categorization**
 
-- **`/categorization/`**: Handles operations related to categorizing services or items. This is configured in the `apps.categorization.urls` module.
+- `/categorization/`: Handles operations related to categorizing services or items. This is configured in the `apps.categorization.urls` module.
 
 **Consultation**
 
-- **`/consultations/`**: Manages consultations and related operations. This is configured in the `apps.consultations.urls` module.
+- `/consultations/`: Manages consultations and related operations. This is configured in the `apps.consultations.urls` module.
 
 **API Documentation**
 
 The project includes automatic API documentation via `drf-spectacular`:
 
-- **Schema Endpoint (`/schema/`)**: Provides the OpenAPI schema for the project.
-- **Swagger UI (`/schema/swagger-ui/`)**: Offers an interactive Swagger UI interface for exploring and testing the API endpoints.
-- **ReDoc (`/schema/redoc/`)**: Provides an alternative ReDoc interface for viewing the API documentation.
+- **Schema Endpoint** (`/schema/`): Provides the OpenAPI schema for the project.
+- **Swagger UI** (`/schema/swagger-ui/`): Offers an interactive Swagger UI interface for exploring and testing the API endpoints.
+- **ReDoc** (`/schema/redoc/`): Provides an alternative ReDoc interface for viewing the API documentation.
 
 These documentation endpoints are configured to help developers easily explore and understand the API structure and available endpoints.
 
@@ -222,7 +219,7 @@ This file defines services for `postgres`, `app`, and `proxy`. Ensure to set the
 
 ### Nginx Configuration
 
-**`default.conf.tpl`**:
+`default.conf.tpl`:
 
 This file configures Nginx as a reverse proxy. Ensure to:
 
@@ -231,7 +228,7 @@ This file configures Nginx as a reverse proxy. Ensure to:
 
 ### Gunicorn Configuration
 
-**`gunicorn.conf.py`**:
+`gunicorn.conf.py`:
 
 This file configures Gunicorn to serve the Django application. Adjust the settings as needed for your production environment.
 
@@ -239,16 +236,16 @@ This file configures Gunicorn to serve the Django application. Adjust the settin
 
 The production settings file utilizes several environment variables to configure Django:
 
-- **`SECRET_KEY`**: Retrieved from `DJANGO_SECRET_KEY`. This is a critical setting for Django's cryptographic signing.
-- **`ALLOWED_HOSTS`**: Defined by the `DJANGO_ALLOWED_HOSTS` environment variable. This specifies the list of host/domain names that this Django site can serve.
-- **`CORS_ALLOW_ALL_ORIGINS`**: Set to `False` to prevent allowing all origins by default.
-- **`CORS_ORIGIN_WHITELIST`**: Defined by `DJANGO_CORS_ORIGIN_WHITELIST`, which is a list of allowed origins for CORS requests.
+- `SECRET_KEY`: Retrieved from `DJANGO_SECRET_KEY`. This is a critical setting for Django's cryptographic signing.
+- `ALLOWED_HOSTS`: Defined by the `DJANGO_ALLOWED_HOSTS` environment variable. This specifies the list of host/domain names that this Django site can serve.
+- `CORS_ALLOW_ALL_ORIGINS`: Set to `False` to prevent allowing all origins by default.
+- `CORS_ORIGIN_WHITELIST`: Defined by `DJANGO_CORS_ORIGIN_WHITELIST`, which is a list of allowed origins for CORS requests.
 
 Additionally, you can configure additional security settings (commented out in the code):
 
-- **`SECURE_PROXY_SSL_HEADER`**: If using HTTPS, set to enforce HTTPS redirection.
-- **`SECURE_SSL_REDIRECT`**: Redirect HTTP to HTTPS.
-- **`SECURE_CONTENT_TYPE_NOSNIFF`**: Enforce content-type sniffing.
+- `SECURE_PROXY_SSL_HEADER`: If using HTTPS, set to enforce HTTPS redirection.
+- `SECURE_SSL_REDIRECT`: Redirect HTTP to HTTPS.
+- `SECURE_CONTENT_TYPE_NOSNIFF`: Enforce content-type sniffing.
 
 Ensure these environment variables are set appropriately in your production environment to maintain security and proper functionality.
 
@@ -304,13 +301,13 @@ The application can be configured to use either local storage or AWS S3 for hand
 
 For development purposes, the project supports local file operations. This can be useful for testing and debugging without requiring AWS S3 integration. The following functions handle file operations in a local development environment:
 
-- **`file_name_generate(extension: str = ".txt") -> str`**  
+- `file_name_generate(extension: str = ".txt") -> str`  
   Generates a unique file name with a specified extension using UUIDs. This ensures that each file name is unique.
 
-- **`text_to_file_local_upload(*, file_name: str, content: str) -> None`**  
+- `text_to_file_local_upload(*, file_name: str, content: str) -> None`  
   Saves text content to a local file. If a file with the same name already exists, it will be deleted before saving the new content.
 
-- **`local_file_get_content(*, file_name: str) -> str`**  
+- `local_file_get_content(*, file_name: str) -> str`  
   Reads and returns the content of a local file. This function opens the file and decodes its content to a string.
 
 When handling file operations, the application checks the `STORAGE_TYPE_STRATEGY` setting to determine the appropriate storage method:
@@ -362,13 +359,31 @@ The `_get_oauth_token` function retrieves an OAuth token required for making aut
 
   This function sends a request to Zoom's API to create a scheduled meeting. It returns a `MeetingDetails` object containing information about the newly created meeting, such as the meeting ID, join URL, and start URL.
 
+#### Example Usage
+
+Here’s an example of how you might use the `create_meeting` function to schedule a meeting:
+
+```python
+from datetime import datetime
+from your_module import create_meeting
+
+meeting_details = create_meeting(
+    topic="Project Sync",
+    start_time=datetime(2024, 9, 1, 15, 0, 0),
+    duration=30
+)
+
+print(f"Meeting ID: {meeting_details.id}")
+print(f"Join URL: {meeting_details.join_url}")
+```
+
 ## Code Quality
 
 Maintaining high code quality is crucial for a reliable and maintainable project. We utilize several tools and configurations to ensure our code meets quality standards.
 
 ### Formatting
 
-**Black** is used for automatic code formatting. It helps in maintaining consistent code style across the project. To format your code, ensure that Black is configured in your development environment to format code automatically upon saving. This can be set up through editor settings.
+For automatic code formatting we use **Black**. It helps in maintaining consistent code style across the project. To format your code, ensure that Black is configured in your development environment to format code automatically upon saving. This can be set up through editor settings.
 
 ```
 pipenv run black .
@@ -376,7 +391,7 @@ pipenv run black .
 
 ### Linter
 
-**Flake8** performs static code analysis to enforce coding standards and identify style violations. To check your code, run Flake8 which will analyze your codebase based on the configuration defined in the `.flake8` file. This configuration allows you to customize which errors and warnings to show, as well as specify which files and directories to ignore.
+Perform static code analysis with **Flake8**  to enforce coding standards and identify style violations. To check your code, run Flake8 which will analyze your codebase based on the configuration defined in the `.flake8` file. This configuration allows you to customize which errors and warnings to show, as well as specify which files and directories to ignore.
 
 ```
 pipenv run flake8
@@ -384,7 +399,7 @@ pipenv run flake8
 
 ### Pre-Commits
 
-Pre-commit hooks are used to enforce code quality before commits are made. Install these hooks to automatically run code formatting and linting checks before changes are committed. This helps in maintaining code quality throughout the development process. The behavior of these hooks is defined in the `.pre-commit-config.yaml` file, where you can specify which tools (e.g., Black, Flake8) are used and their respective versions.
+**Pre-commit** hooks are used to enforce code quality before commits are made. Install these hooks to automatically run code formatting and linting checks before changes are committed. This helps in maintaining code quality throughout the development process. The behavior of these hooks is defined in the `.pre-commit-config.yaml` file, where you can specify which tools (e.g., Black, Flake8) are used and their respective versions.
 
 ```
 pipenv run pre-commit install
