@@ -1,5 +1,5 @@
 upstream web_app {
-    server backend:8000;
+    server django:8000;
 }
 
 server {
